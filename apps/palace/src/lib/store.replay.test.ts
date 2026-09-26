@@ -4,7 +4,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { usePalaceStore } from "./store";
 
 const LOG = readFileSync(join(__dirname, "..", "..", "public", "demo", "day2-events.jsonl"), "utf8");
-const LOG_EVENTS = LOG.split("\n").filter((l) => l.trim().length > 0).length;
+const LOG_LINES = LOG.split("\n").filter((l) => l.trim().length > 0);
+const LOG_EVENTS = LOG_LINES.length;
+const LOG_CAPTURES = LOG_LINES.filter((l) => l.includes('"type":"capture.created"')).length;
 
 describe("replay mode", () => {
   beforeEach(() => {
@@ -42,7 +44,7 @@ describe("replay mode", () => {
     await vi.advanceTimersByTimeAsync(LOG_EVENTS * 2500);
     s = usePalaceStore.getState();
     expect(s.replay).toEqual({ status: "done", played: LOG_EVENTS, total: LOG_EVENTS });
-    expect(s.snapshot.captures).toHaveLength(36);
+    expect(s.snapshot.captures).toHaveLength(LOG_CAPTURES);
     expect(s.snapshot.edges.length).toBeGreaterThan(0);
   });
 
