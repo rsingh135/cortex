@@ -16,7 +16,12 @@ export const IPC = {
   synthesize: "mascot:synthesize",
   setClickThrough: "mascot:set-click-through",
   event: "mascot:event",
+  /** Main -> renderer: the global shortcut (Option+V / Alt+V) asked the pet to start listening. */
+  startListening: "mascot:start-listening",
 } as const;
+
+/** Electron accelerator for "talk to Cortex". Option+V on macOS, Alt+V elsewhere. */
+export const LISTEN_SHORTCUT = "Alt+V";
 
 /** Engine WebSocket event types forwarded from main to the renderer. */
 export const FORWARDED_EVENT_TYPES = ["belief.recalled", "belief.forgotten", "clock.advanced", "voice.received"] as const;
@@ -46,6 +51,8 @@ export interface MascotBridge {
   setClickThrough(enabled: boolean): void;
   /** Subscribe to forwarded engine events. Returns an unsubscribe function. */
   onEvent(cb: (event: MascotEvent) => void): () => void;
+  /** Fires when the user presses the global listen shortcut. Returns an unsubscribe function. */
+  onStartListening(cb: () => void): () => void;
 }
 
 declare global {

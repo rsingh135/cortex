@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
 import { streamSpeech, type VoicePhase } from '../lib/realtime';
-interface Props { disabled:boolean; mode:'remember'|'ask'; onSubmit:(text:string)=>Promise<boolean>; onListen:(active:boolean)=>void; onError:(message:string)=>void }
-export function Composer({disabled,mode,onSubmit,onListen,onError}:Props) {
+interface Props { disabled:boolean; mode:'remember'|'ask'; onSubmit:(text:string)=>Promise<boolean>; onListen:(active:boolean)=>void; onError:(message:string)=>void; /** Increment to start recording from outside (global shortcut). */ listenSignal?:number }
+export function Composer({disabled,mode,onSubmit,onListen,onError,listenSignal=0}:Props) {
   const [text,setText]=useState('');
   const [recording,setRecording]=useState(false);
   const [transcribing,setTranscribing]=useState(false);
@@ -19,6 +19,8 @@ export function Composer({disabled,mode,onSubmit,onListen,onError}:Props) {
     }catch(error){if(mounted.current)onError(error instanceof Error?error.message:String(error));}
     finally{recordingJob.current=false;active.current=false;if(mounted.current){setRecording(false);setTranscribing(false);onListen(false);}}
   };
+  const toggleRef=useRef(toggleRecording);toggleRef.current=toggleRecording;
+  useEffect(()=>{if(listenSignal>0&&!active.current)void toggleRef.current();},[listenSignal]);
   return <form onSubmit={event=>void submit(event)} className="composer">
     <label htmlFor="memory-text">{mode==='remember'?'A little thought worth keeping':'What’s on your mind?'}</label>
     <textarea id="memory-text" value={text} onChange={event=>setText(event.target.value)} placeholder={mode==='remember'?'Remember that I prefer quiet cafés…':'What do you remember about me?'} maxLength={10000} readOnly={recording||transcribing} disabled={disabled&&!recording&&!transcribing} rows={3} onKeyDown={event=>{if((event.metaKey||event.ctrlKey)&&event.key==='Enter')void submit(event);}}/>

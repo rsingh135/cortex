@@ -23,6 +23,11 @@ const bridge: MascotBridge = {
     ipcRenderer.on(IPC.event, handler);
     return () => ipcRenderer.removeListener(IPC.event, handler);
   },
+  onStartListening: (cb) => {
+    const handler = (): void => cb();
+    ipcRenderer.on(IPC.startListening, handler);
+    return () => ipcRenderer.removeListener(IPC.startListening, handler);
+  },
 };
 
 contextBridge.exposeInMainWorld("mascot", bridge);

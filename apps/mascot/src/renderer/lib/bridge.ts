@@ -28,6 +28,17 @@ export function connectBrowserCompanion(): void {
     saveMemory: (text) => call("memories", { text }),
     listMemories: () => call("memories"),
     retryMemory: (id) => call("retry", { id }),
+    // Browser preview: Option+V inside the page stands in for the desktop global shortcut.
+    onStartListening: (cb) => {
+      const handler = (event: KeyboardEvent): void => {
+        if (event.altKey && !event.ctrlKey && !event.metaKey && event.code === "KeyV") {
+          event.preventDefault();
+          cb();
+        }
+      };
+      window.addEventListener("keydown", handler);
+      return () => window.removeEventListener("keydown", handler);
+    },
     ask: (text, opts) => call("ask", { text, ...opts }),
     transcribe: async (bytes, mime) => {
       const response = await fetch("/api/transcribe", { method: "POST", headers: { "x-cortex-client": "mascot", "content-type": mime }, body: new Blob([new Uint8Array(bytes)], { type: mime }) });

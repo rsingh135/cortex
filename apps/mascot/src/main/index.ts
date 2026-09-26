@@ -3,13 +3,13 @@ import { synthesizeSpeech } from "./speech";
  * Electron main process: the always-on-top transparent pet window, tray, the HTTP bridge to the
  * engine's POST /ask, and a WebSocket relay of engine events to the renderer.
  */
-import { app, BrowserWindow, ipcMain, Menu, nativeImage, screen, Tray } from "electron";
+import { app, BrowserWindow, globalShortcut, ipcMain, Menu, nativeImage, screen, Tray } from "electron";
 import { existsSync } from "node:fs";
 import { MemoryNotebook } from "./memory";
 import { transcribeAudio, createRealtimeToken } from "./transcribe";
 import { join } from "node:path";
 import { AskRequest, AskResponse, WsEvent } from "@cortex/schema";
-import { FORWARDED_EVENT_TYPES, IPC, type MascotEvent } from "../shared/types";
+import { FORWARDED_EVENT_TYPES, IPC, LISTEN_SHORTCUT, type MascotEvent } from "../shared/types";
 
 // pnpm starts in apps/mascot; accept a local override or the repository .env.
 for (const path of [join(process.cwd(), ".env"), join(__dirname, "../../../..", ".env")]) {
@@ -175,10 +175,23 @@ app.whenReady().then(() => {
     win?.setIgnoreMouseEvents(enabled === true && !dragOrigin, { forward: true });
   });
 
+  // Option+V anywhere on the desktop: bring the pet forward and start listening.
+  const registered = globalShortcut.register(LISTEN_SHORTCUT, () => {
+    const target = win ?? (win = createWindow());
+    if (target.isMinimized()) target.restore();
+    target.show();
+    target.setIgnoreMouseEvents(false);
+    target.focus();
+    target.webContents.send(IPC.startListening);
+  });
+  if (!registered) console.warn(`mascot: could not register ${LISTEN_SHORTCUT}; another app holds it`);
+
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) win = createWindow();
   });
 });
+
+app.on("will-quit", () => globalShortcut.unregisterAll());
 
 app.on("window-all-closed", () => {
   tray?.destroy();

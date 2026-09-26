@@ -23,6 +23,7 @@ export function App() {
   const [notice, setNotice] = useState("");
   const [voiceEnabled, setVoiceEnabled] = useState(false);
   const voiceOn = useRef(false);
+  const [listenSignal, setListenSignal] = useState(0);
   useEffect(() => () => { voiceOn.current = false; stopSpeech(); }, []);
   const say = async (text: string) => {
     if (!voiceOn.current) return;
@@ -50,6 +51,21 @@ export function App() {
     void window.mascot.listMemories().then(setNotes).catch((err: Error) => dispatch({ type: "failed", message: err.message }));
     return window.mascot.onEvent((event) => dispatch({ type: "engineEvent", event }));
   }, [dispatch]);
+  useEffect(() => {
+    // Option+V: open the panel in Ask mode with spoken replies on, then start the microphone.
+    if (!window.mascot?.onStartListening) return;
+    return window.mascot.onStartListening(() => {
+      setOpen(true);
+      setMode("ask");
+      setNotice("");
+      if (!voiceOn.current) {
+        voiceOn.current = true;
+        setVoiceEnabled(true);
+        void unlockSpeech().catch(() => undefined);
+      }
+      setListenSignal((n) => n + 1);
+    });
+  }, []);
   useEffect(() => {
     if (pet !== "reacting") return;
     const timer = setTimeout(() => dispatch({ type: "reactionDone" }), 800);
@@ -143,12 +159,12 @@ export function App() {
         <button aria-pressed={mode === "remember"} disabled={busy} onClick={() => setMode("remember")}>＋ Add a memory</button>
         <button aria-pressed={mode === "ask"} disabled={busy} onClick={() => setMode("ask")}>✧ Ask Cortex</button>
       </div>
-      <Composer disabled={busy} mode={mode} onSubmit={submit} onListen={(active) => dispatch(active ? { type: "listen" } : { type: "stopListening" })} onError={fail}/>
+      <Composer disabled={busy} mode={mode} onSubmit={submit} onListen={(active) => dispatch(active ? { type: "listen" } : { type: "stopListening" })} onError={fail} listenSignal={listenSignal}/>
       <div className="feedback" aria-live="polite">{notice && <p className="notice">{notice}</p>}<Bubble answer={mode === "ask" ? lastAnswer : null} error={error} thinking={pet === "thinking"}/></div>
       {mode === "remember" && notes.length > 0 && <div className="recent"><div className="recent-title">RECENT MEMORIES<span>{notes.length} kept</span></div>
         <div className="note-list">{notes.slice(0, 20).map((note) => <article key={note.id} className="note"><span className={`note-dot ${note.status}`}/><div><p>{note.text}</p><small>{note.status === "synced" ? "Added to Cortex" : "On this device · delivery unconfirmed"}</small></div>{note.status === "pending" && <button disabled={busy} onClick={() => void retry(note.id)} title="Retry delivery. If an earlier request succeeded but its reply was lost, this may duplicate the memory.">Retry</button>}</article>)}</div>
       </div>}
-      <footer><span className="footer-dot"/> Here whenever a thought finds you<span className="drag-handle" title="Drag to move Cortex">⠿</span></footer>
+      <footer><span className="footer-dot"/> Here whenever a thought finds you · <kbd>⌥ V</kbd> to talk<span className="drag-handle" title="Drag to move Cortex">⠿</span></footer>
     </section>}
   </main>;
 }
