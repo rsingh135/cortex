@@ -34,9 +34,10 @@ Frozen interfaces every track builds against. Types live in `packages/schema/src
 
 Envelope: `{ id, type, day, ts, condition, payload }`. Types and payloads in `packages/schema/src/events.ts`:
 
-`capture.created`, `capture.recalled`, `level.deleted`, `belief.created`, `belief.reinforced`, `belief.recalled`, `belief.updated`, `belief.superseded`, `belief.tombstoned`, `belief.forgotten`, `edge.created`, `procedure.created`, `procedure.cracked`, `procedure.healed`, `procedure.step`, `clock.advanced`, `voice.received`, `snapshot`.
+`capture.created`, `capture.recalled`, `level.deleted`, `belief.created`, `belief.reinforced`, `belief.recalled`, `belief.updated`, `belief.superseded`, `belief.tombstoned`, `belief.forgotten`, `edge.created`, `procedure.created`, `procedure.cracked`, `procedure.healed`, `procedure.step`, `clock.advanced`, `voice.received`, `agent.drafts`, `agent.draft_sent`, `snapshot`.
 
 Rules:
+- Beat 3 approval loop: the engine emits `agent.drafts` `{run_id, drafts: [{draft_id, listing_id, listing_title, to, text, because}]}` when a run pauses for presenter approval; the palace POSTs `/agent/drafts/:id/approve` and the engine answers with `agent.draft_sent` `{draft_id, message_id, because}`, whose `because` beliefs pulse.
 - `capture.created` may carry `image_url`; when absent the palace requests `GET /image/:capture_id?condition=cortex` from the engine.
 - The engine holds one cluster-wide change stream and translates changes into these events. Sweeps coalesce `level.deleted` per capture.
 - The same envelopes are appended to `event-log/*.jsonl` during ingest so replay mode can re-emit them on a timer for beat 1.

@@ -61,6 +61,20 @@ export const ClockAdvanced = z.object({
     rooms_dimmed: z.array(Room),
   }),
 });
+/** A landlord message the agent drafted and is holding for presenter approval (beat 3). */
+export const AgentDraft = z.object({
+  draft_id: z.string(),
+  listing_id: z.string(),
+  listing_title: z.string(),
+  to: z.string(),
+  text: z.string(),
+  /** Belief ids (rules) the draft relied on. */
+  because: z.array(z.string()).default([]),
+});
+export type AgentDraft = z.infer<typeof AgentDraft>;
+/** Emitted when a run pauses for approval; the palace answers with POST /agent/drafts/:id/approve. */
+export const AgentDrafts = z.object({ ...base, type: z.literal("agent.drafts"), payload: z.object({ run_id: z.string(), drafts: z.array(AgentDraft) }) });
+export const AgentDraftSent = z.object({ ...base, type: z.literal("agent.draft_sent"), payload: z.object({ draft_id: z.string(), message_id: z.string(), because: z.array(z.string()).default([]) }) });
 export const VoiceReceived = z.object({ ...base, type: z.literal("voice.received"), payload: z.object({ voice_note_id: z.string(), transcript: z.string() }) });
 export const Snapshot = z.object({
   ...base,
@@ -91,6 +105,8 @@ export const WsEvent = z.discriminatedUnion("type", [
   ProcedureStepEvent,
   ClockAdvanced,
   VoiceReceived,
+  AgentDrafts,
+  AgentDraftSent,
   Snapshot,
 ]);
 export type WsEvent = z.infer<typeof WsEvent>;
@@ -114,6 +130,8 @@ const _covered: Record<WsEventType, true> = {
   "procedure.step": true,
   "clock.advanced": true,
   "voice.received": true,
+  "agent.drafts": true,
+  "agent.draft_sent": true,
   snapshot: true,
 };
 void _covered;

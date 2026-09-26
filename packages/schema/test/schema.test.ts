@@ -83,6 +83,13 @@ describe("ws events", () => {
     });
     expect(e.condition).toBe("cortex");
   });
+  it("parses the beat-3 approval events", () => {
+    const ts = new Date().toISOString();
+    const drafts = WsEvent.parse({ id: "e2", day: 24, ts, type: "agent.drafts", payload: { run_id: "run_1", drafts: [{ draft_id: "d1", listing_id: "listing:305", listing_title: "Sunny 1BR", to: "Dana", text: "Hi Dana!" }] } });
+    expect(drafts.type === "agent.drafts" && drafts.payload.drafts[0]?.because).toEqual([]);
+    const sent = WsEvent.parse({ id: "e3", day: 24, ts, type: "agent.draft_sent", payload: { draft_id: "d1", message_id: "msg_1", because: ["b1"] } });
+    expect(sent.type).toBe("agent.draft_sent");
+  });
   it("rejects an unknown event type", () => {
     expect(() => WsEvent.parse({ id: "e", day: 1, ts: new Date().toISOString(), type: "belief.exploded", payload: {} })).toThrow();
   });

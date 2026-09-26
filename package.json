@@ -19,7 +19,8 @@
     "test:tools": "vitest run",
     "chart": "tsx tools/chart.ts",
     "play-maya": "tsx tools/play-maya.ts",
-    "build-event-log": "tsx tools/build-event-log.ts"
+    "build-event-log": "tsx tools/build-event-log.ts",
+    "record-fallback": "tsx tools/record-fallback.ts"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

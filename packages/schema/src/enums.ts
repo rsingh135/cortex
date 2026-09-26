@@ -128,6 +128,8 @@ export const WS_EVENT_TYPES = [
   "procedure.step",
   "clock.advanced",
   "voice.received",
+  "agent.drafts",
+  "agent.draft_sent",
   "snapshot",
 ] as const;
 export const WsEventType = z.enum(WS_EVENT_TYPES);
