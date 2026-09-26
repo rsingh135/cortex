@@ -697,8 +697,8 @@ Two stacked panels over simulated days: bytes stored on top (stacked bands for i
 - [x] `tools/simulate.ts` passes its assertions with the Parameters table and outputs the usage-log recall days
 - [x] `docs/contracts.md`: endpoints, WebSocket events, listing schema, palace layout rule, write gating, mascot contract
 - [x] Monorepo scaffold: pnpm workspaces, turborepo, `apps/mockworld`, `apps/palace`, `apps/engine`, `apps/mascot`, `packages/persona`, `.env.example`, README, CI
-- [ ] Atlas sandbox project created from the hackathon invite link
-- [ ] `tools/atlas-check.ts` passes: TTL indexes, change streams, 512-dim vector search index, `$graphLookup`; cluster tier recorded in `docs/contracts.md`
+- [x] Atlas sandbox project created from the hackathon invite link
+- [x] `tools/atlas-check.ts` passes: TTL indexes, change streams, 512-dim vector search index, `$graphLookup`; result recorded in `docs/contracts.md`
 - [ ] Public repository with the team added; Vercel projects connected through the GitHub integration
 
 ### Track 1: palace (3D and 2D visualization), demo ops, chart

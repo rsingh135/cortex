@@ -69,8 +69,14 @@ Rules:
 
 ## Sandbox verification
 
-Run `pnpm atlas:check` with `ATLAS_URI` set. Record the output here once it passes.
+Run `pnpm atlas:check` with `ATLAS_URI` set. Verified 2026-09-26 against the hackathon sandbox (MongoDB 8.0.32, replica set, dedicated tier):
 
 ```
-(pending)
+PASS  connection + server info            MongoDB 8.0.32, replica set primary
+PASS  change stream delivers an insert    operationType=insert
+PASS  TTL index accepted                  expireAfterSeconds=0
+PASS  $graphLookup walks edges            procedure -> event, capture
+PASS  Atlas Vector Search + $vectorSearch 512-dim cosine index queryable after 54s, top hit correct
 ```
+
+Vector search indexes take about a minute to become queryable after creation; create them in setup, never on the request path.
