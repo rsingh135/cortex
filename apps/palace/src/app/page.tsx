@@ -1,6 +1,10 @@
-import { PalaceClient } from "./_palace/PalaceClient";
+import type { Metadata } from "next";
+import MemoryExplorer from "../graph/MemoryExplorer";
 
-/** The palace: a full-viewport WebGL scene, so the whole thing is loaded client-side only. */
+export const metadata: Metadata = {
+  title: "Cortex · Your brain",
+  description: "Explore your memories and the connections between them.",
+};
 export default function Home() {
-  return <PalaceClient />;
+  return <MemoryExplorer />;
 }
