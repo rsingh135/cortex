@@ -1,0 +1,34 @@
+{
+  "name": "@cortex/engine",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.70.0",
+    "@cortex/persona": "workspace:*",
+    "@cortex/schema": "workspace:*",
+    "dotenv": "^17.0.0",
+    "hono": "^4.9.0",
+    "@hono/node-server": "^1.19.0",
+    "langsmith": "^0.3.0",
+    "mongodb": "^6.18.0",
+    "playwright": "^1.55.0",
+    "sharp": "^0.34.0",
+    "ulid": "^3.0.0",
+    "ws": "^8.18.0",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/ws": "^8.18.0",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  }
+}

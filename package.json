@@ -1,0 +1,33 @@
+{
+  "name": "cortex",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Cortex: a memory for your computer that remembers what you use, lets the rest fade, and does your chores the way you would.",
+  "packageManager": "pnpm@12.4.2",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck && tsc -p tools/tsconfig.json",
+    "test": "turbo run test && vitest run",
+    "simulate": "tsx tools/simulate.ts",
+    "atlas:check": "tsx tools/atlas-check.ts",
+    "reset-demo-db": "tsx tools/reset-demo-db.ts",
+    "test:tools": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "dotenv": "^17.0.0",
+    "tsx": "^4.20.0",
+    "turbo": "^2.5.0",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  },
+  "dependencies": {
+    "@cortex/schema": "workspace:*",
+    "mongodb": "^6.18.0"
+  }
+}
