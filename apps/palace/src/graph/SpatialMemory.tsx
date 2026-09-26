@@ -11,6 +11,7 @@ import { Billboard, Text, Line, OrbitControls } from "@react-three/drei";
 import { Vector3 } from "three";
 import { ROOMS, type Room } from "@cortex/schema";
 import type { MemoryGraphEdge, MemoryGraphNode } from "../lib/memory-graph";
+import { createSimulation, type Vec } from "../lib/force";
 
 type Point = [number, number, number];
 const COLORS: Record<Room, string> = {
@@ -24,6 +25,8 @@ const COLORS: Record<Room, string> = {
 interface Props {
   nodes: MemoryGraphNode[];
   layoutNodes: MemoryGraphNode[];
+  /** Every edge, so the layout is stable while filters hide links. */
+  layoutEdges: MemoryGraphEdge[];
   edges: MemoryGraphEdge[];
   selectedId: string | null;
   onSelect: (id: string) => void;
@@ -32,10 +35,30 @@ interface Props {
 }
 type Command = { type: "in" | "out" | "fit" | "focus"; sequence: number };
 
-/** Stable clusters preserve spatial memory while filters hide records. */
-function layout(nodes: MemoryGraphNode[]) {
-  const positions = new Map<string, Point>();
+/**
+ * Stable clusters preserve spatial memory while filters hide records.
+ *
+ * Room spheres only decide where a memory *starts*. The force solver then relaxes those seeds in
+ * three dimensions, so what you see is shaped by the edges: shared evidence draws beliefs together
+ * and hubs settle at the centre of their own cluster. It is settled in one pass rather than animated
+ * because each edge here is its own line object, and rebuilding hundreds of line geometries every
+ * frame costs more than the motion is worth. The 2D view carries the live simulation.
+ */
+/** Collision radius per glyph kind, a little larger than the mesh so nothing touches. */
+function glyphRadius(node: MemoryGraphNode): number {
+  return node.kind === "procedure" ? 0.46 : node.kind === "capture" ? 0.4 : 0.38;
+}
+
+function layout(nodes: MemoryGraphNode[], edges: MemoryGraphEdge[] = []) {
   const centers = new Map<Room, Point>();
+  const seeds: {
+    id: string;
+    x: number;
+    y: number;
+    z: number;
+    radius: number;
+    group: string;
+  }[] = [];
   for (const [index, room] of ROOMS.entries()) {
     const angle = (index * Math.PI * 2) / ROOMS.length;
     const center: Point = [
@@ -52,13 +75,48 @@ function layout(nodes: MemoryGraphNode[]) {
       const vertical = 1 - (2 * (i + 0.5)) / Math.max(1, group.length);
       const radius = 1.4 + Math.sqrt(group.length) * 0.6;
       const ring = Math.sqrt(1 - vertical * vertical) * radius;
-      positions.set(node.id, [
-        center[0] + Math.cos(phi) * ring,
-        center[1] + vertical * radius,
-        center[2] + Math.sin(phi) * ring,
-      ]);
+      seeds.push({
+        id: node.id,
+        x: center[0] + Math.cos(phi) * ring,
+        y: center[1] + vertical * radius,
+        z: center[2] + Math.sin(phi) * ring,
+        radius: glyphRadius(node),
+        group: room,
+      });
     });
   }
+
+  const present = new Set(seeds.map((seed) => seed.id));
+  const simulation = createSimulation(
+    seeds,
+    edges
+      .filter((edge) => present.has(edge.from) && present.has(edge.to))
+      .map((edge) => ({
+        source: edge.from,
+        target: edge.to,
+        weight: edge.weight,
+      })),
+    {
+      dimensions: 3,
+      groupCenters: Object.fromEntries(
+        [...centers].map(([room, point]) => [
+          room,
+          { x: point[0], y: point[1], z: point[2] } satisfies Vec,
+        ]),
+      ),
+      linkDistance: 1.7,
+      linkStrength: 0.38,
+      repulsion: 2.6,
+      repulsionCutoff: 6,
+      groupGravity: 0.05,
+      centerGravity: 0.004,
+    },
+  );
+  simulation.settle(500);
+
+  const positions = new Map<string, Point>(
+    simulation.nodes.map((node) => [node.id, [node.x, node.y, node.z] as Point]),
+  );
   const points = [...positions.values()];
   const minimum = [0, 1, 2].map((axis) =>
     Math.min(...points.map((point) => point[axis])),
@@ -238,6 +296,7 @@ function Navigation({
 function GraphScene({
   nodes,
   layoutNodes,
+  layoutEdges,
   edges,
   selectedId,
   onSelect,
@@ -246,8 +305,8 @@ function GraphScene({
   onHover,
 }: Props & { command: Command; onHover: (active: boolean) => void }) {
   const { positions, centers, center, radius } = useMemo(
-    () => layout(layoutNodes),
-    [layoutNodes],
+    () => layout(layoutNodes, layoutEdges),
+    [layoutNodes, layoutEdges],
   );
   const visible = new Set(nodes.map((node) => node.id));
   const neighbors = new Set([selectedId]);

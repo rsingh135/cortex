@@ -1,5 +1,6 @@
 "use client";
 import {
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -12,6 +13,7 @@ import { CONDITIONS, ROOMS, type Condition, type Room } from "@cortex/schema";
 import { projectMemoryGraph, type MemoryGraphNode } from "../lib/memory-graph";
 import { graphDemo } from "../lib/graph-demo";
 import { engineAddress, useMemorySnapshot } from "../lib/use-memory-snapshot";
+import { useForceLayout } from "../lib/use-force-layout";
 import styles from "./memory.module.css";
 import CortexMark from "./CortexMark";
 import BrainOrb from "./BrainOrb";
@@ -34,6 +36,13 @@ const CONDITION_LABELS: Record<Condition, string> = {
   blur_by_age: "Blur by age",
 };
 const EMPTY = { beliefs: [], captures: [], procedures: [], edges: [] };
+const MIN_ZOOM = 0.3;
+const MAX_ZOOM = 4;
+/** Labels would pile up when zoomed out, so only hubs and the focused thread keep theirs. */
+const LABEL_ZOOM = 1.1;
+const LABEL_DEGREE = 3;
+const clampZoom = (zoom: number) =>
+  Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoom));
 const percent = (value: number) => `${Math.round(value * 100)}%`;
 
 export default function MemoryExplorer() {
@@ -114,14 +123,113 @@ export default function MemoryExplorer() {
     [full.nodes],
   );
   const selected = selectedId ? byId.get(selectedId) : undefined;
-  const related = new Set<string>([selectedId ?? ""]);
-  for (const edge of full.edges) {
-    if (edge.from === selectedId) related.add(edge.to);
-    if (edge.to === selectedId) related.add(edge.from);
-  }
   const selectedEdges = full.edges.filter(
     (edge) => edge.from === selectedId || edge.to === selectedId,
   );
+
+  // Degree drives glyph size and mass: a memory that everything leans on reads as a hub.
+  const degree = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const edge of full.edges) {
+      counts.set(edge.from, (counts.get(edge.from) ?? 0) + 1);
+      counts.set(edge.to, (counts.get(edge.to) ?? 0) + 1);
+    }
+    return counts;
+  }, [full.edges]);
+  const radiusOf = useCallback(
+    (node: MemoryGraphNode) => {
+      const base =
+        node.kind === "procedure" ? 16 : node.kind === "capture" ? 11 : 14;
+      return base + Math.min(10, Math.sqrt(degree.get(node.id) ?? 0) * 3.4);
+    },
+    [degree],
+  );
+
+  // The simulation runs over every node, so filtering never rearranges what stays on screen.
+  const seeds = useMemo(
+    () =>
+      full.nodes.map((node) => ({
+        id: node.id,
+        x: node.x,
+        y: node.y,
+        radius: radiusOf(node) + 12,
+        group: node.room,
+      })),
+    [full.nodes, radiusOf],
+  );
+  const links = useMemo(
+    () =>
+      full.edges.map((edge) => ({
+        source: edge.from,
+        target: edge.to,
+        weight: edge.weight,
+      })),
+    [full.edges],
+  );
+  const groupCenters = useMemo(
+    () =>
+      Object.fromEntries(
+        ROOMS.map((name) => [
+          name,
+          { x: graph.roomCenters[name].x, y: graph.roomCenters[name].y, z: 0 },
+        ]),
+      ),
+    [graph.roomCenters],
+  );
+  const layout = useForceLayout({
+    seeds,
+    links,
+    options: {
+      dimensions: 2,
+      groupCenters,
+      linkDistance: 94,
+      repulsion: 3400,
+      repulsionCutoff: 320,
+      groupGravity: 0.03,
+    },
+    enabled: immersive && view === "graph",
+  });
+  const at = (id: string) => layout.position(id) ?? byId.get(id) ?? { x: 0, y: 0 };
+
+  // Hover takes precedence over selection, the way a graph editor previews a thread.
+  const [hoveredId, setHovered] = useState<string | null>(null);
+  const focusId = hoveredId ?? selectedId;
+  const focused = useMemo(() => {
+    const ids = new Set<string>();
+    if (!focusId) return ids;
+    ids.add(focusId);
+    for (const edge of full.edges) {
+      if (edge.from === focusId) ids.add(edge.to);
+      if (edge.to === focusId) ids.add(edge.from);
+    }
+    return ids;
+  }, [focusId, full.edges]);
+
+  const svgRef = useRef<SVGSVGElement>(null);
+  const nodeDrag = useRef<{ id: string; moved: boolean } | null>(null);
+  /** Cursor position in viewBox units; the SVG's own CTM handles letterboxing for us. */
+  const toViewBox = (clientX: number, clientY: number) => {
+    const svg = svgRef.current;
+    const ctm = svg?.getScreenCTM();
+    if (!svg || !ctm) return null;
+    const point = svg.createSVGPoint();
+    point.x = clientX;
+    point.y = clientY;
+    return point.matrixTransform(ctm.inverse());
+  };
+  const offset = (zoom: number) => ({
+    x: (graph.width * (1 - zoom)) / 2,
+    y: (graph.height * (1 - zoom)) / 2,
+  });
+  const toGraph = (clientX: number, clientY: number) => {
+    const view = toViewBox(clientX, clientY);
+    if (!view) return null;
+    const shift = offset(camera.zoom);
+    return {
+      x: (view.x - camera.x - shift.x) / camera.zoom,
+      y: (view.y - camera.y - shift.y) / camera.zoom,
+    };
+  };
   const list = graph.nodes.filter(
     (node) => !node.contextual && node.kind !== "capture",
   );
@@ -440,6 +548,7 @@ export default function MemoryExplorer() {
               <SpatialMemory
                 nodes={graph.nodes}
                 layoutNodes={full.nodes}
+                layoutEdges={full.edges}
                 interactive={immersive}
                 onExplore={explore}
                 edges={graph.edges}
@@ -448,11 +557,29 @@ export default function MemoryExplorer() {
               />
             ) : (
               <svg
+                ref={svgRef}
                 className={styles.graph}
                 style={{ touchAction: immersive ? "none" : "pan-y" }}
                 viewBox={`0 0 ${graph.width} ${graph.height}`}
                 role="group"
                 aria-label="Interactive knowledge memory graph"
+                onWheel={(event) => {
+                  if (!immersive) return;
+                  event.preventDefault();
+                  const view = toViewBox(event.clientX, event.clientY);
+                  const anchor = toGraph(event.clientX, event.clientY);
+                  if (!view || !anchor) return;
+                  // Keep the memory under the cursor pinned to the cursor while zooming.
+                  const zoom = clampZoom(
+                    camera.zoom * Math.exp(-event.deltaY * 0.0015),
+                  );
+                  const shift = offset(zoom);
+                  setCamera({
+                    zoom,
+                    x: view.x - zoom * anchor.x - shift.x,
+                    y: view.y - zoom * anchor.y - shift.y,
+                  });
+                }}
                 onPointerDown={(event) => {
                   if (!immersive) return;
                   if ((event.target as Element).closest("[data-node]")) return;
@@ -465,6 +592,14 @@ export default function MemoryExplorer() {
                   };
                 }}
                 onPointerMove={(event) => {
+                  if (nodeDrag.current) {
+                    const point = toGraph(event.clientX, event.clientY);
+                    if (point) {
+                      layout.moveDrag(point);
+                      nodeDrag.current.moved = true;
+                    }
+                    return;
+                  }
                   if (!drag.current) return;
                   const scale =
                     graph.width /
@@ -480,14 +615,25 @@ export default function MemoryExplorer() {
                   }));
                 }}
                 onPointerUp={() => {
+                  if (nodeDrag.current) {
+                    // A press that never moved is a click, so it selects instead of dragging.
+                    if (!nodeDrag.current.moved)
+                      selectNode(nodeDrag.current.id);
+                    layout.endDrag();
+                    nodeDrag.current = null;
+                  }
                   drag.current = null;
                 }}
                 onPointerCancel={() => {
+                  if (nodeDrag.current) {
+                    layout.endDrag();
+                    nodeDrag.current = null;
+                  }
                   drag.current = null;
                 }}
               >
                 <g
-                  transform={`translate(${camera.x + (graph.width * (1 - camera.zoom)) / 2} ${camera.y + (graph.height * (1 - camera.zoom)) / 2}) scale(${camera.zoom})`}
+                  transform={`translate(${camera.x + offset(camera.zoom).x} ${camera.y + offset(camera.zoom).y}) scale(${camera.zoom})`}
                 >
                   {ROOMS.map((name) => (
                     <g
@@ -516,18 +662,23 @@ export default function MemoryExplorer() {
                     const from = byId.get(edge.from),
                       to = byId.get(edge.to);
                     if (!from || !to) return null;
+                    const a = at(edge.from),
+                      b = at(edge.to);
                     const active =
-                      selectedId === edge.from || selectedId === edge.to;
+                      focusId === edge.from || focusId === edge.to;
                     return (
                       <line
                         key={edge.id}
-                        x1={from.x}
-                        y1={from.y}
-                        x2={to.x}
-                        y2={to.y}
+                        x1={a.x}
+                        y1={a.y}
+                        x2={b.x}
+                        y2={b.y}
                         stroke={active ? COLORS[from.room] : "#c8c5ba"}
-                        strokeWidth={active ? 2.5 : 1.3}
-                        opacity={selectedId && !active ? 0.15 : 0.8}
+                        strokeWidth={
+                          active ? 2.2 + edge.weight : 0.9 + edge.weight * 0.9
+                        }
+                        opacity={focusId && !active ? 0.08 : active ? 0.9 : 0.45}
+                        strokeLinecap="round"
                         strokeDasharray={
                           edge.type === "derived_from" ? "5 5" : undefined
                         }
@@ -539,82 +690,115 @@ export default function MemoryExplorer() {
                       </line>
                     );
                   })}
-                  {graph.nodes.map((node) => (
-                    <g
-                      key={node.id}
-                      data-node={node.id}
-                      transform={`translate(${node.x} ${node.y})`}
-                      className={styles.node}
-                      tabIndex={0}
-                      role="button"
-                      aria-label={`${node.label}, ${node.kind}, ${node.room}`}
-                      aria-pressed={selectedId === node.id}
-                      onClick={() => selectNode(node.id)}
-                      onKeyDown={(event) => {
-                        if (event.key === "Enter" || event.key === " ") {
-                          event.preventDefault();
-                          selectNode(node.id);
+                  {graph.nodes.map((node) => {
+                    const point = at(node.id);
+                    const radius = radiusOf(node);
+                    const isFocus = focusId === node.id;
+                    const dimmed = Boolean(focusId) && !focused.has(node.id);
+                    const labelled =
+                      isFocus ||
+                      focused.has(node.id) ||
+                      camera.zoom >= LABEL_ZOOM ||
+                      (degree.get(node.id) ?? 0) >= LABEL_DEGREE;
+                    return (
+                      <g
+                        key={node.id}
+                        data-node={node.id}
+                        transform={`translate(${point.x} ${point.y})`}
+                        className={styles.node}
+                        style={{ cursor: immersive ? "grab" : "pointer" }}
+                        tabIndex={0}
+                        role="button"
+                        aria-label={`${node.label}, ${node.kind}, ${node.room}`}
+                        aria-pressed={selectedId === node.id}
+                        onPointerDown={(event) => {
+                          if (!immersive) return;
+                          event.stopPropagation();
+                          const start = toGraph(event.clientX, event.clientY);
+                          if (!start) return;
+                          event.currentTarget.ownerSVGElement?.setPointerCapture(
+                            event.pointerId,
+                          );
+                          nodeDrag.current = { id: node.id, moved: false };
+                          layout.beginDrag(node.id, start);
+                        }}
+                        onClick={() => {
+                          if (!immersive) selectNode(node.id);
+                        }}
+                        onPointerEnter={() => setHovered(node.id)}
+                        onPointerLeave={() =>
+                          setHovered((current) =>
+                            current === node.id ? null : current,
+                          )
                         }
-                      }}
-                      opacity={
-                        selectedId && !related.has(node.id)
-                          ? 0.32
-                          : node.contextual
-                            ? 0.58
-                            : 1
-                      }
-                    >
-                      <title>{node.label}</title>
-                      {selectedId === node.id && (
-                        <circle
-                          r="27"
-                          fill="none"
-                          stroke={COLORS[node.room]}
-                          strokeWidth="1.5"
-                          strokeDasharray="3 4"
-                        />
-                      )}
-                      {node.kind === "capture" ? (
-                        <rect
-                          x="-11"
-                          y="-9"
-                          width="22"
-                          height="18"
-                          rx="4"
-                          fill="#fff"
-                          stroke={COLORS[node.room]}
-                          strokeWidth="1.5"
-                        />
-                      ) : node.kind === "procedure" ? (
-                        <path
-                          d="M0 -19L19 0L0 19L-19 0Z"
-                          fill={COLORS[node.room]}
-                          stroke="white"
-                          strokeWidth="3"
-                        />
-                      ) : (
-                        <>
+                        onFocus={() => setHovered(node.id)}
+                        onBlur={() =>
+                          setHovered((current) =>
+                            current === node.id ? null : current,
+                          )
+                        }
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault();
+                            selectNode(node.id);
+                          }
+                        }}
+                        opacity={dimmed ? 0.14 : node.contextual ? 0.62 : 1}
+                      >
+                        <title>{node.label}</title>
+                        {isFocus && (
                           <circle
-                            r="18"
+                            r={radius + 9}
+                            fill="none"
+                            stroke={COLORS[node.room]}
+                            strokeWidth="1.5"
+                            strokeDasharray="3 4"
+                          />
+                        )}
+                        {node.kind === "capture" ? (
+                          <rect
+                            x={-radius * 0.78}
+                            y={-radius * 0.62}
+                            width={radius * 1.56}
+                            height={radius * 1.24}
+                            rx="4"
+                            fill="#fff"
+                            stroke={COLORS[node.room]}
+                            strokeWidth="1.5"
+                          />
+                        ) : node.kind === "procedure" ? (
+                          <path
+                            d={`M0 ${-radius}L${radius} 0L0 ${radius}L${-radius} 0Z`}
                             fill={COLORS[node.room]}
-                            opacity={Math.max(0.4, node.source.confidence)}
                             stroke="white"
                             strokeWidth="3"
                           />
-                          <circle r="5" fill="white" opacity=".85" />
-                        </>
-                      )}
-                      <text
-                        y={node.kind === "capture" ? 27 : 38}
-                        textAnchor="middle"
-                        className={styles.nodeLabel}
-                      >
-                        {node.label.length > 24
-                          ? `${node.label.slice(0, 23)}…`
-                          : node.label}
-                      </text>
-                    </g>
-                  ))}
+                        ) : (
+                          <>
+                            <circle
+                              r={radius}
+                              fill={COLORS[node.room]}
+                              opacity={Math.max(0.4, node.source.confidence)}
+                              stroke="white"
+                              strokeWidth="3"
+                            />
+                            <circle r={radius * 0.28} fill="white" opacity=".85" />
+                          </>
+                        )}
+                        {labelled && (
+                          <text
+                            y={radius + 16}
+                            textAnchor="middle"
+                            className={styles.nodeLabel}
+                          >
+                            {node.label.length > 24
+                              ? `${node.label.slice(0, 23)}…`
+                              : node.label}
+                          </text>
+                        )}
+                      </g>
+                    );
+                  })}
                 </g>
               </svg>
             )}
@@ -632,7 +816,7 @@ export default function MemoryExplorer() {
                       onClick={() =>
                         setCamera((c) => ({
                           ...c,
-                          zoom: Math.max(0.5, c.zoom / 1.2),
+                          zoom: clampZoom(c.zoom / 1.2),
                         }))
                       }
                     >
@@ -649,7 +833,7 @@ export default function MemoryExplorer() {
                       onClick={() =>
                         setCamera((c) => ({
                           ...c,
-                          zoom: Math.min(3, c.zoom * 1.2),
+                          zoom: clampZoom(c.zoom * 1.2),
                         }))
                       }
                     >
@@ -664,7 +848,7 @@ export default function MemoryExplorer() {
             <span>
               {view === "graph"
                 ? immersive
-                  ? "Drag to pan · Select a memory to follow its connections"
+                  ? "Drag a memory to move it · Drag the background to pan · Scroll to zoom · Hover to follow a thread"
                   : "Select a memory · Open Explore the brain for full controls"
                 : immersive
                   ? "Drag to rotate · Pinch to zoom · Right-drag to pan · Esc to exit"
