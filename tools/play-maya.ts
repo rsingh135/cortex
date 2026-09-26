@@ -13,7 +13,13 @@
 import { mkdirSync, writeFileSync, appendFileSync } from "node:fs";
 import { join } from "node:path";
 import { chromium, type Page } from "playwright";
-import { walkupFloor, IngestCaptureMeta, type App } from "@cortex/schema";
+import {
+  walkupFloor,
+  IngestCaptureMeta,
+  IngestCaptureResponse,
+  EndEpisodeResponse,
+  type App,
+} from "@cortex/schema";
 import { mayaScript, type ScriptStep } from "@cortex/persona";
 
 export interface CaptureRecord {
@@ -84,6 +90,8 @@ async function snapshotPage(page: Page): Promise<{ url: string; title: string; t
 
 interface Sink {
   put(meta: IngestCaptureMeta, png: Buffer): Promise<void>;
+  /** Called after the episode's final selected step, before the next day's captures. */
+  endEpisode?(episodeId: string): Promise<void>;
 }
 
 function fileSink(dir: string): Sink & { count: number } {
@@ -103,16 +111,28 @@ function fileSink(dir: string): Sink & { count: number } {
   };
 }
 
-function engineSink(engineUrl: string, token: string): Sink & { count: number } {
+export function engineSink(engineUrl: string, token: string): Sink & { count: number } {
+  const baseUrl = engineUrl.replace(/\/$/, "");
   return {
     count: 0,
     async put(meta, png) {
       const form = new FormData();
       form.set("meta", JSON.stringify(meta));
       form.set("image", new Blob([new Uint8Array(png)], { type: "image/png" }), "capture.png");
-      const res = await fetch(`${engineUrl}/ingest/capture`, { method: "POST", body: form, headers: { "x-cortex-write-token": token } });
+      const res = await fetch(`${baseUrl}/ingest/capture`, { method: "POST", body: form, headers: { "x-cortex-write-token": token } });
       if (!res.ok) throw new Error(`ingest failed ${res.status}: ${await res.text()}`);
+      IngestCaptureResponse.parse(await res.json());
       this.count += 1;
+    },
+    async endEpisode(episodeId) {
+      const res = await fetch(`${baseUrl}/episodes/${encodeURIComponent(episodeId)}/end`, {
+        method: "POST",
+        headers: { "x-cortex-write-token": token },
+      });
+      if (!res.ok) throw new Error(`end episode ${episodeId} failed ${res.status}: ${await res.text()}`);
+      const result = EndEpisodeResponse.parse(await res.json());
+      if (result.episode_id !== episodeId)
+        throw new Error(`end episode ${episodeId} returned a different episode ID`);
     },
   };
 }
@@ -128,6 +148,7 @@ export interface RunOptions {
 
 export async function playMaya(opts: RunOptions): Promise<number> {
   const steps = (opts.steps ?? mayaScript()).filter((s) => !opts.days || opts.days.includes(s.day));
+  const lastStepByEpisode = new Map(steps.map((step, index) => [step.episode, index]));
   const browser = await chromium.launch();
   const host = new URL(opts.mockworldUrl);
   const context = await browser.newContext({
@@ -148,62 +169,67 @@ export async function playMaya(opts: RunOptions): Promise<number> {
     await opts.sink.put(metaFor(step, snap, action), png);
   };
 
-  for (const step of steps) {
-    await setDay(step.day);
-    await pause(step.pause_s);
-    switch (step.action) {
-      case "open": {
-        await page.goto(`${opts.mockworldUrl}${step.target ?? "/"}`, { waitUntil: "networkidle" });
-        await capture(step, { type: "load" });
-        break;
-      }
-      case "dwell": {
-        await capture(step, { type: "dwell" });
-        break;
-      }
-      case "read": {
-        const link = page.locator(`a[data-thread-id="${step.target}"]`).first();
-        if ((await link.count()) === 0) {
-          await page.goto(`${opts.mockworldUrl}/inbox/${step.target}`, { waitUntil: "networkidle" });
+  try {
+    for (const [index, step] of steps.entries()) {
+      await setDay(step.day);
+      await pause(step.pause_s);
+      switch (step.action) {
+        case "open": {
+          await page.goto(`${opts.mockworldUrl}${step.target ?? "/"}`, { waitUntil: "networkidle" });
           await capture(step, { type: "load" });
           break;
         }
-        const text = (await link.innerText()).slice(0, 80);
-        const box = await link.boundingBox();
-        await link.click();
-        await page.waitForLoadState("networkidle");
-        await capture(step, { type: "click", text, ...(box ? { bbox: [box.x, box.y, box.width, box.height] as [number, number, number, number] } : {}) });
-        break;
+        case "dwell": {
+          await capture(step, { type: "dwell" });
+          break;
+        }
+        case "read": {
+          const link = page.locator(`a[data-thread-id="${step.target}"]`).first();
+          if ((await link.count()) === 0) {
+            await page.goto(`${opts.mockworldUrl}/inbox/${step.target}`, { waitUntil: "networkidle" });
+            await capture(step, { type: "load" });
+            break;
+          }
+          const text = (await link.innerText()).slice(0, 80);
+          const box = await link.boundingBox();
+          await link.click();
+          await page.waitForLoadState("networkidle");
+          await capture(step, { type: "click", text, ...(box ? { bbox: [box.x, box.y, box.width, box.height] as [number, number, number, number] } : {}) });
+          break;
+        }
+        case "reject": {
+          const btn = page.locator("#reject");
+          const box = await btn.boundingBox();
+          await btn.click();
+          await page.waitForTimeout(300);
+          await capture(step, { type: "click", text: "Reject", ...(box ? { bbox: [box.x, box.y, box.width, box.height] as [number, number, number, number] } : {}) });
+          break;
+        }
+        case "message": {
+          const form = page.locator("#message-form");
+          await form.locator("textarea").fill(step.text ?? "");
+          const send = form.getByRole("button", { name: "Send message" });
+          const box = await send.boundingBox();
+          await send.click();
+          await page.waitForTimeout(400);
+          await capture(step, { type: "submit", text: "Send message", ...(box ? { bbox: [box.x, box.y, box.width, box.height] as [number, number, number, number] } : {}) });
+          break;
+        }
+        case "click": {
+          const el = page.locator(step.target ?? "body").first();
+          const box = await el.boundingBox();
+          await el.click();
+          await page.waitForLoadState("networkidle");
+          await capture(step, { type: "click", text: step.text ?? "", ...(box ? { bbox: [box.x, box.y, box.width, box.height] as [number, number, number, number] } : {}) });
+          break;
+        }
       }
-      case "reject": {
-        const btn = page.locator("#reject");
-        const box = await btn.boundingBox();
-        await btn.click();
-        await page.waitForTimeout(300);
-        await capture(step, { type: "click", text: "Reject", ...(box ? { bbox: [box.x, box.y, box.width, box.height] as [number, number, number, number] } : {}) });
-        break;
-      }
-      case "message": {
-        const form = page.locator("#message-form");
-        await form.locator("textarea").fill(step.text ?? "");
-        const send = form.getByRole("button", { name: "Send message" });
-        const box = await send.boundingBox();
-        await send.click();
-        await page.waitForTimeout(400);
-        await capture(step, { type: "submit", text: "Send message", ...(box ? { bbox: [box.x, box.y, box.width, box.height] as [number, number, number, number] } : {}) });
-        break;
-      }
-      case "click": {
-        const el = page.locator(step.target ?? "body").first();
-        const box = await el.boundingBox();
-        await el.click();
-        await page.waitForLoadState("networkidle");
-        await capture(step, { type: "click", text: step.text ?? "", ...(box ? { bbox: [box.x, box.y, box.width, box.height] as [number, number, number, number] } : {}) });
-        break;
-      }
+      if (lastStepByEpisode.get(step.episode) === index)
+        await opts.sink.endEpisode?.(step.episode);
     }
+  } finally {
+    await browser.close();
   }
-  await browser.close();
   return opts.sink.count;
 }
 

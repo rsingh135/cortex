@@ -99,7 +99,8 @@ frames return the previous capture ID without adding ladder/state documents;
 changes to the URL, action, page text, or listing metadata preserve a new event.
 The simulated clock advances with chronological captures; captures older than the
 current day are rejected. A missing episode is created for the supplied ID so
-`play-maya --engine` can stream its predefined episode IDs.
+`play-maya --engine` can stream its predefined episode IDs and ends each episode
+after its final selected capture, before advancing to the next episode or day.
 
 Ending an episode currently creates an evidence-backed, deterministic activity
 summary from capture metadata. Screenshot-to-fact model extraction remains pending;
