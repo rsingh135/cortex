@@ -4,11 +4,12 @@ import { isAuthorized, tokenFromHeaders } from "@/lib/auth";
 import { listingById } from "@/lib/data";
 import { landlordReply } from "@/lib/replies";
 import { addMessage, nextId } from "@/lib/world-store";
+import { currentDay } from "@/lib/day";
 
 const Body = z.object({
   listing_id: z.string().min(1),
   body: z.string().min(1).max(4000),
-  /** Simulated day; defaults to 0 when the caller does not track the clock. */
+  /** Simulated day; defaults to the `cortex-day` cookie, then the end of the month. */
   day: z.number().int().min(0).optional(),
   sent_by: z.enum(["maya", "agent"]).optional(),
 });
@@ -22,7 +23,7 @@ export async function POST(request: Request) {
   const listing = listingById(parsed.data.listing_id);
   if (!listing) return Response.json({ error: "unknown listing" }, { status: 404 });
 
-  const day = parsed.data.day ?? 0;
+  const day = parsed.data.day ?? (await currentDay());
   const threadId = `landlord:${listing._id}`;
   const outgoing: Message = {
     _id: nextId("msg"),

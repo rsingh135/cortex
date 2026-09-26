@@ -22,7 +22,7 @@ export function groupThreads(messages: readonly Message[]): Thread[] {
   for (const [id, list] of byId) {
     const sorted = [...list].sort((a, b) => a.day - b.day);
     const last = sorted[sorted.length - 1]!;
-    const participants = [...new Set(sorted.flatMap((m) => [m.from, m.to]))].filter((p) => p !== "Maya");
+    const participants = [...new Set(sorted.flatMap((m) => [m.from, m.to]))].filter((p) => !/maya/i.test(p));
     threads.push({
       id,
       kind: last.kind,

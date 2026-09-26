@@ -17,3 +17,12 @@ describe("write token", () => {
     expect(tokenFromHeaders(new Headers())).toBeNull();
   });
 });
+
+import { displayName } from "./day";
+
+describe("displayName", () => {
+  it("extracts the name from a mailbox string", () => {
+    expect(displayName("Priya <priya@example.com>")).toBe("Priya");
+    expect(displayName("maya@example.com")).toBe("maya@example.com");
+  });
+});
