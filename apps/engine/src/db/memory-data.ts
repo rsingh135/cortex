@@ -10,6 +10,7 @@ import type {
   DailyStat,
   Episode,
   Decision,
+  VoiceNote,
 } from "@cortex/schema";
 export interface MemoryData {
   day: number;
@@ -24,6 +25,8 @@ export interface MemoryData {
   recalls: Recall[];
   episodes: Episode[];
   decisions: Decision[];
+  /** Everything Maya told Cortex: hold-to-talk notes and mascot/palace utterances. */
+  voiceNotes: VoiceNote[];
 }
 export const emptyMemory = (): MemoryData => ({
   day: 0,
@@ -38,6 +41,7 @@ export const emptyMemory = (): MemoryData => ({
   recalls: [],
   episodes: [],
   decisions: [],
+  voiceNotes: [],
 });
 export const withoutEmbedding = <T extends { embedding?: unknown }>(
   value: T,

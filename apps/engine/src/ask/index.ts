@@ -34,6 +34,7 @@ import {
   type Answerer,
   type AnswerSource,
 } from "./answer.js";
+import { applyTell, extractStatement, isStatement, recentToldBeliefs, recordVoiceNote, tellAnswer } from "./tell.js";
 
 export { routeRequest, tokenize } from "./route.js";
 export {
@@ -48,6 +49,7 @@ export {
   type Tts,
   type AudioStore,
 } from "../voice/tts.js";
+export { isStatement, applyTell, recordVoiceNote, fallbackTell, recentToldBeliefs } from "./tell.js";
 
 /** How many beliefs the answer may lean on. Keeps the prompt small and the citation list readable. */
 export const ASK_RECALL_LIMIT = 8;
@@ -68,6 +70,8 @@ export interface AskDeps {
   /** Used only by the deterministic path. */
   answerer?: Answerer;
   model?: string;
+  /** Model for turning statements into beliefs; defaults to `model`. */
+  tellModel?: string;
   recallLimit?: number;
 }
 
@@ -98,11 +102,23 @@ const recallFor = (request: AskRequest, limit: number): RecallRequest =>
     with_images: false,
   });
 
+/** Recalled beliefs first; when a question shares no words with memory, fall back to what she told Cortex lately. */
+function withRecentlyTold(data: MemoryData, request: AskRequest, beliefs: readonly { _id: string }[]) {
+  if (beliefs.length) return [];
+  const seen = new Set(beliefs.map((b) => b._id));
+  const states = new Map(data.beliefStates.filter((s) => s.condition === request.condition).map((s) => [s.belief_id, s]));
+  return recentToldBeliefs(data, request.condition)
+    .filter((b) => !seen.has(b._id))
+    .map((b) => ({ ...b, confidence: states.get(b._id)?.confidence ?? b.c0, score: 0 }));
+}
+
 /** The deterministic path's transaction: decide the route and recall against the ledger. */
 export function askMemory(data: MemoryData, request: AskRequest) {
+  if (!request.dry_run) recordVoiceNote(data, request.text, request.client);
   const routed = routeRequest(request.text, data.procedures);
   const recall = recallMemory(data, recallFor(request, ASK_RECALL_LIMIT));
-  const sources: AnswerSource[] = recall.beliefs.map((belief) => ({
+  const extra = withRecentlyTold(data, request, recall.beliefs);
+  const sources: AnswerSource[] = [...recall.beliefs, ...extra].map((belief) => ({
     belief_id: belief._id,
     text: belief.text,
     room: belief.room,
@@ -155,10 +171,26 @@ export function createAsker(deps: AskDeps): Asker {
     });
   };
 
+  /** A statement about Maya: store it as memory and acknowledge, no recall needed. */
+  const tell = async (request: AskRequest) => {
+    const output = await extractStatement(deps.llm, deps.tellModel ?? model, request.text);
+    const result = await deps.store.run(true, (data) => {
+      const note = recordVoiceNote(data, request.text, request.client);
+      return applyTell(data, note, output);
+    });
+    return finish(request, {
+      route: "personal",
+      answer: tellAnswer(result),
+      cited: [...result.inserted, ...result.reinforced],
+      recalled_ids: [],
+    });
+  };
+
   return {
     async ask(request) {
       const llm = deps.llm;
       const router = deps.router;
+      if (!request.dry_run && isStatement(request.text)) return tell(request);
       if (!llm || !router) {
         const recalled = await deps.store.run(!request.dry_run, (data) =>
           askMemory(data, request),
@@ -188,6 +220,7 @@ export function createAsker(deps: AskDeps): Asker {
       const routed = await router.route(request.text, procedures);
 
       if (routed.route === "general") {
+        if (!request.dry_run) await deps.store.run(true, (data) => recordVoiceNote(data, request.text, request.client));
         const result = await llm.parse({
           model,
           maxTokens: 1024,
@@ -203,15 +236,21 @@ export function createAsker(deps: AskDeps): Asker {
         });
       }
 
-      const { map, recalled } = await deps.store.run(
+      const { map, recalled, extra } = await deps.store.run(
         !request.dry_run,
-        (data) => ({
-          map: buildAgentMap(data, request.condition),
-          recalled: recallMemory(data, recallFor(request, limit)),
-        }),
+        (data) => {
+          if (!request.dry_run) recordVoiceNote(data, request.text, request.client);
+          const recalledNow = recallMemory(data, recallFor(request, limit));
+          return {
+            map: buildAgentMap(data, request.condition),
+            recalled: recalledNow,
+            extra: withRecentlyTold(data, request, recalledNow.beliefs),
+          };
+        },
       );
+      const numbered = [...recalled.beliefs, ...extra];
       const context =
-        recalled.beliefs
+        numbered
           .map(
             (b, i) =>
               `${i + 1}. [${b.room}] ${b.text} (confidence ${b.confidence.toFixed(2)}, day ${b.created_day})`,
@@ -235,7 +274,7 @@ Answer the question using only these memories. In "cited", list the numbers of e
       const cited = [
         ...new Set(
           (result.output?.cited ?? [])
-            .map((n) => recalled.beliefs[n - 1]?._id)
+            .map((n) => numbered[n - 1]?._id)
             .filter((id): id is string => typeof id === "string"),
         ),
       ];

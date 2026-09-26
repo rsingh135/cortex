@@ -219,6 +219,8 @@ export const VoiceNote = z.object({
   transcript: z.string(),
   belief_ids: z.array(Id),
   cracked_procedure_ids: z.array(Id),
+  /** Which surface produced the note; absent for the original hold-to-talk path. */
+  client: z.enum(["mascot", "palace", "eval", "voice"]).optional(),
 });
 export type VoiceNote = z.infer<typeof VoiceNote>;
 

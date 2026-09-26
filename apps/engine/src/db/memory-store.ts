@@ -112,6 +112,7 @@ export function mongoStore(client: MongoClient, db: Db): MemoryStore {
             data.edges = await c.edges.find({}, { session }).toArray();
             data.episodes = await c.episodes.find({}, { session }).toArray();
             data.decisions = await c.decisions.find({}, { session }).toArray();
+            data.voiceNotes = await c.voice_notes.find({}, { session }).toArray();
             data.stats = await c.daily_stats.find({}, { session }).toArray();
             const before = write
               ? {
@@ -124,6 +125,7 @@ export function mongoStore(client: MongoClient, db: Db): MemoryStore {
                   edges: snapshot(data.edges),
                   episodes: snapshot(data.episodes),
                   decisions: snapshot(data.decisions),
+                  voiceNotes: snapshot(data.voiceNotes),
                   stats: snapshot(data.stats),
                 }
               : undefined;
@@ -162,6 +164,9 @@ export function mongoStore(client: MongoClient, db: Db): MemoryStore {
               await persist(c.episodes, data.episodes, before.episodes, session);
               await persist(
                 c.decisions, data.decisions, before.decisions, session,
+              );
+              await persist(
+                c.voice_notes, data.voiceNotes, before.voiceNotes, session,
               );
               for (const stat of data.stats) {
                 const previousId = statIds.get(`${stat.condition}:${stat.day}`);
