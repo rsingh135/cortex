@@ -9,14 +9,18 @@ import type { PalaceRoom } from "@/lib/layout";
 import { useControlsMode, useSelectedId } from "@/lib/store";
 import { ConnectionBadge } from "./ConnectionBadge";
 import { EventTicker } from "./EventTicker";
+import { FallbackOverlay } from "./FallbackOverlay";
 import { Help } from "./Help";
 import { Minimap } from "./Minimap";
 import { MinimapLegend } from "./MinimapLegend";
 import { PointerHint } from "./PointerHint";
 import { Presence } from "./Presence";
+import { ReplayChip } from "./ReplayChip";
 import { SelectionCard } from "./SelectionCard";
 import { StorageMeter } from "./StorageMeter";
 import { Timeline } from "./Timeline";
+import { Toasts } from "./Toast";
+import { useDemoHotkeys } from "./useDemoHotkeys";
 
 export interface HudProps {
   /** Minimap room click, e.g. fly the camera to that room's door. */
@@ -32,12 +36,16 @@ export function Hud({ onRoomClick, playerPosition }: HudProps) {
   const orbiting = useControlsMode() === "orbit";
   const dot = orbiting ? null : playerPosition;
   const selectedId = useSelectedId();
+  useDemoHotkeys();
   return (
     <div className="pointer-events-none fixed inset-0 z-10 font-sans text-[13px] leading-5 text-zinc-900" aria-label="Palace overlay">
       <PointerHint />
+      <Toasts />
+      <FallbackOverlay />
       <div className="absolute left-4 top-4 flex flex-col items-start gap-2.5">
-        <div className={WIDGET}>
+        <div className={`${WIDGET} flex flex-wrap items-center gap-2`}>
           <ConnectionBadge />
+          <ReplayChip />
         </div>
         <div className={WIDGET}>
           <StorageMeter />

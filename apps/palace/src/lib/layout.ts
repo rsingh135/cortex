@@ -374,7 +374,10 @@ function placePaintings(
   for (const b of shown) for (const c of b.evidence) addSupport(c, b);
   for (const e of snapshot.edges) if (e.type === "evidence") addSupport(e.to, beliefById.get(e.from));
 
-  const captures = sortById(snapshot.captures.filter((c) => c.day <= snapshot.day && supporters.has(c.id)));
+  // Supported captures hang first (behind their belief); orphans, such as a fresh replay's page loads
+  // before extraction has produced a belief, hang in the room their app belongs to while slots remain.
+  const present = snapshot.captures.filter((c) => c.day <= snapshot.day);
+  const captures = [...sortById(present.filter((c) => supporters.has(c.id))), ...sortById(present.filter((c) => !supporters.has(c.id)))];
   const freeSlotsByRoom = new Map<Room, WallSlot[]>();
   const roomLayouts = new Map<Room, RoomLayout>();
   for (const r of rooms) {
@@ -384,11 +387,11 @@ function placePaintings(
 
   for (const capture of captures) {
     const anchor = pickAnchor(supporters.get(capture.id) ?? []);
-    if (!anchor) continue;
-    const roomLayout = roomLayouts.get(anchor.room);
-    const free = freeSlotsByRoom.get(anchor.room);
+    const room = anchor?.room ?? ROOM_BY_APP[capture.app];
+    const roomLayout = roomLayouts.get(room);
+    const free = freeSlotsByRoom.get(room);
     if (!roomLayout || !free || free.length === 0) continue;
-    const pedestal = pedestalById.get(anchor.id) ?? [0, 0, 0];
+    const pedestal = (anchor && pedestalById.get(anchor.id)) ?? [0, 0, 0];
     let bestIndex = -1;
     let bestScore = Infinity;
     for (let i = 0; i < free.length; i++) {
@@ -403,12 +406,15 @@ function placePaintings(
     placements.set(capture.id, {
       id: capture.id,
       kind: "painting",
-      room: anchor.room,
+      room,
       position: roomLocalToWorld(roomLayout, slot.local),
       rotationY: normalizeAngle(roomLayout.rotationY + slot.localRotationY),
     });
   }
 }
+
+/** Where an unsupported capture hangs, by the app it came from. */
+const ROOM_BY_APP: Record<PalaceCapture["app"], Room> = { mockloft: "Housing", landlord_chat: "Housing", inbox: "Work", calendar: "Work" };
 
 /** The belief a painting hangs behind: the strongest supporter, ties broken by id. */
 function pickAnchor(beliefs: readonly PalaceBelief[]): PalaceBelief | undefined {

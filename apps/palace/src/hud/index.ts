@@ -15,3 +15,7 @@ export { MinimapLegend, type MinimapLegendProps } from "./MinimapLegend";
 export { StorageMeter } from "./StorageMeter";
 export { Timeline, CHECKPOINT_DAYS, FAST_FORWARD_INTERVAL_MS } from "./Timeline";
 export { setPlayerPosition, getPlayerPosition, usePlayerPosition, type PlayerPose } from "./playerPosition";
+export { Toasts } from "./Toast";
+export { ReplayChip } from "./ReplayChip";
+export { FallbackOverlay } from "./FallbackOverlay";
+export { useDemoHotkeys } from "./useDemoHotkeys";

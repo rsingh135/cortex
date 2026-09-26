@@ -12,12 +12,37 @@ import { fixtureScreenKey } from "./fixtures/screenUrl";
 import { createTicker, type Ticker } from "./fixtures/ticker";
 import { computeLayout, type PalaceLayout, type Placement } from "./layout";
 import { reduceSnapshot } from "./reducer";
+import { createReplay, parseEventLog, type Replay } from "./replay";
 import { sweepSnapshot } from "./sweep";
 import { emptySnapshot, type PalaceBelief, type PalaceCapture, type PalaceProcedure, type PalaceSnapshot } from "./types";
 
 export type PalaceMode = "fixture" | "live";
 export type ConnectionState = "connecting" | "open" | "closed";
 export type ControlsMode = "walk" | "orbit";
+export type ReplayStatus = "idle" | "loading" | "playing" | "done";
+
+export interface ReplayState {
+  status: ReplayStatus;
+  played: number;
+  total: number;
+}
+
+export interface Toast {
+  id: number;
+  text: string;
+}
+
+export interface WorkflowScore {
+  withMemory: { right: number; of: number };
+  noMemory: { right: number; of: number };
+}
+
+export interface ReplayOptions {
+  /** Event log URL; defaults to the bundled day-2 log. */
+  url?: string;
+  /** Start from an empty day-2 memory so the walls fill in front of the audience. Default true. */
+  fresh?: boolean;
+}
 
 export interface PalaceState {
   mode: PalaceMode;
@@ -38,6 +63,16 @@ export interface PalaceState {
   playing: boolean;
   /** Fixture seed (`?seed=`, default 42). */
   seed: number;
+  /** Beat-1 replay of a recorded event log. */
+  replay: ReplayState;
+  /** Short-lived HUD notices, oldest first. */
+  toasts: Toast[];
+  /** Draft ids the agent is waiting on (beat 3); `approveAllDrafts()` posts them to the engine. */
+  pendingDrafts: string[];
+  /** Live-hunt result for the chart page, once the engine reports it. */
+  workflowScore: WorkflowScore | null;
+  /** The `F` fallback video overlay. */
+  fallbackOpen: boolean;
   applyEvent(e: WsEvent): void;
   setDay(day: number): void;
   select(id: string | null): void;
@@ -49,6 +84,13 @@ export interface PalaceState {
   setPlaying(b: boolean): void;
   connect(): void;
   disconnect(): void;
+  startReplay(opts?: ReplayOptions): Promise<void>;
+  stopReplay(): void;
+  toast(text: string): void;
+  dismissToast(id: number): void;
+  setPendingDrafts(ids: string[]): void;
+  setWorkflowScore(score: WorkflowScore | null): void;
+  setFallbackOpen(open: boolean): void;
 }
 
 export const MAX_RECENT_EVENTS = 50;
@@ -56,7 +98,11 @@ export const MIN_DAY = 1;
 export const MAX_DAY = 30;
 
 const WS_URL = process.env.NEXT_PUBLIC_LIVE_SERVER_WS_URL;
-const ENGINE_URL = process.env.NEXT_PUBLIC_ENGINE_URL ?? (WS_URL ? WS_URL.replace(/^ws(s?):\/\//, "http$1://").replace(/\/ws\/?$/, "") : undefined);
+/** Engine base URL (HTTP), derived from the WebSocket URL when not set explicitly; undefined in pure fixture mode. */
+export const ENGINE_URL = process.env.NEXT_PUBLIC_ENGINE_URL ?? (WS_URL ? WS_URL.replace(/^ws(s?):\/\//, "http$1://").replace(/\/ws\/?$/, "") : undefined);
+export const DEFAULT_REPLAY_URL = "/demo/day2-events.jsonl";
+export const REPLAY_TIMING = { speed: 4, minGapMs: 250, maxGapMs: 2500 } as const;
+const TOAST_MS = 2500;
 
 /** Live when a WebSocket URL is configured and `?mode=fixture` is not forcing the fixture. */
 export function detectMode(): PalaceMode {
@@ -74,7 +120,10 @@ export function seedFromLocation(): number {
 
 let ticker: Ticker | null = null;
 let socket: WebSocket | null = null;
+let replayHandle: Replay | null = null;
+let replayRun = 0;
 let syntheticCounter = 0;
+let toastCounter = 0;
 
 /** Fixture textures are cheap keys; the renderer rasterises them lazily (see `fixtures/screenUrl.ts`). */
 const fixtureTexture = (seed: number): TextureResolver => (capture) => fixtureScreenKey(capture, seed);
@@ -110,6 +159,11 @@ export const usePalaceStore = create<PalaceState>()((set, get) => {
     pointerLocked: false,
     playing: true,
     seed: DEFAULT_SEED,
+    replay: { status: "idle", played: 0, total: 0 },
+    toasts: [],
+    pendingDrafts: [],
+    workflowScore: null,
+    fallbackOpen: false,
 
     applyEvent(e) {
       const state = get();
@@ -244,6 +298,7 @@ export const usePalaceStore = create<PalaceState>()((set, get) => {
     },
 
     disconnect() {
+      get().stopReplay();
       ticker?.stop();
       ticker = null;
       if (socket) {
@@ -253,6 +308,82 @@ export const usePalaceStore = create<PalaceState>()((set, get) => {
       }
       set({ connection: "closed" });
     },
+
+    async startReplay(opts = {}) {
+      const url = opts.url ?? DEFAULT_REPLAY_URL;
+      const fresh = opts.fresh ?? true;
+      get().stopReplay();
+      const run = ++replayRun;
+      set({ replay: { status: "loading", played: 0, total: 0 } });
+      let text: string;
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`${res.status}`);
+        text = await res.text();
+      } catch (err) {
+        if (run !== replayRun) return;
+        set({ replay: { status: "idle", played: 0, total: 0 } });
+        get().toast(`replay log unavailable (${url})`);
+        console.warn("palace: replay fetch failed", err);
+        return;
+      }
+      if (run !== replayRun) return;
+      const { events, dropped } = parseEventLog(text);
+      if (dropped) console.warn(`palace: replay dropped ${dropped} invalid line(s)`);
+      if (events.length === 0) {
+        set({ replay: { status: "idle", played: 0, total: 0 } });
+        get().toast("replay log is empty");
+        return;
+      }
+      // The fixture ticker would keep mutating fixture ids under the replay; pause it for the run.
+      ticker?.stop();
+      if (fresh) {
+        const day = events[0]?.day ?? 2;
+        const snapshot = emptySnapshot(day);
+        set({ snapshot, layout: computeLayout(snapshot), recentEvents: [], pulses: {}, selectedId: null, hoveredId: null });
+      }
+      let played = 0;
+      const total = events.length;
+      set({ replay: { status: "playing", played, total } });
+      const handle = createReplay(
+        events,
+        (e) => {
+          if (run !== replayRun) return;
+          get().applyEvent(e);
+          played += 1;
+          set({ replay: { status: played >= total ? "done" : "playing", played, total } });
+          if (played >= total) replayHandle = null;
+        },
+        REPLAY_TIMING,
+      );
+      replayHandle = handle;
+      handle.start();
+    },
+
+    stopReplay() {
+      replayRun += 1;
+      if (replayHandle) {
+        replayHandle.stop();
+        replayHandle = null;
+      }
+      const r = get().replay;
+      if (r.status === "playing" || r.status === "loading") set({ replay: { status: "idle", played: r.played, total: r.total } });
+    },
+
+    toast(text) {
+      const id = ++toastCounter;
+      set({ toasts: [...get().toasts, { id, text }].slice(-3) });
+      setTimeout(() => get().dismissToast(id), TOAST_MS);
+    },
+
+    dismissToast(id) {
+      const toasts = get().toasts;
+      if (toasts.some((t) => t.id === id)) set({ toasts: toasts.filter((t) => t.id !== id) });
+    },
+
+    setPendingDrafts: (pendingDrafts) => set({ pendingDrafts }),
+    setWorkflowScore: (workflowScore) => set({ workflowScore }),
+    setFallbackOpen: (fallbackOpen) => set({ fallbackOpen }),
   };
 });
 
@@ -290,6 +421,10 @@ export const useConnection = (): { mode: PalaceMode; connection: ConnectionState
 export const useControlsMode = (): ControlsMode => usePalaceStore((s) => s.controlsMode);
 export const usePointerLocked = (): boolean => usePalaceStore((s) => s.pointerLocked);
 export const usePlaying = (): boolean => usePalaceStore((s) => s.playing);
+export const useReplay = (): ReplayState => usePalaceStore((s) => s.replay);
+export const useToasts = (): Toast[] => usePalaceStore((s) => s.toasts);
+export const useWorkflowScore = (): WorkflowScore | null => usePalaceStore((s) => s.workflowScore);
+export const useFallbackOpen = (): boolean => usePalaceStore((s) => s.fallbackOpen);
 /** Stable action bundle; safe to destructure in components. */
 export const usePalaceActions = () =>
   usePalaceStore(
@@ -305,6 +440,10 @@ export const usePalaceActions = () =>
       setPlaying: s.setPlaying,
       connect: s.connect,
       disconnect: s.disconnect,
+      startReplay: s.startReplay,
+      stopReplay: s.stopReplay,
+      toast: s.toast,
+      setFallbackOpen: s.setFallbackOpen,
     })),
   );
 

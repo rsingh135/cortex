@@ -47,6 +47,8 @@ export function captureFromDoc(doc: SnapshotCapture | CreatedCapture, day: numbe
   const alive = "alive_levels" in doc ? [...doc.alive_levels] : [...LEVELS];
   const ceiling = "ceiling" in doc ? doc.ceiling : "L0";
   const clarity = "clarity" in doc ? doc.clarity : DEFAULT_PARAMS.levelValue.L0;
+  // A bundled image (replay logs) beats the resolver; live captures derive their engine URL from it.
+  const imageUrl = "image_url" in doc && typeof doc.image_url === "string" && doc.image_url.length > 0 ? doc.image_url : null;
   const base: PalaceCapture = {
     id: doc._id,
     app: doc.app,
@@ -62,7 +64,7 @@ export function captureFromDoc(doc: SnapshotCapture | CreatedCapture, day: numbe
     l0Bytes: doc.l0_bytes,
     url: doc.url,
   };
-  return { ...base, textureUrl: ceiling === null ? null : texture(base) };
+  return { ...base, textureUrl: ceiling === null ? null : (imageUrl ?? texture(base)) };
 }
 
 export function procedureFromDoc(doc: SnapshotProcedure): PalaceProcedure {

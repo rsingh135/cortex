@@ -1,5 +1,6 @@
 "use client";
 /** Controls hint as a compact glass sheet. Dismissible (remembered in localStorage) or collapsed while a card is open; a "?" button brings it back. */
+import { DEMO_KEYS } from "@/lib/demoKeys";
 import { useControlsMode, usePalaceActions } from "@/lib/store";
 import { setHelpDismissed, useHelpDismissed } from "./helpDismissed";
 
@@ -69,6 +70,19 @@ export function Help({ compact = false }: HelpProps) {
         ))}
       </dl>
       <p className="mt-2.5 border-t border-zinc-900/8 pt-2 text-xs leading-4 text-zinc-600">Click a room on the map to fly there. Scrub the timeline to watch memory fade.</p>
+      <details className="mt-2 border-t border-zinc-900/8 pt-2 text-xs leading-4 text-zinc-600">
+        <summary className="cursor-pointer font-medium text-zinc-700">Demo keys</summary>
+        <dl className="mt-1.5 grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-1">
+          {DEMO_KEYS.map((h) => (
+            <div key={h.keys} className="contents">
+              <dt>
+                <kbd className="inline-block rounded-md bg-white/80 px-1.5 py-px font-mono text-[11px] leading-4 text-zinc-700 shadow-[0_1px_0_rgba(24,24,27,0.14)] ring-1 ring-zinc-900/10">{h.keys}</kbd>
+              </dt>
+              <dd>{h.does}</dd>
+            </div>
+          ))}
+        </dl>
+      </details>
     </aside>
   );
 }
