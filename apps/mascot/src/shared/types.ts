@@ -5,7 +5,14 @@
 import type { AskResponse, WsEvent } from "@cortex/schema";
 
 export const IPC = {
+  cursor: "mascot:cursor",
   ask: "mascot:ask",
+  saveMemory: "mascot:save-memory",
+  listMemories: "mascot:list-memories",
+  retryMemory: "mascot:retry-memory",
+  transcribe: "mascot:transcribe",
+  realtimeToken: "mascot:realtime-token",
+  synthesize: "mascot:synthesize",
   setClickThrough: "mascot:set-click-through",
   event: "mascot:event",
 } as const;
@@ -15,7 +22,22 @@ export const FORWARDED_EVENT_TYPES = ["belief.recalled", "belief.forgotten", "cl
 export type ForwardedEventType = (typeof FORWARDED_EVENT_TYPES)[number];
 export type MascotEvent = Extract<WsEvent, { type: ForwardedEventType }>;
 
+export interface MemoryNote {
+  id: string;
+  text: string;
+  createdAt: string;
+  status: "pending" | "synced";
+  error?: string;
+}
+
 export interface MascotBridge {
+  onCursor?(cb: (point: { x: number; y: number }) => void): () => void;
+  realtimeToken(): Promise<string>;
+  synthesize(text: string): Promise<Uint8Array>;
+  saveMemory(text: string): Promise<MemoryNote>;
+  listMemories(): Promise<MemoryNote[]>;
+  retryMemory(id: string): Promise<MemoryNote>;
+  transcribe(bytes: Uint8Array, mime: string): Promise<string>;
   /** Ask the engine. Main performs the HTTP call and validates the response. */
   ask(text: string, opts?: { speak?: boolean }): Promise<AskResponse>;
   /** When true, mouse events pass through the transparent window to whatever is below. */

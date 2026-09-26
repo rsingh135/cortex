@@ -24,6 +24,8 @@ export interface MascotState {
 }
 
 export type Action =
+  | { type: "startSpeaking" }
+  | { type: "memorySaved" }
   | { type: "listen" }
   | { type: "stopListening" }
   | { type: "asked"; text: string }
@@ -45,6 +47,10 @@ const MAX_TURNS = 20;
 
 export function reduce(state: MascotState, action: Action): MascotState {
   switch (action.type) {
+    case "startSpeaking":
+      return { ...state, pet: "speaking", error: null };
+    case "memorySaved":
+      return { ...state, pet: "idle", error: null };
     case "listen":
       return { ...state, pet: "listening", error: null };
     case "stopListening":
