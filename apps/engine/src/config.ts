@@ -6,6 +6,8 @@ const Env = z.object({
   ATLAS_DB: z.string().min(1).default("cortex"),
   ANTHROPIC_API_KEY: z.string().min(1),
   VOYAGE_API_KEY: z.string().optional(),
+  VOYAGE_BASE_URL: z.url().optional(),
+  VOYAGE_EMBEDDING_MODEL: z.string().min(1).optional(),
   ELEVENLABS_API_KEY: z.string().optional(),
   ELEVENLABS_VOICE_ID: z.string().optional(),
   LANGSMITH_API_KEY: z.string().optional(),

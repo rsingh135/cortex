@@ -24,7 +24,7 @@ pnpm --filter @cortex/engine typecheck && pnpm --filter @cortex/engine lint && p
 | `src/extraction/` | ready | Belief extraction | System prompt, strict zod output, `client.beta.messages.parse` on `claude-sonnet-5` with the L1 image. Needs `ANTHROPIC_API_KEY` and LangSmith wrapping |
 | `src/consolidation/` | stub | Belief extraction › consolidation | Exact → near (cosine ≥ 0.9) → conflict/supersede; algorithm in the doc comment |
 | `src/recall/rank.ts` | done | The agent › recall | relevance × confidence × clarity |
-| `src/recall/embed.ts` | partial | Data model | Voyage `voyage-3-lite` 512-dim client stub; int8 pack/unpack + cosine done |
+| `src/recall/embed.ts` | partial | Data model | HTTPS Voyage/Atlas client with 512-dim validation; int8 pack/unpack + cosine |
 | `src/recall/search.ts` | exact/text | The agent › recall, Evaluation | Room filters, exact subject first, text fallback, rank, one-hop evidence cascade, read-only `dry_run`; vector fallback pending |
 | `src/learner/` | stub | Workflow learning | Rule proposal on `claude-opus-5`, checked with `checkRules` from `@cortex/schema/rules` |
 | `src/agent/` | stub | The agent | Router, Playwright replay tools with citations, drafts awaiting approval |
@@ -72,3 +72,20 @@ No sample memories are seeded automatically. Ingest/extraction wiring remains
 unfinished; tests seed canonical documents and all condition ledgers directly.
 Configure Atlas and seed those collections to use persistent memory. Fixture mode
 starts empty. The root `.env` is loaded by the entry point.
+
+## Atlas model API
+
+Atlas model keys authenticate embedding requests at `https://ai.mongodb.com/v1`.
+They do not authenticate the Atlas administration CLI or replace `ATLAS_URI`.
+Keep `VOYAGE_API_KEY` in the ignored root `.env`; set `VOYAGE_BASE_URL` and
+`VOYAGE_EMBEDDING_MODEL` as shown in `.env.example`. The current Atlas setup uses
+`voyage-4-lite` at 512 dimensions. The client retains its legacy model default for
+existing callers; set the model explicitly for Atlas. Changing models requires
+rebuilding stored embeddings before using them for similarity search.
+
+Run `pnpm --filter @cortex/engine embeddings:check` to make one small live request.
+This command requires only the model API configuration and never prints the key
+or vector contents. The reusable client is in `src/recall/embed.ts`; wiring it
+into indexed recall and consolidation remains the next memory slice.
+
+Documentation: https://www.mongodb.com/docs/voyageai/api-and-clients/
