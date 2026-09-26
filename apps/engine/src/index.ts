@@ -15,8 +15,7 @@ import { loadMemoryConfig } from "./config.js";
 import { fixtureStore, mongoStore } from "./db/memory-store.js";
 import { connect } from "./db.js";
 import { createLiveServer, type LiveServer } from "./live/server.js";
-import { createAnthropicClient } from "./ai/client.js";
-import { anthropicLlm } from "./ai/structured.js";
+import { createLlm } from "./ai/client.js";
 import { createExtractor } from "./extraction/extract.js";
 import { createExtractionQueue } from "./extraction/queue.js";
 import { createRouter } from "./router/index.js";
@@ -53,14 +52,14 @@ async function main(): Promise<void> {
     };
   }
 
-  // Model-backed pieces. FIXTURE_MODE never calls Claude; without ANTHROPIC_API_KEY the routes degrade.
-  const client = fixtureMode ? null : createAnthropicClient();
-  const llm = client ? anthropicLlm(client) : null;
+  // Model-backed pieces. FIXTURE_MODE never calls a model; without a provider key the routes degrade.
+  const setup = fixtureMode ? { provider: "none" as const, llm: null, models: { extraction: "", router: "", ask: "" } } : createLlm();
+  const llm = setup.llm;
   const extractionEnabled = process.env.EXTRACTION_ENABLED !== "false";
-  const extractionModel = process.env.EXTRACTION_MODEL ?? "claude-sonnet-5";
-  const reasoningModel = process.env.REASONING_MODEL ?? "claude-opus-5";
+  const extractionModel = setup.models.extraction;
+  const reasoningModel = setup.models.ask;
   const audio = createAudioStore();
-  const router = createRouter(llm, extractionModel);
+  const router = createRouter(llm, setup.models.router);
   const extraction =
     llm && extractionEnabled
       ? createExtractionQueue({
@@ -84,7 +83,7 @@ async function main(): Promise<void> {
     }),
   });
   console.log(
-    `engine: model ${client ? "on" : "off"}${client ? ` (extraction ${extractionEnabled ? extractionModel : "disabled"}, answers ${reasoningModel})` : ""}`,
+    `engine: provider ${setup.provider}${llm ? ` (extraction ${extractionEnabled ? extractionModel : "disabled"}, router ${setup.models.router}, answers ${reasoningModel})` : ""}`,
   );
 
   const app = createApp({

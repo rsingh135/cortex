@@ -4,15 +4,19 @@ import { z } from "zod";
 const Env = z.object({
   ATLAS_URI: z.string().min(1),
   ATLAS_DB: z.string().min(1).default("cortex"),
-  ANTHROPIC_API_KEY: z.string().min(1),
-  /** Required when the key is organization-scoped rather than workspace-scoped. */
-  ANTHROPIC_WORKSPACE_ID: z.string().optional(),
+  /** Model provider: openai | anthropic | none. Defaults by which key is present (OpenAI first). */
+  LLM_PROVIDER: z.enum(["openai", "anthropic", "none"]).optional(),
+  ANTHROPIC_API_KEY: z.string().min(1).optional(),
+  ANTHROPIC_WORKSPACE_ID: z.string().min(1).optional(),
+  OPENAI_API_KEY: z.string().min(1).optional(),
+  OPENAI_EXTRACTION_MODEL: z.string().min(1).optional(),
+  OPENAI_ROUTER_MODEL: z.string().min(1).optional(),
+  OPENAI_ASK_MODEL: z.string().min(1).optional(),
   VOYAGE_API_KEY: z.string().optional(),
   VOYAGE_BASE_URL: z.url().optional(),
   VOYAGE_EMBEDDING_MODEL: z.string().min(1).optional(),
   ELEVENLABS_API_KEY: z.string().optional(),
-  /** Premade "Sarah". Library voices (Emma included) need a paid ElevenLabs plan to use via the API. */
-  ELEVENLABS_VOICE_ID: z.string().default("EXAVITQu4vr4xnSDxMaL"),
+  ELEVENLABS_VOICE_ID: z.string().default("56bWURjYFHyYyVf490Dp"),
   LANGSMITH_API_KEY: z.string().optional(),
   LANGSMITH_TRACING: z.string().optional(),
   LANGSMITH_PROJECT: z.string().default("cortex"),

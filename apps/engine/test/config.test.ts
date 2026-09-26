@@ -17,7 +17,12 @@ describe("loadConfig", () => {
   });
   it("names every missing variable", () => {
     expect(() => loadConfig({})).toThrow(/ATLAS_URI/);
-    expect(() => loadConfig({})).toThrow(/ANTHROPIC_API_KEY/);
+    expect(() => loadConfig({})).toThrow(/CORTEX_WRITE_TOKEN/);
+  });
+  it("model keys are optional; the provider is chosen at startup", () => {
+    const c = loadConfig({ ATLAS_URI: "mongodb://x", CORTEX_WRITE_TOKEN: "t", OPENAI_API_KEY: "o" });
+    expect(c.ANTHROPIC_API_KEY).toBeUndefined();
+    expect(c.OPENAI_API_KEY).toBe("o");
   });
 });
 
