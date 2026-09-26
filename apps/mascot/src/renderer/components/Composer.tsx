@@ -1,68 +1,28 @@
-import { useRef, useState, type FormEvent } from "react";
-import { NotImplementedError, recordWhile, transcribe } from "../lib/stt";
-
-interface ComposerProps {
-  disabled: boolean;
-  onAsk(text: string): void;
-  onListen(active: boolean): void;
-  onError(message: string): void;
-}
-
-export function Composer({ disabled, onAsk, onListen, onError }: ComposerProps) {
-  const [text, setText] = useState("");
-  const holding = useRef(false);
-
-  const submit = (e: FormEvent): void => {
-    e.preventDefault();
-    const t = text.trim();
-    if (!t || disabled) return;
-    setText("");
-    onAsk(t);
-  };
-
-  const startHold = async (): Promise<void> => {
-    if (disabled || holding.current) return;
-    holding.current = true;
-    onListen(true);
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
+import { streamSpeech, type VoicePhase } from '../lib/realtime';
+interface Props { disabled:boolean; mode:'remember'|'ask'; onSubmit:(text:string)=>Promise<boolean>; onListen:(active:boolean)=>void; onError:(message:string)=>void }
+export function Composer({disabled,mode,onSubmit,onListen,onError}:Props) {
+  const [text,setText]=useState('');
+  const [recording,setRecording]=useState(false);
+  const [transcribing,setTranscribing]=useState(false);
+  const [phase,setPhase]=useState<VoicePhase>('connecting');
+  const active=useRef(false),recordingJob=useRef(false),mounted=useRef(true);
+  useEffect(()=>{mounted.current=true;return()=>{mounted.current=false;active.current=false;};},[]);
+  const submit=async(event:FormEvent|KeyboardEvent)=>{event.preventDefault();if(!text.trim()||disabled||recording||transcribing)return;if(await onSubmit(text.trim()))setText('');};
+  const toggleRecording=async()=>{
+    if(active.current){active.current=false;return;}
+    if(disabled||transcribing||recordingJob.current)return;
+    recordingJob.current=true;active.current=true;setPhase('connecting');setRecording(true);onListen(true);
     try {
-      const blob = await recordWhile(() => holding.current);
-      const transcript = await transcribe(blob);
-      onAsk(transcript);
-    } catch (err) {
-      onError(err instanceof NotImplementedError ? "Voice input not wired yet. Type instead." : err instanceof Error ? err.message : String(err));
-    } finally {
-      onListen(false);
-    }
+      const previous=text.trim();
+      await streamSpeech(()=>active.current,transcript=>{if(mounted.current)setText([previous,transcript].filter(Boolean).join('\n'));},next=>{if(!mounted.current)return;setPhase(next);setTranscribing(next==='finishing');setRecording(next!=='finishing');});
+    }catch(error){if(mounted.current)onError(error instanceof Error?error.message:String(error));}
+    finally{recordingJob.current=false;active.current=false;if(mounted.current){setRecording(false);setTranscribing(false);onListen(false);}}
   };
-  const endHold = (): void => {
-    holding.current = false;
-  };
-
-  return (
-    <form onSubmit={submit} className="flex items-center gap-1.5">
-      <input
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="Ask Cortex…"
-        aria-label="Ask Cortex"
-        disabled={disabled}
-        className="h-8 w-[180px] rounded-full bg-white/95 px-3 text-[13px] text-zinc-900 shadow ring-1 ring-zinc-200 outline-none focus:ring-indigo-400 disabled:opacity-60"
-      />
-      <button
-        type="button"
-        aria-label="Hold to talk"
-        title="Hold to talk"
-        disabled={disabled}
-        onPointerDown={() => void startHold()}
-        onPointerUp={endHold}
-        onPointerLeave={endHold}
-        onPointerCancel={endHold}
-        className="grid h-8 w-8 place-items-center rounded-full bg-white/95 text-zinc-700 shadow ring-1 ring-zinc-200 active:bg-amber-100 disabled:opacity-60"
-      >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2Z" />
-        </svg>
-      </button>
-    </form>
-  );
+  return <form onSubmit={event=>void submit(event)} className="composer">
+    <label htmlFor="memory-text">{mode==='remember'?'A little thought worth keeping':'What’s on your mind?'}</label>
+    <textarea id="memory-text" value={text} onChange={event=>setText(event.target.value)} placeholder={mode==='remember'?'Remember that I prefer quiet cafés…':'What do you remember about me?'} maxLength={10000} readOnly={recording||transcribing} disabled={disabled&&!recording&&!transcribing} rows={3} onKeyDown={event=>{if((event.metaKey||event.ctrlKey)&&event.key==='Enter')void submit(event);}}/>
+    <div className="composer-actions"><button type="button" className={`voice-button ${recording?'recording':''}`} disabled={transcribing||(disabled&&!recording)} onClick={()=>void toggleRecording()} aria-pressed={recording} aria-label={recording?'Stop recording':'Record a voice memory'}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-4 0h8"/></svg>{recording?phase==='connecting'?'Cancel':'Stop recording':transcribing?'Finishing…':'Use voice'}</button><button className="save-button" disabled={disabled||recording||transcribing||!text.trim()}>{mode==='remember'?'Keep memory':'Ask Cortex'}<span aria-hidden="true">↗</span></button></div>
+    <p className="composer-hint">{recording?phase==='connecting'?'Connecting microphone and live transcription…':'Live transcription · words appear as you speak · 60s max':transcribing?'Finishing the last words…':'Speak and watch your words appear. Review before sending.'}</p>
+  </form>;
 }

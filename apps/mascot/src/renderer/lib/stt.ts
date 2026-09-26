@@ -1,40 +1,44 @@
-/**
- * Speech-to-text for the user's voice. The mascot is the only place that needs an ElevenLabs key
- * on the client, and only for this. Answer audio comes back from the engine as `audio_url`.
- *
- * TODO(mascot track): wire ElevenLabs Scribe here.
- *   POST https://api.elevenlabs.io/v1/speech-to-text  (multipart: file=<blob>, model_id=scribe_v1)
- *   header xi-api-key: import.meta.env.VITE_ELEVENLABS_API_KEY
- *   response.text is the transcript.
- */
-export class NotImplementedError extends Error {
-  constructor(what: string) {
-    super(`${what} is not implemented yet`);
-    this.name = "NotImplementedError";
+export async function transcribe(audio: Blob): Promise<string> {
+  if (!audio.size) throw new Error("The recording was empty. Record a little longer and try again.");
+  return window.mascot.transcribe(new Uint8Array(await audio.arrayBuffer()), audio.type);
+}
+
+/** Always release the microphone, including permission races and recorder failures. */
+export async function recordWhile(active: () => boolean): Promise<Blob> {
+  if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
+    throw new Error("This browser cannot record audio. Open Cortex in Chrome or the desktop app.");
   }
-}
-
-export async function transcribe(_audio: Blob): Promise<string> {
-  throw new NotImplementedError("ElevenLabs speech-to-text");
-}
-
-/** Records microphone audio while `active()` returns true; resolves with a webm blob. */
-export async function recordWhile(active: () => boolean, pollMs = 100): Promise<Blob> {
-  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  const recorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
-  const chunks: BlobPart[] = [];
-  recorder.ondataavailable = (e) => chunks.push(e.data);
-  recorder.start();
-  await new Promise<void>((resolve) => {
-    const tick = (): void => {
-      if (!active()) resolve();
-      else setTimeout(tick, pollMs);
-    };
-    tick();
-  });
-  const stopped = new Promise<void>((resolve) => (recorder.onstop = () => resolve()));
-  recorder.stop();
-  await stopped;
-  stream.getTracks().forEach((t) => t.stop());
-  return new Blob(chunks, { type: "audio/webm" });
+  let stream: MediaStream;
+  try { stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }); }
+  catch (error) {
+    const name = error instanceof Error ? error.name : "";
+    if (name === "NotAllowedError" || name === "SecurityError") throw new Error("Microphone access is blocked. Allow the microphone in your browser and macOS Privacy & Security settings, then try again.");
+    if (name === "NotFoundError") throw new Error("No microphone found. Connect a microphone and try again.");
+    if (name === "NotReadableError") throw new Error("Your microphone is busy or unavailable. Close other recording apps and try again.");
+    throw error;
+  }
+  let timer: ReturnType<typeof setInterval> | undefined;
+  try {
+    if (!active()) throw new Error("Recording cancelled.");
+    const mimeType = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"].find((type) => MediaRecorder.isTypeSupported(type));
+    const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+    const chunks: BlobPart[] = [];
+    const started = Date.now();
+    return await new Promise<Blob>((resolve, reject) => {
+      recorder.ondataavailable = (event) => { if (event.data.size) chunks.push(event.data); };
+      recorder.onerror = () => reject(new Error("Microphone recording failed. Please try again."));
+      recorder.onstop = () => {
+        const audio = new Blob(chunks, { type: recorder.mimeType || mimeType || "audio/webm" });
+        if (!audio.size) reject(new Error("The recording was empty. Record a little longer and try again."));
+        else resolve(audio);
+      };
+      recorder.start(200);
+      timer = setInterval(() => {
+        if ((!active() || Date.now() - started >= 60000) && recorder.state === "recording") recorder.stop();
+      }, 100);
+    });
+  } finally {
+    clearInterval(timer);
+    stream.getTracks().forEach((track) => track.stop());
+  }
 }
