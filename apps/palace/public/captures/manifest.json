@@ -1,0 +1,362 @@
+[
+  {
+    "file": "/captures/001-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Listings",
+    "url": "/listings?hunt=hunt1",
+    "listing_id": null
+  },
+  {
+    "file": "/captures/002-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Listings",
+    "url": "/listings?hunt=hunt1",
+    "listing_id": null
+  },
+  {
+    "file": "/captures/003-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Loft-style 2BR in East Williamsburg",
+    "url": "/listings/listing:102",
+    "listing_id": "listing:102"
+  },
+  {
+    "file": "/captures/004-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Loft-style 2BR in East Williamsburg",
+    "url": "/listings/listing:102",
+    "listing_id": "listing:102"
+  },
+  {
+    "file": "/captures/005-mockloft-click.webp",
+    "app": "mockloft",
+    "action": "click",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Loft-style 2BR in East Williamsburg",
+    "url": "/listings/listing:102",
+    "listing_id": "listing:102"
+  },
+  {
+    "file": "/captures/006-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Loft-style 1BR in Bushwick",
+    "url": "/listings/listing:111",
+    "listing_id": "listing:111"
+  },
+  {
+    "file": "/captures/007-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Loft-style 1BR in Bushwick",
+    "url": "/listings/listing:111",
+    "listing_id": "listing:111"
+  },
+  {
+    "file": "/captures/008-mockloft-click.webp",
+    "app": "mockloft",
+    "action": "click",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Loft-style 1BR in Bushwick",
+    "url": "/listings/listing:111",
+    "listing_id": "listing:111"
+  },
+  {
+    "file": "/captures/009-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Loft-style 1BR in Williamsburg",
+    "url": "/listings/listing:106",
+    "listing_id": "listing:106"
+  },
+  {
+    "file": "/captures/010-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Loft-style 1BR in Williamsburg",
+    "url": "/listings/listing:106",
+    "listing_id": "listing:106"
+  },
+  {
+    "file": "/captures/011-mockloft-click.webp",
+    "app": "mockloft",
+    "action": "click",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Loft-style 1BR in Williamsburg",
+    "url": "/listings/listing:106",
+    "listing_id": "listing:106"
+  },
+  {
+    "file": "/captures/012-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Bright 2BR in Bushwick",
+    "url": "/listings/listing:104",
+    "listing_id": "listing:104"
+  },
+  {
+    "file": "/captures/013-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Bright 2BR in Bushwick",
+    "url": "/listings/listing:104",
+    "listing_id": "listing:104"
+  },
+  {
+    "file": "/captures/014-mockloft-click.webp",
+    "app": "mockloft",
+    "action": "click",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Bright 2BR in Bushwick",
+    "url": "/listings/listing:104",
+    "listing_id": "listing:104"
+  },
+  {
+    "file": "/captures/015-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Garden-level Studio in Williamsburg",
+    "url": "/listings/listing:107",
+    "listing_id": "listing:107"
+  },
+  {
+    "file": "/captures/016-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Garden-level Studio in Williamsburg",
+    "url": "/listings/listing:107",
+    "listing_id": "listing:107"
+  },
+  {
+    "file": "/captures/017-landlord_chat-submit.webp",
+    "app": "landlord_chat",
+    "action": "submit",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Garden-level Studio in Williamsburg",
+    "url": "/listings/listing:107",
+    "listing_id": "listing:107"
+  },
+  {
+    "file": "/captures/018-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Sunny 1BR in Ridgewood",
+    "url": "/listings/listing:112",
+    "listing_id": "listing:112"
+  },
+  {
+    "file": "/captures/019-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Sunny 1BR in Ridgewood",
+    "url": "/listings/listing:112",
+    "listing_id": "listing:112"
+  },
+  {
+    "file": "/captures/020-landlord_chat-submit.webp",
+    "app": "landlord_chat",
+    "action": "submit",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Sunny 1BR in Ridgewood",
+    "url": "/listings/listing:112",
+    "listing_id": "listing:112"
+  },
+  {
+    "file": "/captures/021-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Loft-style 2BR in East Williamsburg",
+    "url": "/listings/listing:101",
+    "listing_id": "listing:101"
+  },
+  {
+    "file": "/captures/022-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Loft-style 2BR in East Williamsburg",
+    "url": "/listings/listing:101",
+    "listing_id": "listing:101"
+  },
+  {
+    "file": "/captures/023-landlord_chat-submit.webp",
+    "app": "landlord_chat",
+    "action": "submit",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Loft-style 2BR in East Williamsburg",
+    "url": "/listings/listing:101",
+    "listing_id": "listing:101"
+  },
+  {
+    "file": "/captures/024-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Bright 2BR in Bushwick",
+    "url": "/listings/listing:103",
+    "listing_id": "listing:103"
+  },
+  {
+    "file": "/captures/025-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Bright 2BR in Bushwick",
+    "url": "/listings/listing:103",
+    "listing_id": "listing:103"
+  },
+  {
+    "file": "/captures/026-landlord_chat-submit.webp",
+    "app": "landlord_chat",
+    "action": "submit",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Bright 2BR in Bushwick",
+    "url": "/listings/listing:103",
+    "listing_id": "listing:103"
+  },
+  {
+    "file": "/captures/027-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Renovated 1BR in Greenpoint",
+    "url": "/listings/listing:110",
+    "listing_id": "listing:110"
+  },
+  {
+    "file": "/captures/028-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Renovated 1BR in Greenpoint",
+    "url": "/listings/listing:110",
+    "listing_id": "listing:110"
+  },
+  {
+    "file": "/captures/029-mockloft-click.webp",
+    "app": "mockloft",
+    "action": "click",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Renovated 1BR in Greenpoint",
+    "url": "/listings/listing:110",
+    "listing_id": "listing:110"
+  },
+  {
+    "file": "/captures/030-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Loft-style 1BR in Williamsburg",
+    "url": "/listings/listing:105",
+    "listing_id": "listing:105"
+  },
+  {
+    "file": "/captures/031-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Loft-style 1BR in Williamsburg",
+    "url": "/listings/listing:105",
+    "listing_id": "listing:105"
+  },
+  {
+    "file": "/captures/032-landlord_chat-submit.webp",
+    "app": "landlord_chat",
+    "action": "submit",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Loft-style 1BR in Williamsburg",
+    "url": "/listings/listing:105",
+    "listing_id": "listing:105"
+  },
+  {
+    "file": "/captures/033-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day2",
+    "day": 2,
+    "title": "Inbox",
+    "url": "/inbox",
+    "listing_id": null
+  },
+  {
+    "file": "/captures/034-inbox-click.webp",
+    "app": "inbox",
+    "action": "click",
+    "episode": "life-day2",
+    "day": 2,
+    "title": "Inbox",
+    "url": "/inbox",
+    "listing_id": null
+  },
+  {
+    "file": "/captures/035-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day2",
+    "day": 2,
+    "title": "Inbox · newsletter",
+    "url": "/inbox/newsletter",
+    "listing_id": null
+  },
+  {
+    "file": "/captures/036-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day2",
+    "day": 2,
+    "title": "404: This page could not be found.",
+    "url": "/inbox/promo-7",
+    "listing_id": null
+  }
+]

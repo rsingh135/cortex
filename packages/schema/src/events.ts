@@ -15,7 +15,12 @@ const base = {
   condition: Condition.default("cortex"),
 };
 
-export const CaptureCreated = z.object({ ...base, type: z.literal("capture.created"), payload: Capture.omit({ page_text: true }) });
+export const CaptureCreated = z.object({
+  ...base,
+  type: z.literal("capture.created"),
+  /** `image_url` is optional: when absent the palace derives `${ENGINE_URL}/image/:id`. Replay logs bundle a static URL. */
+  payload: Capture.omit({ page_text: true }).extend({ image_url: z.string().optional() }),
+});
 export const CaptureRecalled = z.object({
   ...base,
   type: z.literal("capture.recalled"),
