@@ -12,6 +12,11 @@ import type { MemoryStore } from "../db/memory-store.js";
 import { advanceMemory } from "../forgetting/sweep.js";
 import { recallMemory } from "../recall/search.js";
 import { snapshot } from "../live/snapshot.js";
+import { buildMap } from "../map/index.js";
+import type { Router } from "../router/index.js";
+import type { Asker } from "../ask/index.js";
+import type { ExtractionQueue } from "../extraction/queue.js";
+import type { AudioStore } from "../voice/tts.js";
 import { Hono } from "hono";
 import { z } from "zod";
 import {
@@ -32,6 +37,12 @@ export interface AppOptions {
   fixtureMode: boolean;
   memory?: MemoryStore;
   now?: () => string;
+  /** Model-backed pieces; absent in FIXTURE_MODE or without ANTHROPIC_API_KEY. */
+  router?: Router;
+  asker?: Asker;
+  /** Background belief extraction; captures are enqueued right after they are stored. */
+  extraction?: ExtractionQueue;
+  audio?: AudioStore;
 }
 
 const ConditionQuery = z.object({ condition: Condition.default("cortex") });
@@ -101,10 +112,14 @@ export function createApp(opts: AppOptions): Hono {
       return c.json({ error: "An image file is required" }, 400);
     if (image.size > 10 * 1024 * 1024)
       return c.json({ error: "Image exceeds 10 MiB" }, 413);
-    if (intake)
-      return c.json(
-        await intake.ingest(Buffer.from(await image.arrayBuffer()), meta.data),
+    if (intake) {
+      const result = await intake.ingest(
+        Buffer.from(await image.arrayBuffer()),
+        meta.data,
       );
+      if (result.stored) opts.extraction?.enqueue(result.capture_id);
+      return c.json(result);
+    }
     return c.json(
       { error: "not implemented", route: "POST /ingest/capture" },
       501,
@@ -185,6 +200,12 @@ export function createApp(opts: AppOptions): Hono {
   app.post("/route", async (c) => {
     const v = await validateJson(c, RouteRequest);
     if (!v.ok) return v.response;
+    if (opts.router && opts.memory) {
+      const procedures = await opts.memory.run(false, (d) =>
+        d.procedures.map((p) => ({ _id: p._id, name: p.name, description: p.description })),
+      );
+      return c.json(await opts.router.route(v.data.text, procedures));
+    }
     return c.json({ error: "not implemented", route: "POST /route" }, 501);
   });
 
@@ -206,12 +227,31 @@ export function createApp(opts: AppOptions): Hono {
   app.post("/ask", async (c) => {
     const v = await validateJson(c, AskRequest);
     if (!v.ok) return v.response;
+    if (opts.asker) return c.json(await opts.asker.ask(v.data));
+    if (opts.memory)
+      return c.json(
+        { error: "ask needs a model: set ANTHROPIC_API_KEY and run outside FIXTURE_MODE" },
+        503,
+      );
     return c.json({ error: "not implemented", route: "POST /ask" }, 501);
   });
 
-  app.get("/map", (c) => {
+  app.get("/audio/:id", (c) => {
+    const bytes = opts.audio?.get(c.req.param("id"));
+    if (!bytes) return c.notFound();
+    return c.body(new Uint8Array(bytes), 200, {
+      "Content-Type": "audio/mpeg",
+      "Cache-Control": "private, max-age=3600",
+    });
+  });
+
+  app.get("/map", async (c) => {
     const q = validateQuery(c, ConditionQuery);
     if (!q.ok) return q.response;
+    if (opts.memory)
+      return c.json(
+        await opts.memory.run(false, (d) => buildMap(d, q.data.condition)),
+      );
     return c.json({ error: "not implemented", route: "GET /map" }, 501);
   });
 

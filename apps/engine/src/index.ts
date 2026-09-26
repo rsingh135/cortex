@@ -15,6 +15,13 @@ import { loadMemoryConfig } from "./config.js";
 import { fixtureStore, mongoStore } from "./db/memory-store.js";
 import { connect } from "./db.js";
 import { createLiveServer, type LiveServer } from "./live/server.js";
+import { createAnthropicClient } from "./ai/client.js";
+import { anthropicLlm } from "./ai/structured.js";
+import { createExtractor } from "./extraction/extract.js";
+import { createExtractionQueue } from "./extraction/queue.js";
+import { createRouter } from "./router/index.js";
+import { createAsker } from "./ask/index.js";
+import { createAudioStore, createTts } from "./voice/tts.js";
 
 async function main(): Promise<void> {
   const fixtureMode = process.env.FIXTURE_MODE === "true";
@@ -46,7 +53,49 @@ async function main(): Promise<void> {
     };
   }
 
-  const app = createApp({ fixtureMode, memory });
+  // Model-backed pieces. FIXTURE_MODE never calls Claude; without ANTHROPIC_API_KEY the routes degrade.
+  const client = fixtureMode ? null : createAnthropicClient();
+  const llm = client ? anthropicLlm(client) : null;
+  const extractionEnabled = process.env.EXTRACTION_ENABLED !== "false";
+  const extractionModel = process.env.EXTRACTION_MODEL ?? "claude-sonnet-5";
+  const reasoningModel = process.env.REASONING_MODEL ?? "claude-opus-5";
+  const audio = createAudioStore();
+  const router = createRouter(llm, extractionModel);
+  const extraction =
+    llm && extractionEnabled
+      ? createExtractionQueue({
+          store: memory,
+          extractor: createExtractor(llm, extractionModel),
+          concurrency: 2,
+          onDone: (r) => console.log(`extraction: ${r.capture_id} +${r.inserted.length} beliefs, ${r.reinforced.length} reinforced`),
+          onError: (id, err) => console.error(`extraction failed for ${id}: ${err instanceof Error ? err.message : String(err)}`),
+        })
+      : undefined;
+  const asker = llm
+    ? createAsker({
+        store: memory,
+        llm,
+        router,
+        model: reasoningModel,
+        tts: createTts({
+          apiKey: process.env.ELEVENLABS_API_KEY,
+          voiceId: process.env.ELEVENLABS_VOICE_ID ?? "EXAVITQu4vr4xnSDxMaL",
+          store: audio,
+        }),
+      })
+    : undefined;
+  console.log(
+    `engine: model ${client ? "on" : "off"}${client ? ` (extraction ${extractionEnabled ? extractionModel : "disabled"}, answers ${reasoningModel})` : ""}`,
+  );
+
+  const app = createApp({
+    fixtureMode,
+    memory,
+    router,
+    audio,
+    ...(asker ? { asker } : {}),
+    ...(extraction ? { extraction } : {}),
+  });
   const server = serve({ fetch: app.fetch, port }, () =>
     console.log(`engine: http://localhost:${port}`),
   );

@@ -16,6 +16,7 @@ const Env = z.object({
   CORTEX_WRITE_TOKEN: z.string().min(1),
   ENGINE_PORT: z.coerce.number().int().positive().default(4000),
   EXTRACTION_MODEL: z.string().default("claude-sonnet-5"),
+  EXTRACTION_ENABLED: z.string().default("true"),
   REASONING_MODEL: z.string().default("claude-opus-5"),
 });
 export type Config = z.infer<typeof Env>;
