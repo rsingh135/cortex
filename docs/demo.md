@@ -2,6 +2,18 @@
 
 Three minutes, five beats, one laptop. Everything below assumes the engine, mock world and palace run locally and the palace is open full-screen on the projector with the browser window for the live hunt on the second half of the screen.
 
+## Building the day-24 snapshot (once, or after the engine changes)
+
+```bash
+pnpm --filter @cortex/mockworld build && pnpm --filter @cortex/mockworld start -p 3222   # fresh process: reject state is in memory
+ATLAS_DB=cortex_demo pnpm --filter @cortex/engine start                                  # port 4000
+MOCKWORLD_URL=http://localhost:3222 pnpm play-maya --speed 0 --engine http://localhost:4000 --usage-log
+curl -X POST localhost:4000/clock/advance -H 'content-type: application/json' -d '{"to_day":24}'
+ATLAS_DB=cortex_demo pnpm reset-demo-db --save snapshots/day24
+```
+
+`--usage-log` advances the clock day by day and replays Maya's questions as recalls, so the housing memories she used stay sharp while the rest fade. Restart the mock world before every run: it keeps reject state in memory and the runner skips listings whose Reject button is gone.
+
 ## Before going on stage
 
 ```bash

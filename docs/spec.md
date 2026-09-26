@@ -711,7 +711,7 @@ Two stacked panels over simulated days: bytes stored on top (stacked bands for i
 - [x] Timeline scrubber, fast-forward with sweep animation, storage meter, minimap, `/map` page with the agent's JSON
 - [x] WebSocket client with `GET /snapshot` on reconnect; split view with the browser for the live hunt
 - [x] Two-panel chart page (`/chart`) from engine `/stats` or the simulated series; accuracy lines once the eval runs
-- [x] `tools/reset-demo-db.ts` (save/restore verified on the sandbox); bundled day-2 event log built from real captures
+- [x] `tools/reset-demo-db.ts` (save/restore verified on the sandbox); bundled day-2 event log built from real captures; `play-maya --usage-log` replays recalls during ingest; day-24 snapshot procedure in `docs/demo.md`
 - [x] Replay mode wired to the `R` hotkey; hotkeys for every fallback (`F`, `V`, `J`, `C`, `A`); bundled dream-journal and voice clips
 - [ ] `fallback.mp4` recording of a full run; `A` needs pending draft ids from the engine
 - [ ] Vercel projects for the mock world and the palace through the GitHub integration; cloudflared tunnel for the WebSocket
