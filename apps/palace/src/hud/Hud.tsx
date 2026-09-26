@@ -6,8 +6,10 @@
  * the room it has rather than sliding under the help.
  */
 import type { PalaceRoom } from "@/lib/layout";
-import { useControlsMode, useSelectedId } from "@/lib/store";
+import { useBrowserOpen, useControlsMode, useDrafts, useSelectedId } from "@/lib/store";
+import { BrowserPanel, BROWSER_PANEL_WIDTH } from "./BrowserPanel";
 import { ConnectionBadge } from "./ConnectionBadge";
+import { DraftCard } from "./DraftCard";
 import { EventTicker } from "./EventTicker";
 import { FallbackOverlay } from "./FallbackOverlay";
 import { Help } from "./Help";
@@ -36,7 +38,12 @@ export function Hud({ onRoomClick, playerPosition }: HudProps) {
   const orbiting = useControlsMode() === "orbit";
   const dot = orbiting ? null : playerPosition;
   const selectedId = useSelectedId();
+  const browserOpen = useBrowserOpen();
+  const hasDrafts = useDrafts().length > 0;
   useDemoHotkeys();
+  // With the browser on the right edge, everything else lives in the left half: the timeline recentres there,
+  // and the minimap and help step aside so the draft card has the column.
+  const leftHalfCentre = browserOpen ? `calc((100vw - ${BROWSER_PANEL_WIDTH} - 2rem) / 2)` : "50%";
   return (
     <div className="pointer-events-none fixed inset-0 z-10 font-sans text-[13px] leading-5 text-zinc-900" aria-label="Palace overlay">
       <PointerHint />
@@ -52,22 +59,31 @@ export function Hud({ onRoomClick, playerPosition }: HudProps) {
         </div>
       </div>
 
-      <div className="absolute inset-y-4 right-4 flex flex-col items-end gap-3">
-        <div className={`${WIDGET} glass shrink-0 rounded-2xl p-2.5`}>
-          <Minimap size={220} playerPosition={dot} onRoomClick={onRoomClick} />
-          <MinimapLegend showPlayer={dot !== null} className="mt-1.5 justify-center" />
-        </div>
+      <BrowserPanel />
+      {/* The right column slides left when the browser panel takes the right edge. */}
+      <div className="absolute inset-y-4 flex flex-col items-end gap-3 transition-[right] duration-300 ease-out" style={{ right: browserOpen ? `calc(${BROWSER_PANEL_WIDTH} + 2rem)` : "1rem" }}>
+        {browserOpen ? null : (
+          <div className={`${WIDGET} glass shrink-0 rounded-2xl p-2.5`}>
+            <Minimap size={220} playerPosition={dot} onRoomClick={onRoomClick} />
+            <MinimapLegend showPlayer={dot !== null} className="mt-1.5 justify-center" />
+          </div>
+        )}
         {/* Padding + negative margin keep the card's shadow inside the scroll box instead of clipping it. */}
+        <div className={`${WIDGET} shrink-0`}>
+          <DraftCard />
+        </div>
         <Presence id={selectedId} className={`${WIDGET} -m-4 min-h-0 overflow-y-auto p-4`} render={(id) => <SelectionCard id={id} />} />
         <div className={`${WIDGET} mt-auto shrink-0`}>
-          <Help compact={selectedId !== null} />
+          <Help compact={selectedId !== null || hasDrafts || browserOpen} />
         </div>
       </div>
 
-      <div className={`${WIDGET} absolute bottom-4 left-4 hidden md:block`}>
-        <EventTicker />
-      </div>
-      <div className={`${WIDGET} absolute bottom-4 left-1/2 -translate-x-1/2`}>
+      {browserOpen ? null : (
+        <div className={`${WIDGET} absolute bottom-4 left-4 hidden md:block`}>
+          <EventTicker />
+        </div>
+      )}
+      <div className={`${WIDGET} absolute bottom-4 -translate-x-1/2 transition-[left] duration-300 ease-out`} style={{ left: leftHalfCentre }}>
         <Timeline />
       </div>
     </div>

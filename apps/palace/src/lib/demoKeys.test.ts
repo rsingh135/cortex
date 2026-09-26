@@ -12,6 +12,7 @@ describe("demoActionFor", () => {
     expect(demoActionFor({ key: "f" })).toBe("fallback");
     expect(demoActionFor({ key: "v" })).toBe("voice");
     expect(demoActionFor({ key: "a" })).toBe("approve");
+    expect(demoActionFor({ key: "b" })).toBe("browser");
   });
   it("ignores scene keys and modifier chords", () => {
     expect(demoActionFor({ key: "Tab" })).toBeNull();

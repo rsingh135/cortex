@@ -2,7 +2,7 @@
  * Demo hotkeys (docs/demo.md), as a pure key -> action mapper so the binding is testable without a DOM.
  * Tab / Esc / E belong to the scene controls and are never claimed here.
  */
-export type DemoAction = "replay.start" | "replay.stop" | "journal" | "chart" | "fallback" | "voice" | "approve";
+export type DemoAction = "replay.start" | "replay.stop" | "journal" | "chart" | "fallback" | "voice" | "approve" | "browser";
 
 export interface KeyLike {
   key: string;
@@ -20,6 +20,7 @@ export const DEMO_KEYS: ReadonlyArray<{ keys: string; does: string }> = [
   { keys: "F", does: "fallback video" },
   { keys: "V", does: "voice fallback" },
   { keys: "A", does: "approve drafts" },
+  { keys: "B", does: "browser split view" },
 ];
 
 /** Null when the key is not a demo hotkey or a modifier other than Shift is held. */
@@ -38,6 +39,8 @@ export function demoActionFor(e: KeyLike): DemoAction | null {
       return e.shiftKey ? null : "voice";
     case "a":
       return e.shiftKey ? null : "approve";
+    case "b":
+      return e.shiftKey ? null : "browser";
     default:
       return null;
   }

@@ -19,3 +19,5 @@ export { Toasts } from "./Toast";
 export { ReplayChip } from "./ReplayChip";
 export { FallbackOverlay } from "./FallbackOverlay";
 export { useDemoHotkeys } from "./useDemoHotkeys";
+export { DraftCard } from "./DraftCard";
+export { BrowserPanel, MOCKWORLD_URL } from "./BrowserPanel";

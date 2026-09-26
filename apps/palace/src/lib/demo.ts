@@ -80,6 +80,28 @@ export async function sendVoiceFallback(): Promise<void> {
   }
 }
 
+/** Approve one draft; removes it locally on success. */
+export async function approveDraft(id: string): Promise<boolean> {
+  const { toast, removeDraft } = usePalaceStore.getState();
+  if (!ENGINE_URL) {
+    toast("approve draft: no engine configured");
+    return false;
+  }
+  try {
+    const res = await fetch(`${ENGINE_URL}/agent/drafts/${encodeURIComponent(id)}/approve`, { method: "POST" });
+    if (!res.ok) {
+      toast(`approve draft: engine returned ${res.status}`);
+      return false;
+    }
+    removeDraft(id);
+    toast("Message sent");
+    return true;
+  } catch {
+    toast("approve draft: engine not reachable");
+    return false;
+  }
+}
+
 /** `A`: approve every pending landlord draft. */
 export async function approveAllDrafts(): Promise<void> {
   const { toast, pendingDrafts, setPendingDrafts } = usePalaceStore.getState();

@@ -126,6 +126,10 @@ export function reduceSnapshot(snapshot: PalaceSnapshot, e: WsEvent, texture: Te
     }
     case "voice.received":
       return { snapshot, pulses: [], membershipChanged: false };
+    case "agent.drafts":
+      return { snapshot, pulses: e.payload.drafts.flatMap((d) => d.because), membershipChanged: false };
+    case "agent.draft_sent":
+      return { snapshot, pulses: e.payload.because, membershipChanged: false };
     case "snapshot":
       return { snapshot: snapshotFromEvent(e, texture), pulses: [], membershipChanged: true };
     default: {

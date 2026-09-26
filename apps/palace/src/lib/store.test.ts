@@ -28,6 +28,8 @@ function sampleEvents(): Record<WsEventType, WsEvent> {
     "procedure.step": { ...base, type: "procedure.step", payload: { procedure_id: procedure.id, run_id: "run_1", step: 2, do: "filter_listings", because: [belief.id] } },
     "clock.advanced": { ...base, type: "clock.advanced", payload: { from_day: 24, to_day: 25, levels_deleted: 0, bytes_freed: 0, captures_forgotten: 0, beliefs_decayed: 0, beliefs_forgotten: 0, rooms_dimmed: [] } },
     "voice.received": { ...base, type: "voice.received", payload: { voice_note_id: "vn_1", transcript: "I'm getting a dog" } },
+    "agent.drafts": { ...base, type: "agent.drafts", payload: { run_id: "run_1", drafts: [{ draft_id: "d1", listing_id: "listing:305", listing_title: "Sunny 1BR in Bushwick", to: "Dana Whitfield", text: "Hi Dana! Is it still available?", because: [belief.id] }] } },
+    "agent.draft_sent": { ...base, type: "agent.draft_sent", payload: { draft_id: "d1", message_id: "msg_1", because: [belief.id] } },
     snapshot: {
       ...base,
       day: 3,
@@ -111,6 +113,24 @@ describe("palace store", () => {
     const back = usePalaceStore.getState().snapshot;
     expect(back.bytes).toEqual(start.bytes);
     expect(back.captures.map((c) => c.aliveLevels)).toEqual(start.captures.map((c) => c.aliveLevels));
+  });
+
+  it("drafts arrive, open the browser panel, and clear when sent", () => {
+    const events = sampleEvents();
+    usePalaceStore.getState().setBrowserOpen(false);
+    usePalaceStore.getState().applyEvent(events["agent.drafts"]);
+    let s = usePalaceStore.getState();
+    expect(s.drafts.map((d) => d.draft_id)).toEqual(["d1"]);
+    expect(s.pendingDrafts).toEqual(["d1"]);
+    expect(s.browserOpen).toBe(true);
+    expect(s.pulses[FIXTURE_IDS.budgetPreference]).toBeGreaterThan(0);
+    usePalaceStore.getState().applyEvent(events["agent.draft_sent"]);
+    s = usePalaceStore.getState();
+    expect(s.drafts).toEqual([]);
+    expect(s.pendingDrafts).toEqual([]);
+    usePalaceStore.getState().applyEvent(events["agent.drafts"]);
+    usePalaceStore.getState().removeDraft("d1");
+    expect(usePalaceStore.getState().drafts).toEqual([]);
   });
 
   it("edits and deletes beliefs locally", () => {

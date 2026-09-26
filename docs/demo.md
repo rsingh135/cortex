@@ -26,9 +26,11 @@ Checklist:
 | --- | --- | --- | --- | --- |
 | 1 | Memory forms | Press `R`: replay of the day-2 hunt's ingest events on a timer, then the last five captures extracted live from the runner | "Maya browsed apartments. Each screenshot becomes a belief in the Housing room." | `R` replay, `Shift+R` stop |
 | 2 | Memory fades | Click fast-forward to day 24 | "Three weeks pass. What she never used blurs and vanishes. What she kept returning to stays sharp." Play the dream journal once at the end of the sweep | `J` dream journal |
-| 3 | Memory acts | Type "Find me apartments" in the mascot or the palace composer. Agent opens MockLoft in the browser window, reads six listings, skips four, drafts two messages. Approve the drafts | "It skips the walk-up, the one without laundry, the one over budget, the one off the L. Every rule it used just pulsed." | `A` approve all drafts |
+| 3 | Memory acts | Type "Find me apartments" in the mascot or the palace composer. The palace opens its browser split view (`B`) with MockLoft; the agent reads six listings, skips four, drafts two messages. The draft card appears; approve each or press `A` | "It skips the walk-up, the one without laundry, the one over budget, the one off the L. Every rule it used just pulsed." | `A` approve all drafts |
 | 4 | Memory updates | Hold to talk, say "I'm getting a dog" (or `V` for the pre-recorded WAV). The pets belief appears with a dashed thread; the procedure cracks. Re-run the hunt on the four re-run listings | "One sentence, and everything built on the old belief follows." | `V` voice fallback |
 | 5 | The proof | Open `/chart` | "Cortex keeps keep-everything's accuracy at a fraction of the storage. Six of six decisions right; no memory gets two." | `C` chart |
+
+Rehearsing beat 3 without the engine: open `/palace?demo=drafts` and the sample approval card appears after two seconds.
 
 Closing line: **Recall remembers everything. Cortex remembers you.**
 

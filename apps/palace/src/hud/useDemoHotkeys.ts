@@ -43,6 +43,9 @@ export function useDemoHotkeys(): void {
         case "approve":
           void approveAllDrafts();
           return;
+        case "browser":
+          store.setBrowserOpen(!store.browserOpen);
+          return;
       }
     };
     window.addEventListener("keydown", onKeyDown);

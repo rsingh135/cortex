@@ -3,7 +3,7 @@
  * The palace store. One zustand store, one reducer (`applyEvent`), one sweep (`setDay`).
  * Fixture mode: generated memory plus a fake ticker. Live mode: GET /snapshot, then a WebSocket.
  */
-import { WsEvent, type WsEventType } from "@cortex/schema";
+import { WsEvent, type AgentDraft, type WsEventType } from "@cortex/schema";
 import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
 import type { TextureResolver } from "./adapt";
@@ -69,6 +69,10 @@ export interface PalaceState {
   toasts: Toast[];
   /** Draft ids the agent is waiting on (beat 3); `approveAllDrafts()` posts them to the engine. */
   pendingDrafts: string[];
+  /** The drafts themselves, for the approval card. */
+  drafts: AgentDraft[];
+  /** Split view: the mock world in an iframe beside the palace during the live hunt. */
+  browserOpen: boolean;
   /** Live-hunt result for the chart page, once the engine reports it. */
   workflowScore: WorkflowScore | null;
   /** The `F` fallback video overlay. */
@@ -89,6 +93,8 @@ export interface PalaceState {
   toast(text: string): void;
   dismissToast(id: number): void;
   setPendingDrafts(ids: string[]): void;
+  removeDraft(id: string): void;
+  setBrowserOpen(open: boolean): void;
   setWorkflowScore(score: WorkflowScore | null): void;
   setFallbackOpen(open: boolean): void;
 }
@@ -162,6 +168,8 @@ export const usePalaceStore = create<PalaceState>()((set, get) => {
     replay: { status: "idle", played: 0, total: 0 },
     toasts: [],
     pendingDrafts: [],
+    drafts: [],
+    browserOpen: false,
     workflowScore: null,
     fallbackOpen: false,
 
@@ -169,6 +177,16 @@ export const usePalaceStore = create<PalaceState>()((set, get) => {
       const state = get();
       const texture = state.mode === "live" ? liveTexture : fixtureTexture(state.seed);
       const result = reduceSnapshot(state.snapshot, e, texture);
+      if (e.type === "agent.drafts") {
+        const incoming = e.payload.drafts;
+        const kept = state.drafts.filter((d) => !incoming.some((n) => n.draft_id === d.draft_id));
+        const drafts = [...kept, ...incoming];
+        set({ drafts, pendingDrafts: drafts.map((d) => d.draft_id), browserOpen: true });
+      } else if (e.type === "agent.draft_sent") {
+        set({ drafts: state.drafts.filter((d) => d.draft_id !== e.payload.draft_id), pendingDrafts: state.pendingDrafts.filter((id) => id !== e.payload.draft_id) });
+      } else if (e.type === "procedure.step" && !state.browserOpen) {
+        set({ browserOpen: true });
+      }
       set({
         snapshot: result.snapshot,
         layout: result.membershipChanged ? computeLayout(result.snapshot) : state.layout,
@@ -381,7 +399,9 @@ export const usePalaceStore = create<PalaceState>()((set, get) => {
       if (toasts.some((t) => t.id === id)) set({ toasts: toasts.filter((t) => t.id !== id) });
     },
 
-    setPendingDrafts: (pendingDrafts) => set({ pendingDrafts }),
+    setPendingDrafts: (pendingDrafts) => set({ pendingDrafts, drafts: get().drafts.filter((d) => pendingDrafts.includes(d.draft_id)) }),
+    removeDraft: (id) => set({ drafts: get().drafts.filter((d) => d.draft_id !== id), pendingDrafts: get().pendingDrafts.filter((x) => x !== id) }),
+    setBrowserOpen: (browserOpen) => set({ browserOpen }),
     setWorkflowScore: (workflowScore) => set({ workflowScore }),
     setFallbackOpen: (fallbackOpen) => set({ fallbackOpen }),
   };
@@ -425,6 +445,8 @@ export const useReplay = (): ReplayState => usePalaceStore((s) => s.replay);
 export const useToasts = (): Toast[] => usePalaceStore((s) => s.toasts);
 export const useWorkflowScore = (): WorkflowScore | null => usePalaceStore((s) => s.workflowScore);
 export const useFallbackOpen = (): boolean => usePalaceStore((s) => s.fallbackOpen);
+export const useDrafts = (): AgentDraft[] => usePalaceStore((s) => s.drafts);
+export const useBrowserOpen = (): boolean => usePalaceStore((s) => s.browserOpen);
 /** Stable action bundle; safe to destructure in components. */
 export const usePalaceActions = () =>
   usePalaceStore(
@@ -444,6 +466,8 @@ export const usePalaceActions = () =>
       stopReplay: s.stopReplay,
       toast: s.toast,
       setFallbackOpen: s.setFallbackOpen,
+      removeDraft: s.removeDraft,
+      setBrowserOpen: s.setBrowserOpen,
     })),
   );
 

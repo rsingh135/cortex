@@ -58,6 +58,10 @@ export function describeEvent(e: WsEvent, lookup: EventLookup): string {
       return `Day ${e.payload.to_day}: ${e.payload.levels_deleted} levels dropped, ${formatBytes(e.payload.bytes_freed)} freed, ${e.payload.captures_forgotten} screenshots forgotten`;
     case "voice.received":
       return `Voice note: "${truncate(e.payload.transcript, 48)}"`;
+    case "agent.drafts":
+      return `Agent drafted ${e.payload.drafts.length} landlord message${e.payload.drafts.length === 1 ? "" : "s"}, waiting for approval`;
+    case "agent.draft_sent":
+      return `Message sent to landlord (${e.payload.draft_id})`;
     case "snapshot":
       return `Snapshot: ${e.payload.beliefs.length} beliefs, ${e.payload.captures.length} captures`;
   }
