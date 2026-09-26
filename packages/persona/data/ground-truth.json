@@ -176,19 +176,19 @@
     {
       "id": "s01",
       "group": "seen_once",
-      "question": "What was the unit number of Corner 2BR in Williamsburg (listing:206)?",
-      "answer": "4R",
+      "question": "What was the unit number of Bright 2BR in Bushwick (listing:104)?",
+      "answer": "5B",
       "grading": "exact",
-      "evidence_capture_hint": "listing:206",
+      "evidence_capture_hint": "listing:104",
       "survives_at": "L1"
     },
     {
       "id": "s02",
       "group": "seen_once",
-      "question": "What was the unit number of Loft-style 1BR in Ridgewood (listing:207)?",
-      "answer": "1A",
+      "question": "What was the unit number of Bright Studio in Ridgewood (listing:212)?",
+      "answer": "1B",
       "grading": "exact",
-      "evidence_capture_hint": "listing:207",
+      "evidence_capture_hint": "listing:212",
       "survives_at": "L1"
     },
     {
@@ -203,46 +203,46 @@
     {
       "id": "s04",
       "group": "seen_once",
-      "question": "What was the unit number of Bright 2BR in Bushwick (listing:104)?",
-      "answer": "5B",
-      "grading": "exact",
-      "evidence_capture_hint": "listing:104",
-      "survives_at": "L1"
-    },
-    {
-      "id": "s05",
-      "group": "seen_once",
-      "question": "What was the unit number of Loft-style 1BR in Bushwick (listing:111)?",
-      "answer": "5C",
-      "grading": "exact",
-      "evidence_capture_hint": "listing:111",
-      "survives_at": "L1"
-    },
-    {
-      "id": "s06",
-      "group": "seen_once",
-      "question": "What color were the kitchen cabinets in listing:110?",
-      "answer": "walnut",
+      "question": "What was the unit number of Renovated 1BR in Greenpoint (listing:110)?",
+      "answer": "2F",
       "grading": "exact",
       "evidence_capture_hint": "listing:110",
       "survives_at": "L1"
     },
     {
-      "id": "s07",
+      "id": "s05",
       "group": "seen_once",
-      "question": "What color were the kitchen cabinets in listing:101?",
-      "answer": "butter yellow",
+      "question": "What was the unit number of Loft-style 2BR in East Williamsburg (listing:101)?",
+      "answer": "4B",
       "grading": "exact",
       "evidence_capture_hint": "listing:101",
       "survives_at": "L1"
     },
     {
-      "id": "s08",
+      "id": "s06",
+      "group": "seen_once",
+      "question": "What color were the kitchen cabinets in listing:102?",
+      "answer": "butter yellow",
+      "grading": "exact",
+      "evidence_capture_hint": "listing:102",
+      "survives_at": "L1"
+    },
+    {
+      "id": "s07",
       "group": "seen_once",
       "question": "What color were the kitchen cabinets in listing:210?",
       "answer": "pale grey",
       "grading": "exact",
       "evidence_capture_hint": "listing:210",
+      "survives_at": "L1"
+    },
+    {
+      "id": "s08",
+      "group": "seen_once",
+      "question": "What color were the kitchen cabinets in listing:211?",
+      "answer": "sage green",
+      "grading": "exact",
+      "evidence_capture_hint": "listing:211",
       "survives_at": "L1"
     },
     {
@@ -257,6 +257,24 @@
     {
       "id": "s10",
       "group": "seen_once",
+      "question": "What street was listing:204 on?",
+      "answer": "168 Graham Ave",
+      "grading": "exact",
+      "evidence_capture_hint": "listing:204",
+      "survives_at": "L1"
+    },
+    {
+      "id": "s11",
+      "group": "seen_once",
+      "question": "What street was listing:206 on?",
+      "answer": "506 Manhattan Ave",
+      "grading": "exact",
+      "evidence_capture_hint": "listing:206",
+      "survives_at": "L1"
+    },
+    {
+      "id": "s12",
+      "group": "seen_once",
       "question": "What street was listing:106 on?",
       "answer": "293 Grand St",
       "grading": "exact",
@@ -264,30 +282,12 @@
       "survives_at": "L1"
     },
     {
-      "id": "s11",
-      "group": "seen_once",
-      "question": "What street was listing:102 on?",
-      "answer": "851 Metropolitan Ave",
-      "grading": "exact",
-      "evidence_capture_hint": "listing:102",
-      "survives_at": "L1"
-    },
-    {
-      "id": "s12",
-      "group": "seen_once",
-      "question": "What street was listing:201 on?",
-      "answer": "246 Bedford Ave",
-      "grading": "exact",
-      "evidence_capture_hint": "listing:201",
-      "survives_at": "L1"
-    },
-    {
       "id": "s13",
       "group": "seen_once",
-      "question": "What was the listed price of listing:523 in the search results?",
-      "answer": "$2,900",
+      "question": "What was the listed price of listing:507 in the search results?",
+      "answer": "$3,400",
       "grading": "exact",
-      "evidence_capture_hint": "listing:523",
+      "evidence_capture_hint": "listing:507",
       "survives_at": "L2"
     },
     {
@@ -302,19 +302,19 @@
     {
       "id": "s15",
       "group": "seen_once",
-      "question": "What was the listed price of listing:518 in the search results?",
-      "answer": "$2,700",
+      "question": "What was the listed price of listing:505 in the search results?",
+      "answer": "$3,050",
       "grading": "exact",
-      "evidence_capture_hint": "listing:518",
+      "evidence_capture_hint": "listing:505",
       "survives_at": "L2"
     },
     {
       "id": "s16",
       "group": "seen_once",
-      "question": "What was the listed price of listing:514 in the search results?",
-      "answer": "$2,750",
+      "question": "What was the listed price of listing:520 in the search results?",
+      "answer": "$2,300",
       "grading": "exact",
-      "evidence_capture_hint": "listing:514",
+      "evidence_capture_hint": "listing:520",
       "survives_at": "L2"
     },
     {

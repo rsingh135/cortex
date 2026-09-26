@@ -85,6 +85,15 @@ describe("persona generation", () => {
     expect(new Set(script.map((s) => s.episode)).size).toBeGreaterThan(20);
   });
 
+  it("never reads a thread before its first message arrives", () => {
+    const firstDay = new Map<string, number>();
+    for (const m of persona.inbox) firstDay.set(m.thread_id, Math.min(firstDay.get(m.thread_id) ?? 99, m.day));
+    for (const s of script.filter((s) => s.action === "read")) {
+      expect(firstDay.has(s.target!), s.target).toBe(true);
+      expect(firstDay.get(s.target!)!).toBeLessThanOrEqual(s.day);
+    }
+  });
+
   it("questions are 20 / 20 / 10 with unique ids and non-empty answers", () => {
     const qs = groundTruth.questions;
     expect(qs.length).toBe(50);

@@ -30,11 +30,11 @@ export const DEFAULT_SEED = 42;
 export function generatePersona(seed: number = DEFAULT_SEED): Persona {
   const rng = mulberry32(seed);
   const listings = z.array(Listing).parse(generateListings(rng));
-  const script = z.array(ScriptStep).parse(generateScript(rng, listings));
+  const inbox = z.array(Message).parse(generateInbox(rng));
+  const script = z.array(ScriptStep).parse(generateScript(rng, listings, inbox));
   const questions = generateQuestions(rng, listings);
   const groundTruth = GroundTruth.parse({ rules: TRUE_RULES, style: STYLE, questions });
   const usageLog = z.array(UsageLogEntry).parse(generateUsageLog());
-  const inbox = z.array(Message).parse(generateInbox(rng));
   const calendar = z.array(CalendarEvent).parse(generateCalendar());
   return { listings, script, groundTruth, usageLog, inbox, calendar };
 }

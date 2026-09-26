@@ -2,7 +2,7 @@
  * Maya's month as Playwright-ready steps. Hunts on days 2 and 5, ordinary life on days 1–20.
  * Every step carries its episode id so capture records carry explicit episode boundaries.
  */
-import type { Listing } from "@cortex/schema";
+import type { Listing, Message } from "@cortex/schema";
 import type { ScriptStep } from "../index";
 import { decide, draftMessage } from "./decisions";
 import { FACTS } from "./life";
@@ -31,7 +31,8 @@ function huntSteps(rng: Rng, listings: Listing[], huntName: "hunt1" | "hunt2"): 
   return steps;
 }
 
-function lifeSteps(rng: Rng): ScriptStep[] {
+function lifeSteps(rng: Rng, inbox: readonly Message[]): ScriptStep[] {
+  const promoThreads = inbox.filter((m) => m.thread_id.startsWith("promo-"));
   const steps: ScriptStep[] = [];
   const day1 = "setup-day1";
   steps.push({ day: 1, app: "inbox", episode: day1, action: "open", target: "/inbox", pause_s: 2 });
@@ -51,13 +52,15 @@ function lifeSteps(rng: Rng): ScriptStep[] {
     if (day === FACTS.oneOnOneDay - 1) steps.push({ day, app: "inbox", episode, action: "read", target: "one-on-one", pause_s: 6 });
     if (day === FACTS.dentistDay - 2) steps.push({ day, app: "inbox", episode, action: "read", target: "dentist", pause_s: 5 });
     if (day === FACTS.leaseThreadDay || day === FACTS.leaseThreadDay + 1) steps.push({ day, app: "inbox", episode, action: "read", target: "lease", pause_s: 25 });
-    if (rng.chance(0.4)) steps.push({ day, app: "inbox", episode, action: "read", target: `promo-${rng.int(0, 9)}`, pause_s: 3 });
+    // Only read promos that have already arrived; the mock world hides mail from the future.
+    const arrived = promoThreads.filter((m) => m.day <= day);
+    if (arrived.length > 0 && rng.chance(0.4)) steps.push({ day, app: "inbox", episode, action: "read", target: rng.pick(arrived).thread_id, pause_s: 3 });
     if (day % 4 === 0) steps.push({ day, app: "calendar", episode, action: "open", target: "/calendar", pause_s: 6 });
   }
   return steps;
 }
 
-export function generateScript(rng: Rng, listings: Listing[]): ScriptStep[] {
-  const steps = [...lifeSteps(rng), ...huntSteps(rng, listings, "hunt1"), ...huntSteps(rng, listings, "hunt2")];
+export function generateScript(rng: Rng, listings: Listing[], inbox: readonly Message[]): ScriptStep[] {
+  const steps = [...lifeSteps(rng, inbox), ...huntSteps(rng, listings, "hunt1"), ...huntSteps(rng, listings, "hunt2")];
   return steps.sort((a, b) => a.day - b.day || (a.episode < b.episode ? -1 : a.episode > b.episode ? 1 : 0));
 }

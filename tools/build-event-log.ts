@@ -4,7 +4,7 @@
  * `belief.created` per decision Maya made, timed like the real run. Output validates against
  * WsEvent so replay mode and live mode share one path.
  *
- *   pnpm build-event-log [--captures <dir with captures.jsonl>] [--out apps/palace/public/demo/day2-events.jsonl]
+ *   pnpm build-event-log [--captures <dir with captures.jsonl>] [--days 2] [--out apps/palace/public/demo/day2-events.jsonl]
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -107,7 +107,13 @@ function main(): void {
   const out = arg("--out") ?? "apps/palace/public/demo/day2-events.jsonl";
   const logPath = join(capturesDir, "captures.jsonl");
   if (!existsSync(logPath)) throw new Error(`no captures.jsonl in ${capturesDir}; run pnpm play-maya first`);
-  const records = readFileSync(logPath, "utf8").trim().split("\n").map((l) => JSON.parse(l) as Record);
+  const daysArg = arg("--days");
+  const days = daysArg ? new Set(daysArg.split(",").map(Number)) : null;
+  const records = readFileSync(logPath, "utf8")
+    .trim()
+    .split("\n")
+    .map((l) => JSON.parse(l) as Record)
+    .filter((r) => !days || days.has(r.meta.day));
   const titles = new Map(loadListings().map((l) => [l._id, l.title]));
   const lines = buildEventLog(records, "/captures", titles);
   mkdirSync(dirname(out), { recursive: true });

@@ -44,204 +44,8 @@
     "app": "mockloft",
     "episode": "hunt1-day2",
     "action": "open",
-    "target": "/listings/listing:102",
-    "pause_s": 3
-  },
-  {
-    "day": 2,
-    "app": "mockloft",
-    "episode": "hunt1-day2",
-    "action": "dwell",
-    "target": "/listings/listing:102",
-    "pause_s": 16
-  },
-  {
-    "day": 2,
-    "app": "mockloft",
-    "episode": "hunt1-day2",
-    "action": "reject",
-    "target": "listing:102",
-    "pause_s": 2
-  },
-  {
-    "day": 2,
-    "app": "mockloft",
-    "episode": "hunt1-day2",
-    "action": "open",
-    "target": "/listings/listing:111",
-    "pause_s": 4
-  },
-  {
-    "day": 2,
-    "app": "mockloft",
-    "episode": "hunt1-day2",
-    "action": "dwell",
-    "target": "/listings/listing:111",
-    "pause_s": 15
-  },
-  {
-    "day": 2,
-    "app": "mockloft",
-    "episode": "hunt1-day2",
-    "action": "reject",
-    "target": "listing:111",
-    "pause_s": 3
-  },
-  {
-    "day": 2,
-    "app": "mockloft",
-    "episode": "hunt1-day2",
-    "action": "open",
-    "target": "/listings/listing:106",
-    "pause_s": 2
-  },
-  {
-    "day": 2,
-    "app": "mockloft",
-    "episode": "hunt1-day2",
-    "action": "dwell",
-    "target": "/listings/listing:106",
-    "pause_s": 15
-  },
-  {
-    "day": 2,
-    "app": "mockloft",
-    "episode": "hunt1-day2",
-    "action": "reject",
-    "target": "listing:106",
-    "pause_s": 2
-  },
-  {
-    "day": 2,
-    "app": "mockloft",
-    "episode": "hunt1-day2",
-    "action": "open",
-    "target": "/listings/listing:104",
-    "pause_s": 2
-  },
-  {
-    "day": 2,
-    "app": "mockloft",
-    "episode": "hunt1-day2",
-    "action": "dwell",
-    "target": "/listings/listing:104",
-    "pause_s": 8
-  },
-  {
-    "day": 2,
-    "app": "mockloft",
-    "episode": "hunt1-day2",
-    "action": "reject",
-    "target": "listing:104",
-    "pause_s": 3
-  },
-  {
-    "day": 2,
-    "app": "mockloft",
-    "episode": "hunt1-day2",
-    "action": "open",
-    "target": "/listings/listing:107",
-    "pause_s": 4
-  },
-  {
-    "day": 2,
-    "app": "mockloft",
-    "episode": "hunt1-day2",
-    "action": "dwell",
-    "target": "/listings/listing:107",
-    "pause_s": 16
-  },
-  {
-    "day": 2,
-    "app": "landlord_chat",
-    "episode": "hunt1-day2",
-    "action": "message",
-    "target": "listing:107",
-    "text": "Hi Sofia! I'm Maya, moving to New York Sept 1 for a new job near Union Square. Is the garden-level studio in williamsburg still available? Does the building have laundry? I'd love to see it this week if possible. Thanks!",
-    "pause_s": 30
-  },
-  {
-    "day": 2,
-    "app": "mockloft",
-    "episode": "hunt1-day2",
-    "action": "open",
-    "target": "/listings/listing:112",
-    "pause_s": 2
-  },
-  {
-    "day": 2,
-    "app": "mockloft",
-    "episode": "hunt1-day2",
-    "action": "dwell",
-    "target": "/listings/listing:112",
-    "pause_s": 13
-  },
-  {
-    "day": 2,
-    "app": "landlord_chat",
-    "episode": "hunt1-day2",
-    "action": "message",
-    "target": "listing:112",
-    "text": "Hi Jordan! I'm Maya, moving to New York Sept 1 for a new job near Union Square. Is the sunny 1br in ridgewood still available? Does the building have laundry? I'd love to see it this week if possible. Thanks!",
-    "pause_s": 33
-  },
-  {
-    "day": 2,
-    "app": "mockloft",
-    "episode": "hunt1-day2",
-    "action": "open",
-    "target": "/listings/listing:101",
-    "pause_s": 2
-  },
-  {
-    "day": 2,
-    "app": "mockloft",
-    "episode": "hunt1-day2",
-    "action": "dwell",
-    "target": "/listings/listing:101",
-    "pause_s": 16
-  },
-  {
-    "day": 2,
-    "app": "landlord_chat",
-    "episode": "hunt1-day2",
-    "action": "message",
-    "target": "listing:101",
-    "text": "Hi Priyanka! I'm Maya, moving to New York Sept 1 for a new job near Union Square. Is the loft-style 2br in east williamsburg still available? Does the building have laundry? I'd love to see it this week if possible. Thanks!",
-    "pause_s": 36
-  },
-  {
-    "day": 2,
-    "app": "mockloft",
-    "episode": "hunt1-day2",
-    "action": "open",
-    "target": "/listings/listing:103",
-    "pause_s": 3
-  },
-  {
-    "day": 2,
-    "app": "mockloft",
-    "episode": "hunt1-day2",
-    "action": "dwell",
-    "target": "/listings/listing:103",
-    "pause_s": 13
-  },
-  {
-    "day": 2,
-    "app": "landlord_chat",
-    "episode": "hunt1-day2",
-    "action": "message",
-    "target": "listing:103",
-    "text": "Hi Sofia! I'm Maya, moving to New York Sept 1 for a new job near Union Square. Is the bright 2br in bushwick still available? Does the building have laundry? I'd love to see it this week if possible. Thanks!",
-    "pause_s": 30
-  },
-  {
-    "day": 2,
-    "app": "mockloft",
-    "episode": "hunt1-day2",
-    "action": "open",
     "target": "/listings/listing:110",
-    "pause_s": 4
+    "pause_s": 2
   },
   {
     "day": 2,
@@ -249,7 +53,7 @@
     "episode": "hunt1-day2",
     "action": "dwell",
     "target": "/listings/listing:110",
-    "pause_s": 11
+    "pause_s": 9
   },
   {
     "day": 2,
@@ -264,8 +68,107 @@
     "app": "mockloft",
     "episode": "hunt1-day2",
     "action": "open",
-    "target": "/listings/listing:105",
+    "target": "/listings/listing:102",
+    "pause_s": 3
+  },
+  {
+    "day": 2,
+    "app": "mockloft",
+    "episode": "hunt1-day2",
+    "action": "dwell",
+    "target": "/listings/listing:102",
+    "pause_s": 13
+  },
+  {
+    "day": 2,
+    "app": "mockloft",
+    "episode": "hunt1-day2",
+    "action": "reject",
+    "target": "listing:102",
+    "pause_s": 3
+  },
+  {
+    "day": 2,
+    "app": "mockloft",
+    "episode": "hunt1-day2",
+    "action": "open",
+    "target": "/listings/listing:103",
+    "pause_s": 3
+  },
+  {
+    "day": 2,
+    "app": "mockloft",
+    "episode": "hunt1-day2",
+    "action": "dwell",
+    "target": "/listings/listing:103",
+    "pause_s": 11
+  },
+  {
+    "day": 2,
+    "app": "landlord_chat",
+    "episode": "hunt1-day2",
+    "action": "message",
+    "target": "listing:103",
+    "text": "Hi Sofia! I'm Maya, moving to New York Sept 1 for a new job near Union Square. Is the bright 2br in bushwick still available? Does the building have laundry? I'd love to see it this week if possible. Thanks!",
+    "pause_s": 31
+  },
+  {
+    "day": 2,
+    "app": "mockloft",
+    "episode": "hunt1-day2",
+    "action": "open",
+    "target": "/listings/listing:112",
+    "pause_s": 2
+  },
+  {
+    "day": 2,
+    "app": "mockloft",
+    "episode": "hunt1-day2",
+    "action": "dwell",
+    "target": "/listings/listing:112",
+    "pause_s": 10
+  },
+  {
+    "day": 2,
+    "app": "landlord_chat",
+    "episode": "hunt1-day2",
+    "action": "message",
+    "target": "listing:112",
+    "text": "Hi Jordan! I'm Maya, moving to New York Sept 1 for a new job near Union Square. Is the sunny 1br in ridgewood still available? Does the building have laundry? I'd love to see it this week if possible. Thanks!",
+    "pause_s": 40
+  },
+  {
+    "day": 2,
+    "app": "mockloft",
+    "episode": "hunt1-day2",
+    "action": "open",
+    "target": "/listings/listing:101",
     "pause_s": 4
+  },
+  {
+    "day": 2,
+    "app": "mockloft",
+    "episode": "hunt1-day2",
+    "action": "dwell",
+    "target": "/listings/listing:101",
+    "pause_s": 13
+  },
+  {
+    "day": 2,
+    "app": "landlord_chat",
+    "episode": "hunt1-day2",
+    "action": "message",
+    "target": "listing:101",
+    "text": "Hi Priyanka! I'm Maya, moving to New York Sept 1 for a new job near Union Square. Is the loft-style 2br in east williamsburg still available? Does the building have laundry? I'd love to see it this week if possible. Thanks!",
+    "pause_s": 31
+  },
+  {
+    "day": 2,
+    "app": "mockloft",
+    "episode": "hunt1-day2",
+    "action": "open",
+    "target": "/listings/listing:105",
+    "pause_s": 2
   },
   {
     "day": 2,
@@ -283,6 +186,103 @@
     "target": "listing:105",
     "text": "Hi Marcus! I'm Maya, moving to New York Sept 1 for a new job near Union Square. Is the loft-style 1br in williamsburg still available? Does the building have laundry? I'd love to see it this week if possible. Thanks!",
     "pause_s": 38
+  },
+  {
+    "day": 2,
+    "app": "mockloft",
+    "episode": "hunt1-day2",
+    "action": "open",
+    "target": "/listings/listing:111",
+    "pause_s": 2
+  },
+  {
+    "day": 2,
+    "app": "mockloft",
+    "episode": "hunt1-day2",
+    "action": "dwell",
+    "target": "/listings/listing:111",
+    "pause_s": 10
+  },
+  {
+    "day": 2,
+    "app": "mockloft",
+    "episode": "hunt1-day2",
+    "action": "reject",
+    "target": "listing:111",
+    "pause_s": 3
+  },
+  {
+    "day": 2,
+    "app": "mockloft",
+    "episode": "hunt1-day2",
+    "action": "open",
+    "target": "/listings/listing:104",
+    "pause_s": 3
+  },
+  {
+    "day": 2,
+    "app": "mockloft",
+    "episode": "hunt1-day2",
+    "action": "dwell",
+    "target": "/listings/listing:104",
+    "pause_s": 10
+  },
+  {
+    "day": 2,
+    "app": "mockloft",
+    "episode": "hunt1-day2",
+    "action": "reject",
+    "target": "listing:104",
+    "pause_s": 1
+  },
+  {
+    "day": 2,
+    "app": "mockloft",
+    "episode": "hunt1-day2",
+    "action": "open",
+    "target": "/listings/listing:106",
+    "pause_s": 2
+  },
+  {
+    "day": 2,
+    "app": "mockloft",
+    "episode": "hunt1-day2",
+    "action": "dwell",
+    "target": "/listings/listing:106",
+    "pause_s": 10
+  },
+  {
+    "day": 2,
+    "app": "mockloft",
+    "episode": "hunt1-day2",
+    "action": "reject",
+    "target": "listing:106",
+    "pause_s": 3
+  },
+  {
+    "day": 2,
+    "app": "mockloft",
+    "episode": "hunt1-day2",
+    "action": "open",
+    "target": "/listings/listing:107",
+    "pause_s": 4
+  },
+  {
+    "day": 2,
+    "app": "mockloft",
+    "episode": "hunt1-day2",
+    "action": "dwell",
+    "target": "/listings/listing:107",
+    "pause_s": 13
+  },
+  {
+    "day": 2,
+    "app": "landlord_chat",
+    "episode": "hunt1-day2",
+    "action": "message",
+    "target": "listing:107",
+    "text": "Hi Sofia! I'm Maya, moving to New York Sept 1 for a new job near Union Square. Is the garden-level studio in williamsburg still available? Does the building have laundry? I'd love to see it this week if possible. Thanks!",
+    "pause_s": 28
   },
   {
     "day": 2,
@@ -309,14 +309,6 @@
     "pause_s": 6
   },
   {
-    "day": 2,
-    "app": "inbox",
-    "episode": "life-day2",
-    "action": "read",
-    "target": "promo-7",
-    "pause_s": 3
-  },
-  {
     "day": 3,
     "app": "inbox",
     "episode": "life-day3",
@@ -331,6 +323,14 @@
     "action": "read",
     "target": "gym",
     "pause_s": 6
+  },
+  {
+    "day": 3,
+    "app": "inbox",
+    "episode": "life-day3",
+    "action": "read",
+    "target": "promo-9",
+    "pause_s": 3
   },
   {
     "day": 4,
@@ -358,6 +358,14 @@
   },
   {
     "day": 4,
+    "app": "inbox",
+    "episode": "life-day4",
+    "action": "read",
+    "target": "promo-9",
+    "pause_s": 3
+  },
+  {
+    "day": 4,
     "app": "calendar",
     "episode": "life-day4",
     "action": "open",
@@ -386,7 +394,7 @@
     "episode": "hunt2-day5",
     "action": "open",
     "target": "/listings/listing:201",
-    "pause_s": 2
+    "pause_s": 4
   },
   {
     "day": 5,
@@ -394,7 +402,7 @@
     "episode": "hunt2-day5",
     "action": "dwell",
     "target": "/listings/listing:201",
-    "pause_s": 10
+    "pause_s": 15
   },
   {
     "day": 5,
@@ -403,81 +411,7 @@
     "action": "message",
     "target": "listing:201",
     "text": "Hi Tom! I'm Maya, moving to New York Sept 1 for a new job near Union Square. Is the loft-style 1br in williamsburg still available? Does the building have laundry? I'd love to see it this week if possible. Thanks!",
-    "pause_s": 40
-  },
-  {
-    "day": 5,
-    "app": "mockloft",
-    "episode": "hunt2-day5",
-    "action": "open",
-    "target": "/listings/listing:206",
-    "pause_s": 4
-  },
-  {
-    "day": 5,
-    "app": "mockloft",
-    "episode": "hunt2-day5",
-    "action": "dwell",
-    "target": "/listings/listing:206",
-    "pause_s": 13
-  },
-  {
-    "day": 5,
-    "app": "mockloft",
-    "episode": "hunt2-day5",
-    "action": "reject",
-    "target": "listing:206",
-    "pause_s": 2
-  },
-  {
-    "day": 5,
-    "app": "mockloft",
-    "episode": "hunt2-day5",
-    "action": "open",
-    "target": "/listings/listing:212",
-    "pause_s": 2
-  },
-  {
-    "day": 5,
-    "app": "mockloft",
-    "episode": "hunt2-day5",
-    "action": "dwell",
-    "target": "/listings/listing:212",
-    "pause_s": 8
-  },
-  {
-    "day": 5,
-    "app": "landlord_chat",
-    "episode": "hunt2-day5",
-    "action": "message",
-    "target": "listing:212",
-    "text": "Hi Jordan! I'm Maya, moving to New York Sept 1 for a new job near Union Square. Is the bright studio in ridgewood still available? Does the building have laundry? I'd love to see it this week if possible. Thanks!",
-    "pause_s": 38
-  },
-  {
-    "day": 5,
-    "app": "mockloft",
-    "episode": "hunt2-day5",
-    "action": "open",
-    "target": "/listings/listing:205",
-    "pause_s": 2
-  },
-  {
-    "day": 5,
-    "app": "mockloft",
-    "episode": "hunt2-day5",
-    "action": "dwell",
-    "target": "/listings/listing:205",
-    "pause_s": 10
-  },
-  {
-    "day": 5,
-    "app": "landlord_chat",
-    "episode": "hunt2-day5",
-    "action": "message",
-    "target": "listing:205",
-    "text": "Hi Priyanka! I'm Maya, moving to New York Sept 1 for a new job near Union Square. Is the corner 2br in williamsburg still available? Does the building have laundry? I'd love to see it this week if possible. Thanks!",
-    "pause_s": 40
+    "pause_s": 32
   },
   {
     "day": 5,
@@ -485,7 +419,7 @@
     "episode": "hunt2-day5",
     "action": "open",
     "target": "/listings/listing:204",
-    "pause_s": 3
+    "pause_s": 2
   },
   {
     "day": 5,
@@ -509,30 +443,6 @@
     "episode": "hunt2-day5",
     "action": "open",
     "target": "/listings/listing:211",
-    "pause_s": 2
-  },
-  {
-    "day": 5,
-    "app": "mockloft",
-    "episode": "hunt2-day5",
-    "action": "dwell",
-    "target": "/listings/listing:211",
-    "pause_s": 10
-  },
-  {
-    "day": 5,
-    "app": "mockloft",
-    "episode": "hunt2-day5",
-    "action": "reject",
-    "target": "listing:211",
-    "pause_s": 3
-  },
-  {
-    "day": 5,
-    "app": "mockloft",
-    "episode": "hunt2-day5",
-    "action": "open",
-    "target": "/listings/listing:207",
     "pause_s": 4
   },
   {
@@ -540,8 +450,57 @@
     "app": "mockloft",
     "episode": "hunt2-day5",
     "action": "dwell",
+    "target": "/listings/listing:211",
+    "pause_s": 8
+  },
+  {
+    "day": 5,
+    "app": "mockloft",
+    "episode": "hunt2-day5",
+    "action": "reject",
+    "target": "listing:211",
+    "pause_s": 2
+  },
+  {
+    "day": 5,
+    "app": "mockloft",
+    "episode": "hunt2-day5",
+    "action": "open",
+    "target": "/listings/listing:212",
+    "pause_s": 4
+  },
+  {
+    "day": 5,
+    "app": "mockloft",
+    "episode": "hunt2-day5",
+    "action": "dwell",
+    "target": "/listings/listing:212",
+    "pause_s": 10
+  },
+  {
+    "day": 5,
+    "app": "landlord_chat",
+    "episode": "hunt2-day5",
+    "action": "message",
+    "target": "listing:212",
+    "text": "Hi Jordan! I'm Maya, moving to New York Sept 1 for a new job near Union Square. Is the bright studio in ridgewood still available? Does the building have laundry? I'd love to see it this week if possible. Thanks!",
+    "pause_s": 20
+  },
+  {
+    "day": 5,
+    "app": "mockloft",
+    "episode": "hunt2-day5",
+    "action": "open",
     "target": "/listings/listing:207",
-    "pause_s": 13
+    "pause_s": 3
+  },
+  {
+    "day": 5,
+    "app": "mockloft",
+    "episode": "hunt2-day5",
+    "action": "dwell",
+    "target": "/listings/listing:207",
+    "pause_s": 8
   },
   {
     "day": 5,
@@ -550,7 +509,81 @@
     "action": "message",
     "target": "listing:207",
     "text": "Hi Grace! I'm Maya, moving to New York Sept 1 for a new job near Union Square. Is the loft-style 1br in ridgewood still available? Does the building have laundry? I'd love to see it this week if possible. Thanks!",
-    "pause_s": 28
+    "pause_s": 36
+  },
+  {
+    "day": 5,
+    "app": "mockloft",
+    "episode": "hunt2-day5",
+    "action": "open",
+    "target": "/listings/listing:203",
+    "pause_s": 3
+  },
+  {
+    "day": 5,
+    "app": "mockloft",
+    "episode": "hunt2-day5",
+    "action": "dwell",
+    "target": "/listings/listing:203",
+    "pause_s": 10
+  },
+  {
+    "day": 5,
+    "app": "landlord_chat",
+    "episode": "hunt2-day5",
+    "action": "message",
+    "target": "listing:203",
+    "text": "Hi Omar! I'm Maya, moving to New York Sept 1 for a new job near Union Square. Is the garden-level 2br in bushwick still available? Does the building have laundry? I'd love to see it this week if possible. Thanks!",
+    "pause_s": 33
+  },
+  {
+    "day": 5,
+    "app": "mockloft",
+    "episode": "hunt2-day5",
+    "action": "open",
+    "target": "/listings/listing:205",
+    "pause_s": 3
+  },
+  {
+    "day": 5,
+    "app": "mockloft",
+    "episode": "hunt2-day5",
+    "action": "dwell",
+    "target": "/listings/listing:205",
+    "pause_s": 12
+  },
+  {
+    "day": 5,
+    "app": "landlord_chat",
+    "episode": "hunt2-day5",
+    "action": "message",
+    "target": "listing:205",
+    "text": "Hi Priyanka! I'm Maya, moving to New York Sept 1 for a new job near Union Square. Is the corner 2br in williamsburg still available? Does the building have laundry? I'd love to see it this week if possible. Thanks!",
+    "pause_s": 37
+  },
+  {
+    "day": 5,
+    "app": "mockloft",
+    "episode": "hunt2-day5",
+    "action": "open",
+    "target": "/listings/listing:206",
+    "pause_s": 4
+  },
+  {
+    "day": 5,
+    "app": "mockloft",
+    "episode": "hunt2-day5",
+    "action": "dwell",
+    "target": "/listings/listing:206",
+    "pause_s": 9
+  },
+  {
+    "day": 5,
+    "app": "mockloft",
+    "episode": "hunt2-day5",
+    "action": "reject",
+    "target": "listing:206",
+    "pause_s": 1
   },
   {
     "day": 5,
@@ -566,7 +599,7 @@
     "episode": "hunt2-day5",
     "action": "dwell",
     "target": "/listings/listing:202",
-    "pause_s": 9
+    "pause_s": 15
   },
   {
     "day": 5,
@@ -581,33 +614,8 @@
     "app": "mockloft",
     "episode": "hunt2-day5",
     "action": "open",
-    "target": "/listings/listing:203",
-    "pause_s": 3
-  },
-  {
-    "day": 5,
-    "app": "mockloft",
-    "episode": "hunt2-day5",
-    "action": "dwell",
-    "target": "/listings/listing:203",
-    "pause_s": 13
-  },
-  {
-    "day": 5,
-    "app": "landlord_chat",
-    "episode": "hunt2-day5",
-    "action": "message",
-    "target": "listing:203",
-    "text": "Hi Omar! I'm Maya, moving to New York Sept 1 for a new job near Union Square. Is the garden-level 2br in bushwick still available? Does the building have laundry? I'd love to see it this week if possible. Thanks!",
-    "pause_s": 27
-  },
-  {
-    "day": 5,
-    "app": "mockloft",
-    "episode": "hunt2-day5",
-    "action": "open",
     "target": "/listings/listing:210",
-    "pause_s": 3
+    "pause_s": 2
   },
   {
     "day": 5,
@@ -615,7 +623,7 @@
     "episode": "hunt2-day5",
     "action": "dwell",
     "target": "/listings/listing:210",
-    "pause_s": 12
+    "pause_s": 10
   },
   {
     "day": 5,
@@ -623,7 +631,7 @@
     "episode": "hunt2-day5",
     "action": "reject",
     "target": "listing:210",
-    "pause_s": 2
+    "pause_s": 1
   },
   {
     "day": 5,
@@ -632,6 +640,14 @@
     "action": "open",
     "target": "/inbox",
     "pause_s": 2
+  },
+  {
+    "day": 5,
+    "app": "inbox",
+    "episode": "life-day5",
+    "action": "read",
+    "target": "promo-9",
+    "pause_s": 3
   },
   {
     "day": 6,
@@ -674,14 +690,6 @@
     "pause_s": 12
   },
   {
-    "day": 7,
-    "app": "inbox",
-    "episode": "life-day7",
-    "action": "read",
-    "target": "promo-5",
-    "pause_s": 3
-  },
-  {
     "day": 8,
     "app": "inbox",
     "episode": "life-day8",
@@ -720,14 +728,6 @@
     "action": "read",
     "target": "newsletter",
     "pause_s": 6
-  },
-  {
-    "day": 9,
-    "app": "inbox",
-    "episode": "life-day9",
-    "action": "read",
-    "target": "promo-4",
-    "pause_s": 3
   },
   {
     "day": 10,
@@ -774,7 +774,7 @@
     "app": "inbox",
     "episode": "life-day11",
     "action": "read",
-    "target": "promo-6",
+    "target": "promo-2",
     "pause_s": 3
   },
   {
@@ -790,7 +790,7 @@
     "app": "inbox",
     "episode": "life-day12",
     "action": "read",
-    "target": "promo-1",
+    "target": "promo-5",
     "pause_s": 3
   },
   {
@@ -824,6 +824,14 @@
     "action": "open",
     "target": "/calendar",
     "pause_s": 8
+  },
+  {
+    "day": 13,
+    "app": "inbox",
+    "episode": "life-day13",
+    "action": "read",
+    "target": "promo-2",
+    "pause_s": 3
   },
   {
     "day": 14,
@@ -882,6 +890,14 @@
     "pause_s": 2
   },
   {
+    "day": 17,
+    "app": "inbox",
+    "episode": "life-day17",
+    "action": "read",
+    "target": "promo-2",
+    "pause_s": 3
+  },
+  {
     "day": 18,
     "app": "inbox",
     "episode": "life-day18",
@@ -920,6 +936,14 @@
     "action": "read",
     "target": "lease",
     "pause_s": 25
+  },
+  {
+    "day": 19,
+    "app": "inbox",
+    "episode": "life-day19",
+    "action": "read",
+    "target": "promo-1",
+    "pause_s": 3
   },
   {
     "day": 20,

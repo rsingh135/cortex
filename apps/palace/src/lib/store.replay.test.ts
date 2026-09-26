@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { usePalaceStore } from "./store";
 
 const LOG = readFileSync(join(__dirname, "..", "..", "public", "demo", "day2-events.jsonl"), "utf8");
+const LOG_EVENTS = LOG.split("\n").filter((l) => l.trim().length > 0).length;
 
 describe("replay mode", () => {
   beforeEach(() => {
@@ -25,7 +26,7 @@ describe("replay mode", () => {
     await start;
     let s = usePalaceStore.getState();
     expect(s.replay.status).toBe("playing");
-    expect(s.replay.total).toBe(76);
+    expect(s.replay.total).toBe(LOG_EVENTS);
     expect(s.snapshot.day).toBe(2);
     expect(s.snapshot.captures.length).toBeLessThanOrEqual(1);
 

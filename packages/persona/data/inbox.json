@@ -44,12 +44,12 @@
     "sent_by": "world"
   },
   {
-    "_id": "msg_022",
-    "thread_id": "promo-1",
+    "_id": "msg_030",
+    "thread_id": "promo-9",
     "kind": "inbox",
     "from": "Coffee Club <news@beans.example>",
     "to": "maya@example.com",
-    "subject": "New in store",
+    "subject": "Weekend sale",
     "body": "Promotional email. Nothing important.",
     "day": 3,
     "sent_by": "world"
@@ -63,6 +63,17 @@
     "subject": "Design review 4",
     "body": "Design review today at 2:00 PM in the Fern room. Bring the onboarding flow.",
     "day": 4,
+    "sent_by": "world"
+  },
+  {
+    "_id": "msg_026",
+    "thread_id": "promo-5",
+    "kind": "inbox",
+    "from": "Coffee Club <news@beans.example>",
+    "to": "maya@example.com",
+    "subject": "We miss you",
+    "body": "Promotional email. Nothing important.",
+    "day": 5,
     "sent_by": "world"
   },
   {
@@ -88,14 +99,36 @@
     "sent_by": "world"
   },
   {
-    "_id": "msg_023",
-    "thread_id": "promo-2",
+    "_id": "msg_021",
+    "thread_id": "promo-0",
     "kind": "inbox",
     "from": "Bike Share <ride@citybike.example>",
     "to": "maya@example.com",
     "subject": "We miss you",
     "body": "Promotional email. Nothing important.",
-    "day": 7,
+    "day": 8,
+    "sent_by": "world"
+  },
+  {
+    "_id": "msg_024",
+    "thread_id": "promo-3",
+    "kind": "inbox",
+    "from": "Coffee Club <news@beans.example>",
+    "to": "maya@example.com",
+    "subject": "Your monthly summary",
+    "body": "Promotional email. Nothing important.",
+    "day": 8,
+    "sent_by": "world"
+  },
+  {
+    "_id": "msg_025",
+    "thread_id": "promo-4",
+    "kind": "inbox",
+    "from": "Bike Share <ride@citybike.example>",
+    "to": "maya@example.com",
+    "subject": "Your monthly summary",
+    "body": "Promotional email. Nothing important.",
+    "day": 8,
     "sent_by": "world"
   },
   {
@@ -121,6 +154,28 @@
     "sent_by": "world"
   },
   {
+    "_id": "msg_023",
+    "thread_id": "promo-2",
+    "kind": "inbox",
+    "from": "Coffee Club <news@beans.example>",
+    "to": "maya@example.com",
+    "subject": "We miss you",
+    "body": "Promotional email. Nothing important.",
+    "day": 9,
+    "sent_by": "world"
+  },
+  {
+    "_id": "msg_029",
+    "thread_id": "promo-8",
+    "kind": "inbox",
+    "from": "Bike Share <ride@citybike.example>",
+    "to": "maya@example.com",
+    "subject": "Your monthly summary",
+    "body": "Promotional email. Nothing important.",
+    "day": 10,
+    "sent_by": "world"
+  },
+  {
     "_id": "msg_004",
     "thread_id": "design-review",
     "kind": "inbox",
@@ -143,17 +198,6 @@
     "sent_by": "world"
   },
   {
-    "_id": "msg_026",
-    "thread_id": "promo-5",
-    "kind": "inbox",
-    "from": "Coffee Club <news@beans.example>",
-    "to": "maya@example.com",
-    "subject": "We miss you",
-    "body": "Promotional email. Nothing important.",
-    "day": 12,
-    "sent_by": "world"
-  },
-  {
     "_id": "msg_005",
     "thread_id": "design-review",
     "kind": "inbox",
@@ -165,25 +209,14 @@
     "sent_by": "world"
   },
   {
-    "_id": "msg_030",
-    "thread_id": "promo-9",
-    "kind": "inbox",
-    "from": "Plant Shop <hi@leafy.example>",
-    "to": "maya@example.com",
-    "subject": "Your monthly summary",
-    "body": "Promotional email. Nothing important.",
-    "day": 13,
-    "sent_by": "world"
-  },
-  {
-    "_id": "msg_029",
-    "thread_id": "promo-8",
+    "_id": "msg_027",
+    "thread_id": "promo-6",
     "kind": "inbox",
     "from": "Bike Share <ride@citybike.example>",
     "to": "maya@example.com",
-    "subject": "Your monthly summary",
+    "subject": "We miss you",
     "body": "Promotional email. Nothing important.",
-    "day": 14,
+    "day": 13,
     "sent_by": "world"
   },
   {
@@ -209,23 +242,12 @@
     "sent_by": "world"
   },
   {
-    "_id": "msg_024",
-    "thread_id": "promo-3",
+    "_id": "msg_022",
+    "thread_id": "promo-1",
     "kind": "inbox",
-    "from": "Bike Share <ride@citybike.example>",
+    "from": "Coffee Club <news@beans.example>",
     "to": "maya@example.com",
-    "subject": "Weekend sale",
-    "body": "Promotional email. Nothing important.",
-    "day": 17,
-    "sent_by": "world"
-  },
-  {
-    "_id": "msg_027",
-    "thread_id": "promo-6",
-    "kind": "inbox",
-    "from": "Bike Share <ride@citybike.example>",
-    "to": "maya@example.com",
-    "subject": "We miss you",
+    "subject": "Your monthly summary",
     "body": "Promotional email. Nothing important.",
     "day": 17,
     "sent_by": "world"
@@ -242,17 +264,6 @@
     "sent_by": "world"
   },
   {
-    "_id": "msg_025",
-    "thread_id": "promo-4",
-    "kind": "inbox",
-    "from": "Plant Shop <hi@leafy.example>",
-    "to": "maya@example.com",
-    "subject": "Your monthly summary",
-    "body": "Promotional email. Nothing important.",
-    "day": 18,
-    "sent_by": "world"
-  },
-  {
     "_id": "msg_018",
     "thread_id": "lease",
     "kind": "inbox",
@@ -260,17 +271,6 @@
     "to": "maya@example.com",
     "subject": "Lease for 88 Wyckoff Ave, Apt 3B",
     "body": "Great news, the landlord accepted. Lease signing is October 15 at 10 AM at our office. Security deposit $2,750, first month due at signing.",
-    "day": 19,
-    "sent_by": "world"
-  },
-  {
-    "_id": "msg_021",
-    "thread_id": "promo-0",
-    "kind": "inbox",
-    "from": "Coffee Club <news@beans.example>",
-    "to": "maya@example.com",
-    "subject": "Weekend sale",
-    "body": "Promotional email. Nothing important.",
     "day": 19,
     "sent_by": "world"
   },
@@ -300,11 +300,11 @@
     "_id": "msg_028",
     "thread_id": "promo-7",
     "kind": "inbox",
-    "from": "Bike Share <ride@citybike.example>",
+    "from": "Coffee Club <news@beans.example>",
     "to": "maya@example.com",
-    "subject": "We miss you",
+    "subject": "New in store",
     "body": "Promotional email. Nothing important.",
-    "day": 22,
+    "day": 21,
     "sent_by": "world"
   },
   {
