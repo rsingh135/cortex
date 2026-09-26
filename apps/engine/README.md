@@ -16,14 +16,19 @@ pnpm --filter @cortex/engine typecheck && pnpm --filter @cortex/engine lint && p
 | --- | --- | --- | --- |
 | `src/ingest/policy.ts` | done | Capture pipeline | Pure decision: which browser signals capture (load, actionable click, submit, dwell ≥ 10s), never scroll; near-duplicate by phash distance ≤ 4 |
 | `src/ingest/phash.ts` | done | Capture pipeline | 64-bit average hash with sharp + Hamming distance |
-| `src/ingest/intake.ts` | done | Capture pipeline, Data model | Validated PNG/WebP → contextual deduplication → canonical capture, image ladder, all condition ledgers, episode count; extraction remains pending |
+| `src/ingest/intake.ts` | done | Capture pipeline, Data model | Validated PNG/WebP → contextual deduplication → canonical capture, image ladder, all condition ledgers, episode count; the API enqueues the capture for background extraction |
 | `src/ingest/episodes.ts` | metadata summaries | Capture pipeline | Start/end episodes and create a recallable activity summary with screenshot evidence |
 | `src/ladder/` | done | Forgetting engine › resolution ladder | `buildLadder`: L0 full, L1 ½, L2 ¼, L3 ⅛, all WebP q80; `degradeForServing` for the served level |
 | `src/forgetting/plan.ts` | done | Forgetting engine, Parameters | Pure `planSweep` (levels to delete, ceilings, clarity, confidences, forgotten beliefs) and `planRecall` (cascade to evidence) using `@cortex/schema` math |
 | `src/forgetting/sweep.ts` | ledger mode | Forgetting engine › two clocks | Applies `planSweep` through transactional `MemoryStore`; writes `daily_stats` |
 | `src/db/repo.ts` | partial | Data model, Atlas load-bearing | Repository interface; Mongo implementation has trivial reads, the rest `NotImplemented` |
-| `src/extraction/` | ready | Belief extraction | System prompt, strict zod output, `client.beta.messages.parse` on `claude-sonnet-5` with the L1 image. Needs `ANTHROPIC_API_KEY` and LangSmith wrapping |
-| `src/consolidation/` | stub | Belief extraction › consolidation | Exact → near (cosine ≥ 0.9) → conflict/supersede; algorithm in the doc comment |
+| `src/ai/` | done | — | One Anthropic client (LangSmith-wrapped when `LANGSMITH_API_KEY` is set) and the `Llm` structured-output interface every model call goes through; tests inject a fake |
+| `src/extraction/` | done | Belief extraction | `queue.ts` runs extraction in the background (concurrency 2) on the L1 rung + page text + previous 3 captures; `apply.ts` writes beliefs, per-condition state, evidence edges, listing attrs, deletes `page_text`. `EXTRACTION_ENABLED=false` turns it off |
+| `src/consolidation/` | exact | Belief extraction › consolidation | Exact (s,p,o) match reinforces in every condition and appends evidence; near-match (`$vectorSearch`) and conflict/supersede remain TODO |
+| `src/map/` | done | The agent's 2D map | `buildMap`: per-room counts, top 4 by confidence, procedures, cracked, recent changes; `GET /map` |
+| `src/router/` | done | The agent › routing | `claude-sonnet-5` structured call with a keyword heuristic fallback; `POST /route` |
+| `src/ask/` | done | The agent, Mascot | `POST /ask`: route → map + recall (ledger path, `dry_run` honoured) → `claude-opus-5` answer citing recalled belief ids → optional ElevenLabs audio at `GET /audio/:id` |
+| `src/voice/tts.ts` | done | Voice notes › TTS | ElevenLabs TTS with premade-voice fallback on 402 (issue #3); in-memory audio store |
 | `src/recall/rank.ts` | done | The agent › recall | relevance × confidence × clarity |
 | `src/recall/embed.ts` | partial | Data model | HTTPS Voyage/Atlas client with 512-dim validation; int8 pack/unpack + cosine |
 | `src/recall/search.ts` | exact/text | The agent › recall, Evaluation | Room filters, exact subject first, text fallback, rank, one-hop evidence cascade, read-only `dry_run`; vector fallback pending |
@@ -33,14 +38,14 @@ pnpm --filter @cortex/engine typecheck && pnpm --filter @cortex/engine lint && p
 | `src/propagation/` | stub | Voice notes › propagation | `$graphLookup` + `decision_attributes` match → crack/heal |
 | `src/live/events.ts` | partial, not wired | The palace › rendering | Semantic event translator scaffold; ledger writes currently synchronize through full snapshots |
 | `src/live/server.ts` | snapshots | The palace › rendering | One filtered database change stream, condition-specific snapshots on connect and after committed changes |
-| `src/api/app.ts` | partial | contracts.md | Every route, validated with `@cortex/schema/api`; handlers return 501 until wired |
+| `src/api/app.ts` | partial | contracts.md | Every route, validated with `@cortex/schema/api`; `/learn`, `/voice`, `/agent/*` still return 501 |
 
 Unimplemented HTTP handlers return 501; module stubs throw `NotImplemented("<module>")` from `src/lib/errors.ts`.
 
 ## Build order
 
-1. Wire screenshot extraction and consolidation into the transactional ledger.
-2. Embed beliefs and add vector fallback to recall.
+1. ~~Wire screenshot extraction and consolidation into the transactional ledger.~~ Done (exact-match consolidation; near-match and supersede pending).
+2. Embed beliefs and add vector fallback to recall and consolidation.
 3. Add semantic live events for mascot recall/forgetting reactions.
 4. Learner → propagation → agent → voice → eval harness.
 
