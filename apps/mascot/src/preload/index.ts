@@ -4,6 +4,7 @@ import type { AskResponse } from "@cortex/schema";
 import { IPC, type MascotBridge, type MascotEvent } from "../shared/types";
 
 const bridge: MascotBridge = {
+  moveWindow: (x, y) => ipcRenderer.send(IPC.move, { x, y }),
   onCursor: (cb) => {
     const handler = (_e: IpcRendererEvent, point: { x: number; y: number }) => cb(point);
     ipcRenderer.on(IPC.cursor, handler);

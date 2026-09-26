@@ -2,8 +2,8 @@
  * The pet, Codex-style: the portrait with two mini buttons underneath (Talk, Type). No panel.
  * Talk streams the microphone, stops on a second press, and sends the transcript to the engine;
  * Type shows a one-line field. Answers appear in a small bubble above the pet and are spoken.
- * Dragging is native (`-webkit-app-region: drag` on the portrait), so the window follows the
- * cursor at the OS frame rate wherever it is on screen.
+ * Dragging the portrait sends the cursor's screen position to main on every pointer move, which
+ * repositions the window immediately, so the pet can go anywhere on screen with no polling lag.
  */
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { Bubble } from "./components/Bubble";
@@ -21,6 +21,7 @@ export function App() {
   const [draft, setDraft] = useState("");
   const [showBubble, setShowBubble] = useState(false);
   const input = useRef<HTMLInputElement>(null);
+  const grab = useRef<{ x: number; y: number; moved: boolean } | null>(null);
   const fail = useCallback((message: string) => dispatch({ type: "failed", message }), [dispatch]);
   const voice = useVoiceInput(fail);
   const busy = pet === "thinking" || pet === "speaking";
@@ -128,7 +129,30 @@ export function App() {
         </div>
       )}
       <div className="pet-dock" data-interactive>
-        <div className="pet-handle" title="Drag to move Cortex · ⌥V to talk">
+        <div
+          className="pet-handle"
+          title="Drag to move Cortex · ⌥V to talk"
+          onPointerDown={(e) => {
+            if (e.button !== 0) return;
+            grab.current = { x: e.clientX, y: e.clientY, moved: false };
+            window.mascot?.setClickThrough(false);
+            e.currentTarget.setPointerCapture(e.pointerId);
+          }}
+          onPointerMove={(e) => {
+            const g = grab.current;
+            if (!g) return;
+            if (!g.moved && Math.hypot(e.clientX - g.x, e.clientY - g.y) < 3) return;
+            g.moved = true;
+            window.mascot?.moveWindow?.(e.screenX - g.x, e.screenY - g.y);
+          }}
+          onPointerUp={(e) => {
+            grab.current = null;
+            if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
+          }}
+          onPointerCancel={() => {
+            grab.current = null;
+          }}
+        >
           <Pet state={pet} reaction={reaction} />
         </div>
         {status ? (

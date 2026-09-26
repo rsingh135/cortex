@@ -57,7 +57,7 @@ function createWindow(): BrowserWindow {
   } else {
     void w.loadFile(join(__dirname, "../renderer/index.html"));
   }
-  // Eye tracking only; window movement is native (-webkit-app-region: drag on the portrait).
+  // Eye tracking only; window movement comes from the renderer's drag events (IPC.move).
   const cursorTimer = setInterval(() => {
     if (w.isDestroyed() || !w.isVisible()) return;
     const point = screen.getCursorScreenPoint();
@@ -163,6 +163,12 @@ app.whenReady().then(() => {
     if (typeof text !== "string" || text.trim().length === 0) throw new Error("ask: text required");
     const speak = typeof opts === "object" && opts !== null && (opts as { speak?: unknown }).speak === true;
     return ask(text, speak);
+  });
+  ipcMain.on(IPC.move, (_e, pos: unknown) => {
+    if (!win || typeof pos !== "object" || pos === null) return;
+    const { x, y } = pos as { x?: unknown; y?: unknown };
+    if (typeof x !== "number" || typeof y !== "number" || !Number.isFinite(x) || !Number.isFinite(y)) return;
+    win.setPosition(Math.round(x), Math.round(y));
   });
   ipcMain.on(IPC.setClickThrough, (_e, enabled: unknown) => {
     win?.setIgnoreMouseEvents(enabled === true, { forward: true });

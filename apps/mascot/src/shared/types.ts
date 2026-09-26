@@ -6,6 +6,8 @@ import type { AskResponse, WsEvent } from "@cortex/schema";
 
 export const IPC = {
   cursor: "mascot:cursor",
+  /** Renderer -> main: put the window's top-left at these screen coordinates (drag). */
+  move: "mascot:move",
   ask: "mascot:ask",
   saveMemory: "mascot:save-memory",
   listMemories: "mascot:list-memories",
@@ -49,6 +51,8 @@ export interface MascotBridge {
   setClickThrough(enabled: boolean): void;
   /** Subscribe to forwarded engine events. Returns an unsubscribe function. */
   onEvent(cb: (event: MascotEvent) => void): () => void;
+  /** Move the window so its top-left corner sits at screen (x, y). Used while dragging the pet. */
+  moveWindow?(x: number, y: number): void;
   /** Fires when the user presses the global listen shortcut. Returns an unsubscribe function. */
   onStartListening(cb: () => void): () => void;
 }
