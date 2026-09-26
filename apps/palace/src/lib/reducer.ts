@@ -124,6 +124,11 @@ export function reduceSnapshot(snapshot: PalaceSnapshot, e: WsEvent, texture: Te
       const day = e.payload.to_day;
       return { snapshot: { ...snapshot, day, bytes: snapshotBytes(snapshot.captures, day) }, pulses: [], membershipChanged: day !== snapshot.day };
     }
+    case "agent.drafts":
+      // A draft awaiting approval writes nothing; it only lights up the rules behind it.
+      return { snapshot, pulses: e.payload.drafts.flatMap((d) => d.because), membershipChanged: false };
+    case "agent.draft_sent":
+      return { snapshot, pulses: e.payload.because, membershipChanged: false };
     case "voice.received":
       return { snapshot, pulses: [], membershipChanged: false };
     case "snapshot":

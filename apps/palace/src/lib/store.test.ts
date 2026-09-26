@@ -27,6 +27,8 @@ function sampleEvents(): Record<WsEventType, WsEvent> {
     "procedure.healed": { ...base, type: "procedure.healed", payload: { procedure_id: procedure.id, run_id: "run_1" } },
     "procedure.step": { ...base, type: "procedure.step", payload: { procedure_id: procedure.id, run_id: "run_1", step: 2, do: "filter_listings", because: [belief.id] } },
     "clock.advanced": { ...base, type: "clock.advanced", payload: { from_day: 24, to_day: 25, levels_deleted: 0, bytes_freed: 0, captures_forgotten: 0, beliefs_decayed: 0, beliefs_forgotten: 0, rooms_dimmed: [] } },
+    "agent.drafts": { ...base, type: "agent.drafts", payload: { run_id: "run_1", drafts: [{ draft_id: "drf_1", listing_id: "listing:214", listing_title: "2BR in Ridgewood", to: "landlord@example.com", text: "Hi — is this still available?", because: [belief.id] }] } },
+    "agent.draft_sent": { ...base, type: "agent.draft_sent", payload: { draft_id: "drf_1", message_id: "msg_1", because: [belief.id] } },
     "voice.received": { ...base, type: "voice.received", payload: { voice_note_id: "vn_1", transcript: "I'm getting a dog" } },
     snapshot: {
       ...base,
