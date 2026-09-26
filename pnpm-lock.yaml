@@ -166,12 +166,18 @@ importers:
 
   .:
     dependencies:
+      '@cortex/persona':
+        specifier: workspace:*
+        version: link:packages/persona
       '@cortex/schema':
         specifier: workspace:*
         version: link:packages/schema
       mongodb:
         specifier: ^6.18.0
         version: 6.21.0
+      playwright:
+        specifier: ^1.55.0
+        version: 1.63.0
     devDependencies:
       '@types/node':
         specifier: ^24.0.0

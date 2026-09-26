@@ -1,5 +1,15 @@
 {
   "extends": "../tsconfig.base.json",
-  "compilerOptions": { "noEmit": true, "rootDir": ".." },
-  "include": ["./*.ts", "./test/**/*.ts"]
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": "..",
+    "lib": [
+      "ES2022",
+      "DOM"
+    ]
+  },
+  "include": [
+    "./*.ts",
+    "./test/**/*.ts"
+  ]
 }

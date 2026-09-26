@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { inboxMessages } from "@/lib/data";
 import { messagesForThread } from "@/lib/world-store";
+import { currentDay, displayName } from "@/lib/day";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +15,8 @@ export async function generateMetadata(props: PageProps<"/inbox/[thread]">): Pro
 export default async function ThreadPage(props: PageProps<"/inbox/[thread]">) {
   const { thread } = await props.params;
   const id = decodeURIComponent(thread);
-  const messages = [...inboxMessages().filter((m) => m.thread_id === id), ...messagesForThread(id)].sort((a, b) => a.day - b.day);
+  const day = await currentDay();
+  const messages = [...inboxMessages().filter((m) => m.thread_id === id), ...messagesForThread(id)].filter((m) => m.day <= day).sort((a, b) => a.day - b.day);
   if (messages.length === 0) notFound();
   const first = messages[0]!;
   const app = first.kind === "landlord_chat" ? "landlord_chat" : "inbox";
@@ -35,7 +37,7 @@ export default async function ThreadPage(props: PageProps<"/inbox/[thread]">) {
         {messages.map((m) => (
           <li key={m._id} className={`max-w-[80%] rounded-lg border border-stone-300 p-3 ${m.from === "Maya" ? "self-end bg-stone-100" : "self-start bg-white"}`} data-message-id={m._id}>
             <p className="mb-1 text-xs text-stone-500">
-              <span className="font-medium text-stone-700">{m.from}</span> → {m.to} · day {m.day}
+              <span className="font-medium text-stone-700">{displayName(m.from)}</span> → {displayName(m.to)} · day {m.day}
             </p>
             <p className="whitespace-pre-line text-sm leading-6">{m.body}</p>
           </li>

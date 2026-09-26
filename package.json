@@ -17,7 +17,8 @@
     "atlas:check": "tsx tools/atlas-check.ts",
     "reset-demo-db": "tsx tools/reset-demo-db.ts",
     "test:tools": "vitest run",
-    "chart": "tsx tools/chart.ts"
+    "chart": "tsx tools/chart.ts",
+    "play-maya": "tsx tools/play-maya.ts"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
@@ -29,6 +30,8 @@
   },
   "dependencies": {
     "@cortex/schema": "workspace:*",
-    "mongodb": "^6.18.0"
+    "mongodb": "^6.18.0",
+    "@cortex/persona": "workspace:*",
+    "playwright": "^1.55.0"
   }
 }
