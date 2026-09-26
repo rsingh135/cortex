@@ -9,7 +9,7 @@ dotenv({ path: fileURLToPath(new URL("../../../.env", import.meta.url)) });
 dotenv();
 import { serve } from "@hono/node-server";
 import { createApp } from "./api/index.js";
-import { loadConfig } from "./config.js";
+import { loadMemoryConfig } from "./config.js";
 import { fixtureStore, mongoStore } from "./db/memory-store.js";
 import { connect } from "./db.js";
 
@@ -22,13 +22,13 @@ async function main(): Promise<void> {
   let close = async () => {};
 
   if (!fixtureMode) {
-    const config = loadConfig();
+    const config = loadMemoryConfig();
     const { client, db } = await connect(config.ATLAS_URI, config.ATLAS_DB);
     memory = mongoStore(client, db);
     close = () => client.close();
     const ping = await db.command({ ping: 1 });
     console.log(
-      `engine: connected to ${config.ATLAS_DB} (ping ok=${ping.ok}); models ${config.EXTRACTION_MODEL} / ${config.REASONING_MODEL}`,
+      `engine: connected to ${config.ATLAS_DB} (ping ok=${ping.ok})`,
     );
   } else {
     console.log("engine: FIXTURE_MODE, no database");

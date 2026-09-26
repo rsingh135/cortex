@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { loadConfig } from "../src/config.js";
+import { loadConfig, loadMemoryConfig } from "../src/config.js";
 
-const good = { ATLAS_URI: "mongodb://x", ANTHROPIC_API_KEY: "k", CORTEX_WRITE_TOKEN: "t" };
+const good = {
+  ATLAS_URI: "mongodb://x",
+  ANTHROPIC_API_KEY: "k",
+  CORTEX_WRITE_TOKEN: "t",
+};
 
 describe("loadConfig", () => {
   it("applies defaults", () => {
@@ -14,5 +18,18 @@ describe("loadConfig", () => {
   it("names every missing variable", () => {
     expect(() => loadConfig({})).toThrow(/ATLAS_URI/);
     expect(() => loadConfig({})).toThrow(/ANTHROPIC_API_KEY/);
+  });
+});
+
+describe("loadMemoryConfig", () => {
+  it("boots memory endpoints with only the Atlas connection", () => {
+    expect(loadMemoryConfig({ ATLAS_URI: "mongodb://test" })).toEqual({
+      ATLAS_URI: "mongodb://test",
+      ATLAS_DB: "cortex",
+      ENGINE_PORT: 4000,
+    });
+  });
+  it("still rejects a missing Atlas connection", () => {
+    expect(() => loadMemoryConfig({})).toThrow(/ATLAS_URI/);
   });
 });

@@ -9,7 +9,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "tsc --noEmit",
     "test": "vitest run",
-    "embeddings:check": "tsx src/recall/check.ts"
+    "embeddings:check": "tsx src/recall/check.ts",
+    "memory:check": "tsx src/db/check.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.70.0",

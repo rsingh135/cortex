@@ -5,7 +5,7 @@
 ## Run
 
 ```bash
-pnpm --filter @cortex/engine dev              # tsx watch; needs .env (ATLAS_URI, ANTHROPIC_API_KEY, CORTEX_WRITE_TOKEN)
+pnpm --filter @cortex/engine dev              # tsx watch; needs root .env (ATLAS_URI; AI/agent keys are separate)
 FIXTURE_MODE=true pnpm --filter @cortex/engine dev   # in-memory ledger, no Atlas: health, snapshot, recall, clock, images, stats
 pnpm --filter @cortex/engine typecheck && pnpm --filter @cortex/engine lint && pnpm --filter @cortex/engine test
 ```
@@ -89,3 +89,18 @@ or vector contents. The reusable client is in `src/recall/embed.ts`; wiring it
 into indexed recall and consolidation remains the next memory slice.
 
 Documentation: https://www.mongodb.com/docs/voyageai/api-and-clients/
+
+## Live Atlas verification
+
+The implemented memory HTTP endpoints boot with `ATLAS_URI` alone. Full AI/agent
+configuration remains separate, so a missing Claude key does not block memory
+storage, recall, images, or forgetting.
+
+- `pnpm --filter @cortex/engine memory:check` exercises actual Atlas transactions,
+  concurrent recalls, dry runs, rollback, snapshots, BSON image bytes, and
+  condition-specific forgetting using the real HTTP handlers.
+- `pnpm atlas:check` verifies change streams, TTL index support, `$graphLookup`, and
+  creation/query of a 512-dimensional vector index. It does not wait for TTL deletion.
+
+Each command creates a unique temporary database and removes it in a `finally`
+block. Neither command seeds or deletes the configured `ATLAS_DB` database.

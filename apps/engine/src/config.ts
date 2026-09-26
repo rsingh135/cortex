@@ -20,11 +20,33 @@ const Env = z.object({
 });
 export type Config = z.infer<typeof Env>;
 
-export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
-  const parsed = Env.safeParse(env);
+const MemoryEnv = Env.pick({
+  ATLAS_URI: true,
+  ATLAS_DB: true,
+  ENGINE_PORT: true,
+});
+export type MemoryConfig = z.infer<typeof MemoryEnv>;
+
+function parseEnv<T>(schema: z.ZodType<T>, env: NodeJS.ProcessEnv): T {
+  const parsed = schema.safeParse(env);
   if (!parsed.success) {
-    const missing = parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("\n  ");
-    throw new Error(`Engine config invalid:\n  ${missing}\nCopy .env.example to .env and fill it in.`);
+    const missing = parsed.error.issues
+      .map((i) => `${i.path.join(".")}: ${i.message}`)
+      .join("\n  ");
+    throw new Error(
+      `Engine config invalid:\n  ${missing}\nCopy .env.example to .env and fill it in.`,
+    );
   }
   return parsed.data;
+}
+
+export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
+  return parseEnv(Env, env);
+}
+
+/** Memory HTTP endpoints only need Atlas. AI and agent credentials are checked by their modules. */
+export function loadMemoryConfig(
+  env: NodeJS.ProcessEnv = process.env,
+): MemoryConfig {
+  return parseEnv(MemoryEnv, env);
 }
