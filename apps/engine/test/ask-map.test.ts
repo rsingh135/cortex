@@ -185,9 +185,9 @@ describe("POST /ask", () => {
           return { ...result, cited: result.cited.filter((id) => offered.has(id)) };
         },
       },
-      speaker: {
-        async speak() {
-          return `/audio/${audio.put(new Uint8Array([1, 2, 3]), "audio/mpeg")}`;
+      tts: {
+        async synthesize() {
+          return audio.put(new Uint8Array([1, 2, 3]));
         },
       },
     });
@@ -264,12 +264,13 @@ describe("GET /map", () => {
     expect(housing.top).toEqual(["Housing budget is 3000 a month"]);
   });
 
-  it("splits active procedures from cracked ones", () => {
+  it("still lists a cracked procedure, and flags it", () => {
+    // A cracked procedure still exists and still runs; hiding it would tell the agent it had none.
     const data = seed();
     data.procedures = [{ ...hunt, status: "cracked", cracked_by: ["laundry"] }];
     const map = buildAgentMap(data, "cortex");
     const housing = map.rooms.find((r) => r.name === "Housing")!;
-    expect(housing.procedures).toEqual([]);
+    expect(housing.procedures).toEqual(["Apartment hunt"]);
     expect(housing.cracked).toEqual(["Apartment hunt"]);
   });
 

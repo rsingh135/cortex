@@ -15,14 +15,13 @@ import { loadMemoryConfig } from "./config.js";
 import { fixtureStore, mongoStore } from "./db/memory-store.js";
 import { connect } from "./db.js";
 import { createLiveServer, type LiveServer } from "./live/server.js";
-import {
-  createAsker,
-  createAudioStore,
-  createClaudeAnswerer,
-  createElevenLabsSpeaker,
-  type Speaker,
-} from "./ask/index.js";
-import Anthropic from "@anthropic-ai/sdk";
+import { createAnthropicClient } from "./ai/client.js";
+import { anthropicLlm } from "./ai/structured.js";
+import { createExtractor } from "./extraction/extract.js";
+import { createExtractionQueue } from "./extraction/queue.js";
+import { createRouter } from "./router/index.js";
+import { createAsker } from "./ask/index.js";
+import { createAudioStore, createTts, PREMADE_VOICE } from "./voice/tts.js";
 
 async function main(): Promise<void> {
   const fixtureMode = process.env.FIXTURE_MODE === "true";
@@ -54,42 +53,48 @@ async function main(): Promise<void> {
     };
   }
 
-  // Both credentials are optional: without them /ask still answers extractively from memory,
-  // which is what the eval harness and the offline demo rely on.
+  // Model-backed pieces. FIXTURE_MODE never calls Claude; without ANTHROPIC_API_KEY the routes degrade.
+  const client = fixtureMode ? null : createAnthropicClient();
+  const llm = client ? anthropicLlm(client) : null;
+  const extractionEnabled = process.env.EXTRACTION_ENABLED !== "false";
+  const extractionModel = process.env.EXTRACTION_MODEL ?? "claude-sonnet-5";
+  const reasoningModel = process.env.REASONING_MODEL ?? "claude-opus-5";
   const audio = createAudioStore();
-  const anthropicKey = process.env.ANTHROPIC_API_KEY?.trim();
-  // An organization-scoped key rejects every request without this header.
-  const workspaceId = process.env.ANTHROPIC_WORKSPACE_ID?.trim();
-  const elevenKey = process.env.ELEVENLABS_API_KEY?.trim();
-  let speaker: Speaker | undefined;
-  if (elevenKey) {
-    speaker = createElevenLabsSpeaker(elevenKey, {
-      voiceId: process.env.ELEVENLABS_VOICE_ID?.trim() || "EXAVITQu4vr4xnSDxMaL",
-      store: audio,
-    });
-  }
+  const router = createRouter(llm, extractionModel);
+  const extraction =
+    llm && extractionEnabled
+      ? createExtractionQueue({
+          store: memory,
+          extractor: createExtractor(llm, extractionModel),
+          concurrency: 2,
+          onDone: (r) => console.log(`extraction: ${r.capture_id} +${r.inserted.length} beliefs, ${r.reinforced.length} reinforced`),
+          onError: (id, err) => console.error(`extraction failed for ${id}: ${err instanceof Error ? err.message : String(err)}`),
+        })
+      : undefined;
+  // Always built: without a model it answers extractively from memory, and it can still speak.
   const asker = createAsker({
     store: memory,
-    ...(anthropicKey
-      ? {
-          answerer: createClaudeAnswerer(
-            new Anthropic({
-              apiKey: anthropicKey,
-              ...(workspaceId
-                ? { defaultHeaders: { "anthropic-workspace-id": workspaceId } }
-                : {}),
-            }),
-            process.env.REASONING_MODEL?.trim() || "claude-opus-5",
-          ),
-        }
-      : {}),
-    ...(speaker ? { speaker } : {}),
+    router,
+    model: reasoningModel,
+    ...(llm ? { llm } : {}),
+    tts: createTts({
+      apiKey: process.env.ELEVENLABS_API_KEY,
+      voiceId: process.env.ELEVENLABS_VOICE_ID ?? PREMADE_VOICE,
+      store: audio,
+    }),
   });
   console.log(
-    `engine: /ask uses ${anthropicKey ? "claude" : "extractive"} answers${speaker ? " with speech" : ""}`,
+    `engine: model ${client ? "on" : "off"}${client ? ` (extraction ${extractionEnabled ? extractionModel : "disabled"}, answers ${reasoningModel})` : ""}`,
   );
 
-  const app = createApp({ fixtureMode, memory, asker, audio });
+  const app = createApp({
+    fixtureMode,
+    memory,
+    router,
+    audio,
+    asker,
+    ...(extraction ? { extraction } : {}),
+  });
   const server = serve({ fetch: app.fetch, port }, () =>
     console.log(`engine: http://localhost:${port}`),
   );

@@ -1,6 +1,6 @@
 /**
  * HTTP surface of the engine. Every route from docs/contracts.md, validated with @cortex/schema/api.
- * Handlers still awaiting their module return 501; the rest run against the memory ledger.
+ * Handlers return 501 until their module lands; wiring them is the memory track's job.
  */
 import { Binary } from "mongodb";
 import { cors } from "hono/cors";
@@ -13,8 +13,10 @@ import { advanceMemory } from "../forgetting/sweep.js";
 import { recallMemory } from "../recall/search.js";
 import { snapshot } from "../live/snapshot.js";
 import { buildAgentMap } from "../map/index.js";
+import type { Router } from "../router/index.js";
 import { createAsker, type Asker } from "../ask/index.js";
-import type { AudioStore } from "../ask/speech.js";
+import type { ExtractionQueue } from "../extraction/queue.js";
+import type { AudioStore } from "../voice/tts.js";
 import { Hono } from "hono";
 import { z } from "zod";
 import {
@@ -35,9 +37,11 @@ export interface AppOptions {
   fixtureMode: boolean;
   memory?: MemoryStore;
   now?: () => string;
-  /** Answers POST /ask. Defaults to a deterministic extractive answerer when memory is present. */
+  /** Model-backed pieces; absent in FIXTURE_MODE or without ANTHROPIC_API_KEY. */
+  router?: Router;
   asker?: Asker;
-  /** Backs GET /audio/:id when the asker synthesises speech. */
+  /** Background belief extraction; captures are enqueued right after they are stored. */
+  extraction?: ExtractionQueue;
   audio?: AudioStore;
 }
 
@@ -46,6 +50,7 @@ const ConditionQuery = z.object({ condition: Condition.default("cortex") });
 export function createApp(opts: AppOptions): Hono {
   const app = new Hono();
   const intake = opts.memory ? createIntake(opts.memory) : undefined;
+  // Falls back to the deterministic asker, so /ask answers from memory even with no model key.
   const asker =
     opts.asker ?? (opts.memory ? createAsker({ store: opts.memory }) : undefined);
   app.use("*", cors());
@@ -110,10 +115,14 @@ export function createApp(opts: AppOptions): Hono {
       return c.json({ error: "An image file is required" }, 400);
     if (image.size > 10 * 1024 * 1024)
       return c.json({ error: "Image exceeds 10 MiB" }, 413);
-    if (intake)
-      return c.json(
-        await intake.ingest(Buffer.from(await image.arrayBuffer()), meta.data),
+    if (intake) {
+      const result = await intake.ingest(
+        Buffer.from(await image.arrayBuffer()),
+        meta.data,
       );
+      if (result.stored) opts.extraction?.enqueue(result.capture_id);
+      return c.json(result);
+    }
     return c.json(
       { error: "not implemented", route: "POST /ingest/capture" },
       501,
@@ -194,6 +203,12 @@ export function createApp(opts: AppOptions): Hono {
   app.post("/route", async (c) => {
     const v = await validateJson(c, RouteRequest);
     if (!v.ok) return v.response;
+    if (opts.router && opts.memory) {
+      const procedures = await opts.memory.run(false, (d) =>
+        d.procedures.map((p) => ({ _id: p._id, name: p.name, description: p.description })),
+      );
+      return c.json(await opts.router.route(v.data.text, procedures));
+    }
     return c.json({ error: "not implemented", route: "POST /route" }, 501);
   });
 
@@ -215,28 +230,27 @@ export function createApp(opts: AppOptions): Hono {
   app.post("/ask", async (c) => {
     const v = await validateJson(c, AskRequest);
     if (!v.ok) return v.response;
-    if (!asker)
-      return c.json({ error: "not implemented", route: "POST /ask" }, 501);
-    return c.json(await asker.ask(v.data));
+    if (asker) return c.json(await asker.ask(v.data));
+    return c.json({ error: "not implemented", route: "POST /ask" }, 501);
   });
 
   app.get("/audio/:id", (c) => {
-    const clip = opts.audio?.get(c.req.param("id"));
-    if (!clip) return c.notFound();
-    return c.body(new Uint8Array(clip.bytes), 200, {
-      "Content-Type": clip.contentType,
-      "Cache-Control": "no-store",
+    const bytes = opts.audio?.get(c.req.param("id"));
+    if (!bytes) return c.notFound();
+    return c.body(new Uint8Array(bytes), 200, {
+      "Content-Type": "audio/mpeg",
+      "Cache-Control": "private, max-age=3600",
     });
   });
 
   app.get("/map", async (c) => {
     const q = validateQuery(c, ConditionQuery);
     if (!q.ok) return q.response;
-    if (!opts.memory)
-      return c.json({ error: "not implemented", route: "GET /map" }, 501);
-    return c.json(
-      await opts.memory.run(false, (d) => buildAgentMap(d, q.data.condition)),
-    );
+    if (opts.memory)
+      return c.json(
+        await opts.memory.run(false, (d) => buildAgentMap(d, q.data.condition)),
+      );
+    return c.json({ error: "not implemented", route: "GET /map" }, 501);
   });
 
   app.get("/snapshot", async (c) => {

@@ -1,10 +1,13 @@
 /**
- * The agent's 2D map: the ~500-token view it reads before recalling anything.
- * Active beliefs only, per condition. docs/contracts.md > GET /map.
+ * The agent's 2D map: the compact floor plan the model reads before recalling anything.
+ * About 500 tokens regardless of how large the memory grows.
+ * docs/spec.md > The palace and the agent's map. docs/contracts.md > GET /map.
  *
- * Mirrors apps/palace/src/lib/map.ts so the agent and the palace describe the same memory.
- * Recent changes come from belief history, which the ledger already carries; the engine
- * needs no event buffer to answer this route.
+ * Mirrors apps/palace/src/lib/map.ts so the agent and the palace describe the same memory: a room
+ * lists every procedure it owns, and separately flags the cracked ones — a cracked procedure still
+ * exists and still runs, so hiding it from `procedures` would tell the agent it had nothing to use.
+ * Recent changes come from belief history, which the ledger already carries, so this route needs no
+ * event buffer and reports reinforcement and supersession rather than only creations.
  */
 import { MapResponse, ROOMS, type Condition, type Room } from "@cortex/schema";
 import type { MemoryData } from "../db/memory-data.js";
@@ -38,9 +41,7 @@ export function buildAgentMap(data: MemoryData, condition: Condition) {
     return {
       name,
       beliefs: inRoom.length,
-      procedures: procedures
-        .filter((p) => p.status === "active")
-        .map((p) => p.name),
+      procedures: procedures.map((p) => p.name),
       top: [...inRoom]
         .sort(
           (a, b) =>
@@ -52,18 +53,15 @@ export function buildAgentMap(data: MemoryData, condition: Condition) {
         .filter((p) => p.status === "cracked")
         .map((p) => p.name),
     };
-  });
+    // An empty room costs tokens and tells the agent nothing it cannot infer.
+  }).filter((room) => room.beliefs > 0 || room.procedures.length > 0);
 
   // Newest first across every visible belief's history; ties break on id for a stable map.
   const visible = new Set(active.map((entry) => entry.belief._id));
   const recent_changes = data.beliefs
     .filter((belief) => visible.has(belief._id))
-    .flatMap((belief) =>
-      belief.history.map((entry) => ({ belief, ...entry })),
-    )
-    .sort(
-      (a, b) => b.day - a.day || order(a.belief._id, b.belief._id),
-    )
+    .flatMap((belief) => belief.history.map((entry) => ({ belief, ...entry })))
+    .sort((a, b) => b.day - a.day || order(a.belief._id, b.belief._id))
     .slice(0, MAP_RECENT_CHANGES)
     .map(
       (entry) =>
@@ -71,4 +69,9 @@ export function buildAgentMap(data: MemoryData, condition: Condition) {
     );
 
   return MapResponse.parse({ day: data.day, rooms, recent_changes });
+}
+
+/** The map as the model sees it, for the /ask context block. */
+export function mapAsText(map: ReturnType<typeof buildAgentMap>): string {
+  return JSON.stringify(map);
 }
