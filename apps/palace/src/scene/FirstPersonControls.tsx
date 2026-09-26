@@ -27,6 +27,8 @@ export interface FirstPersonControlsProps {
   walkSpeed?: number;
   runSpeed?: number;
   lookSensitivity?: number;
+  /** Open space (the belief graph): no walls, no doorways. */
+  noCollision?: boolean;
 }
 
 const MAX_PITCH = Math.PI / 2 - 0.08;
@@ -49,14 +51,14 @@ function isTypingTarget(target: EventTarget | null): boolean {
   return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || target.isContentEditable;
 }
 
-export function FirstPersonControls({ spawn = DEFAULT_SPAWN, spawnYaw = -Math.PI / 2, walkSpeed = 3, runSpeed = 6, lookSensitivity = 0.0022 }: FirstPersonControlsProps) {
+export function FirstPersonControls({ spawn = DEFAULT_SPAWN, spawnYaw = -Math.PI / 2, walkSpeed = 3, runSpeed = 6, lookSensitivity = 0.0022, noCollision = false }: FirstPersonControlsProps) {
   const camera = useThree((s) => s.camera);
   const gl = useThree((s) => s.gl);
   const layout = useLayout();
   const enabled = useControlsMode() === "walk";
 
-  const walls = useMemo(() => collisionSet(layout), [layout]);
-  const ways = useMemo(() => doorways(layout), [layout]);
+  const walls = useMemo(() => (noCollision ? [] : collisionSet(layout)), [layout, noCollision]);
+  const ways = useMemo(() => (noCollision ? [] : doorways(layout)), [layout, noCollision]);
 
   const keys = useRef(new Set<string>());
   const pose = useRef<WalkPose>({ x: spawn[0], z: spawn[2], yaw: spawnYaw, pitch: 0 });

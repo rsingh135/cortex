@@ -167,7 +167,7 @@ body {
 }
 
 /* The palace route pins its content, so nothing scrolls there; /map keeps normal document flow. */
-body:has(> [aria-label="Memory palace"]) {
+body:has([aria-label="Memory palace"]) {
   overflow: hidden;
 }
 
@@ -257,3 +257,39 @@ input.scrubber:active::-moz-range-thumb {
     scroll-behavior: auto !important;
   }
 }
+
+/*
+ * Dark theme for the belief graph. The HUD components use light zinc utilities; inside a
+ * [data-theme="dark"] wrapper the glass tokens and the ink utilities flip so the same widgets
+ * sit on the charcoal space without a second component tree.
+ */
+[data-theme="dark"] {
+  --background: #0e0f12;
+  --foreground: #eef0f6;
+  --glass-bg: rgba(22, 24, 30, 0.72);
+  --glass-bg-strong: rgba(24, 26, 33, 0.9);
+  --glass-ring: rgba(255, 255, 255, 0.1);
+  --glass-highlight: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 14px 36px -18px rgba(0, 0, 0, 0.8);
+  color-scheme: dark;
+}
+[data-theme="dark"] .text-zinc-900 { color: #eef0f6; }
+[data-theme="dark"] .text-zinc-800 { color: #dfe3ee; }
+[data-theme="dark"] .text-zinc-700 { color: #c3c9d9; }
+[data-theme="dark"] .text-zinc-600 { color: #9aa3ba; }
+[data-theme="dark"] .text-zinc-500 { color: #7d869c; }
+[data-theme="dark"] .text-zinc-400 { color: #626b80; }
+[data-theme="dark"] .bg-white\/80,
+[data-theme="dark"] .bg-white\/70,
+[data-theme="dark"] .bg-white { background-color: rgba(255, 255, 255, 0.06); }
+[data-theme="dark"] .bg-zinc-900\/6 { background-color: rgba(255, 255, 255, 0.08); }
+[data-theme="dark"] .bg-zinc-900\/10 { background-color: rgba(255, 255, 255, 0.12); }
+[data-theme="dark"] .bg-zinc-900 { background-color: #eef0f6; color: #0e0f12; }
+[data-theme="dark"] .hover\:bg-zinc-800:hover { background-color: #ffffff; }
+[data-theme="dark"] .ring-zinc-900\/10 { --tw-ring-color: rgba(255, 255, 255, 0.14); }
+[data-theme="dark"] .ring-zinc-900\/8 { --tw-ring-color: rgba(255, 255, 255, 0.1); }
+[data-theme="dark"] .border-zinc-900\/8 { border-color: rgba(255, 255, 255, 0.1); }
+[data-theme="dark"] .bg-zinc-100 { background-color: rgba(255, 255, 255, 0.08); }
+[data-theme="dark"] .bg-zinc-50 { background-color: rgba(255, 255, 255, 0.05); }
+[data-theme="dark"] kbd { background: rgba(255, 255, 255, 0.08); color: #dfe3ee; box-shadow: 0 1px 0 rgba(0, 0, 0, 0.5); }
+[data-theme="dark"] textarea, [data-theme="dark"] input { background: rgba(255, 255, 255, 0.06); color: #eef0f6; }

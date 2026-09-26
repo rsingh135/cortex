@@ -1,5 +1,7 @@
 # Palace architecture
 
+> **Current look (Sep 26, evening):** `/palace` is the **belief graph**: a dark open space with six room-coloured clusters of glowing belief nodes (top five per room), thin edges, walk or orbit through it, no walls and no minimap. Code in `src/graph3d/` and `src/lib/graphLayout.ts`, page in `src/app/_graph/`. The room-and-corridor palace described below still exists at `/rooms` and shares the store, HUD, replay, hotkeys and live mode. The dark HUD comes from `[data-theme="dark"]` overrides in `globals.css`.
+
 The 3D memory palace and the agent's 2D map. Next.js 16 App Router, React Three Fiber 9, drei 10, three, zustand. Read `node_modules/next/dist/docs/` before touching routing. Bright architectural style: white plaster walls, pale wood floors, soft daylight, no bloom.
 
 ## Directories and ownership
@@ -14,6 +16,9 @@ The 3D memory palace and the agent's 2D map. Next.js 16 App Router, React Three 
 | `src/scene/` | Canvas, lighting, architecture meshes, first-person controls, door fly, collision | store, layout |
 | `src/objects/` | Belief pedestal, painting (blur shader), empty frame, procedure table, threads, cracks, archive case | store, layout |
 | `src/hud/` | Belief card, timeline scrubber, storage meter, minimap, connection badge, help | store |
+| `src/lib/graphLayout.ts` | Belief-graph layout: cluster ring, top-N per room, hashed node scatter with overlap relaxation, edge + shared-evidence links | types, hash |
+| `src/graph3d/` | Dark canvas, belief nodes (sphere + glow sprite), edge line segments, cluster labels | store, graphLayout, scene (controls, pointer events), objects/pulse |
+| `src/app/_graph/` | `/palace` page: graph canvas + walk/orbit controls + HUD without minimap | graph3d, scene, hud |
 | `src/app/page.tsx` | Composes scene + objects + HUD (client-only Canvas via `next/dynamic`, `ssr: false`) | all |
 | `src/app/map/page.tsx` | Standalone 2D map: floor plan + the JSON the agent reads | store, hud/minimap |
 

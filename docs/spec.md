@@ -453,45 +453,44 @@ In the demo the mascot is how Maya asks "when is Priya's birthday dinner?" and h
 
 ## The palace and the agent's map
 
-**Humans walk a 3D palace; the agent reads a compact 2D floor plan of the same memory.** Both are generated from the same Atlas data, so what you see is exactly what the agent knows.
+**Humans walk through a dark, open 3D graph of what Cortex believes; the agent reads a compact 2D floor plan of the same memory.** Both are generated from the same Atlas data, so what you see is exactly what the agent knows.
 
 ### Layout
 
-- A central atrium with doors to the semantic rooms: Housing, Work, Social, Health, Errands, Misc.
-- Rooms grow with the number of memories inside.
-- Inside a room, beliefs sit on pedestals, procedures sit on tables with their steps laid out as cards, and screenshots hang on the walls as paintings behind the beliefs they support.
-- An Archive alcove off the atrium holds superseded beliefs in glass cases.
-- Layout is deterministic: each object's position is derived from a hash of its `_id` and its room, so the same memory always builds the same palace and the server never stores positions.
+- Open space, no walls: a deep charcoal void with a faint star field for depth.
+- Six clusters float on a ring, one per semantic room (Housing, Work, Social, Health, Errands, Misc), each in its own colour with the room name floating above it and a count of its memories.
+- Each cluster shows the room's strongest beliefs, five per room by confidence, as glowing nodes. Summaries are never shown; the rest of the memory stays reachable through the agent's map and the cards.
+- Thin edges connect beliefs: learner edges (`derived_from`, `uses`, `supersedes`) brighter, shared-evidence links (two beliefs from the same screenshot) fainter.
+- Layout is deterministic: cluster positions are fixed by room, node positions come from a hash of the belief `_id` relaxed so nodes never overlap, so the same memory always draws the same graph and the server never stores positions.
+- The original room-and-corridor palace remains at `/rooms` as a fallback view.
 
 ### What each visual means
 
 | Visual | Meaning |
 | --- | --- |
-| Painting sharpness | The screenshot's current clarity |
-| Empty frame labeled "forgotten" | Every level of that screenshot is gone |
-| Glow | Belief confidence |
-| Pulse and paintings snapping into focus | The agent just recalled this memory |
-| Cracks | Depends on something that changed; needs a successful run to heal |
-| Solid thread | Evidence: this belief came from that screenshot |
-| Dashed thread | Inference: this belief was concluded, not seen |
-| Gold frame | Came from Maya directly (voice note or edit) |
+| Node size and glow | Belief confidence; low-confidence beliefs shrink and dim |
+| Flicker out | The belief was forgotten, superseded, or dropped out of its room's top five |
+| Pulse | The agent just recalled this belief |
+| Edge brightness | The weaker endpoint's confidence; edges fade with their beliefs |
+| Gold node | Came from Maya directly (voice note or edit) or is pinned |
+| Cluster colour | The room the belief lives in |
 
-The empty frame is the image that sells the idea: Cortex still knows the fact, but the moment it learned it is gone.
+Screenshots are not nodes. Their fading shows in the belief's card: evidence thumbnails at the served level, blurring as clarity drops, and "forgotten" when every rung is gone. That card is still the image that sells the idea: Cortex knows the fact, but the moment it learned it is gone.
 
 ### Interactions
 
-- Orbit camera; click a door to fly into a room.
-- Click a belief to open its card: text, confidence over time, evidence thumbnails at served level, recall count, history, LangSmith trace link, and Edit and Delete.
+- Walk with WASD and the mouse, or press Tab for an orbit camera; walk straight into a cluster.
+- Hover a node to read the belief; click it to open its card: text, confidence over time, evidence thumbnails at served level, recall count, history, LangSmith trace link, and Edit and Delete.
 - Hold to talk for a voice note.
-- A timeline scrubber sets the simulated day; fast-forward advances it and runs the forgetting sweep.
+- A timeline scrubber sets the simulated day; fast-forward advances it and runs the forgetting sweep, and nodes dim, shrink and flicker out.
 - A storage meter shows Cortex's bytes against what keep-everything would have stored.
-- Approve or reject a drafted landlord message during the live hunt.
+- Approve or reject a drafted landlord message during the live hunt; `B` opens the mock world beside the graph.
+- Demo hotkeys: `R` replays day 2, `J` dream journal, `C` chart, `F` fallback video, `V` voice fallback, `A` approve drafts.
 
 ### Rendering
 
-- React Three Fiber and drei; low-poly procedural geometry; instanced meshes for beliefs.
-- Paintings use the served level as a texture, with a blur shader driven by the gap between clarity and the ceiling's value.
-- Atlas change stream events arrive over WebSocket from the engine and animate the matching objects. On reconnect the palace fetches `GET /snapshot` and rebuilds.
+- React Three Fiber and drei; a sphere and an additive glow sprite per node, one line-segments draw call for every edge, billboarded text for labels.
+- Atlas change stream events arrive over WebSocket from the engine and animate the matching nodes. On reconnect the palace fetches `GET /snapshot` and rebuilds.
 
 ### The agent's 2D map
 
@@ -704,11 +703,11 @@ Two stacked panels over simulated days: bytes stored on top (stacked bands for i
 ### Track 1: palace (3D and 2D visualization), demo ops, chart
 
 - [x] Fixture mode: seeded fake memory, canvas placeholder screenshots, fake event ticker, so the palace runs with no engine
-- [x] Atrium and rooms laid out deterministically from `_id` hash and room; first-person walk, click-door fly, orbit fallback
-- [x] Beliefs by kind, confidence as opacity, procedures on tables, paintings with a clarity blur shader, empty "forgotten" frames
+- [x] Belief graph: six room clusters in open dark space, top five beliefs per room, deterministic node placement; first-person walk and orbit; room palace kept at `/rooms`
+- [x] Nodes sized and lit by confidence, edges by the weaker endpoint, forgotten nodes flicker out; screenshot clarity shown in the card thumbnails
 - [x] Pulse, cracks, solid and dashed threads, gold frames, Archive alcove
 - [ ] Belief card with edit, delete, trace link; draft approval control for the live hunt
-- [x] Timeline scrubber, fast-forward with sweep animation, storage meter, minimap, `/map` page with the agent's JSON
+- [x] Timeline scrubber, fast-forward with sweep animation, storage meter, `/map` page with the agent's JSON
 - [x] WebSocket client with `GET /snapshot` on reconnect; split view with the browser for the live hunt
 - [x] Two-panel chart page (`/chart`) from engine `/stats` or the simulated series; accuracy lines once the eval runs
 - [x] `tools/reset-demo-db.ts` (save/restore verified on the sandbox); bundled day-2 event log built from real captures; `play-maya --usage-log` replays recalls during ingest; day-24 snapshot procedure in `docs/demo.md`

@@ -31,7 +31,8 @@ function computePointer(event: DomPointerEvent, state: RootState): void {
   state.raycaster.setFromCamera(state.pointer, state.camera);
 }
 
-function eventManager(store: RootStore): EventManager<HTMLElement> {
+/** Pointer computation shared with the belief-graph canvas. */
+export function eventManager(store: RootStore): EventManager<HTMLElement> {
   return { ...createPointerEvents(store), compute: computePointer };
 }
 

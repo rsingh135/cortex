@@ -29,11 +29,13 @@ export interface HudProps {
   onRoomClick?: (room: PalaceRoom) => void;
   /** Override the you-are-here dot; by default it follows `setPlayerPosition`. */
   playerPosition?: [number, number] | null;
+  /** The belief graph has no rooms to fly to; it hides the minimap. */
+  showMinimap?: boolean;
 }
 
 const WIDGET = "pointer-events-auto";
 
-export function Hud({ onRoomClick, playerPosition }: HudProps) {
+export function Hud({ onRoomClick, playerPosition, showMinimap = true }: HudProps) {
   // In orbit mode the camera hangs above the palace; a you-are-here dot would be meaningless.
   const orbiting = useControlsMode() === "orbit";
   const dot = orbiting ? null : playerPosition;
@@ -62,7 +64,7 @@ export function Hud({ onRoomClick, playerPosition }: HudProps) {
       <BrowserPanel />
       {/* The right column slides left when the browser panel takes the right edge. */}
       <div className="absolute inset-y-4 flex flex-col items-end gap-3 transition-[right] duration-300 ease-out" style={{ right: browserOpen ? `calc(${BROWSER_PANEL_WIDTH} + 2rem)` : "1rem" }}>
-        {browserOpen ? null : (
+        {browserOpen || !showMinimap ? null : (
           <div className={`${WIDGET} glass shrink-0 rounded-2xl p-2.5`}>
             <Minimap size={220} playerPosition={dot} onRoomClick={onRoomClick} />
             <MinimapLegend showPlayer={dot !== null} className="mt-1.5 justify-center" />
@@ -74,7 +76,7 @@ export function Hud({ onRoomClick, playerPosition }: HudProps) {
         </div>
         <Presence id={selectedId} className={`${WIDGET} -m-4 min-h-0 overflow-y-auto p-4`} render={(id) => <SelectionCard id={id} />} />
         <div className={`${WIDGET} mt-auto shrink-0`}>
-          <Help compact={selectedId !== null || hasDrafts || browserOpen} />
+          <Help compact={selectedId !== null || hasDrafts || browserOpen} graph={!showMinimap} />
         </div>
       </div>
 

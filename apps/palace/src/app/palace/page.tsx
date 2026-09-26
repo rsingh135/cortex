@@ -1,6 +1,6 @@
-import { PalaceClient } from "../_palace/PalaceClient";
+import { GraphClient } from "../_graph/GraphClient";
 
-/** The walk-through palace remains available separately from the focused graph explorer. */
+/** The memory palace: a dark open space of belief clusters you can walk through. The room version lives at /rooms. */
 export default function PalacePage() {
-  return <PalaceClient />;
+  return <GraphClient />;
 }

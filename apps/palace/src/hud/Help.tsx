@@ -27,16 +27,20 @@ const ORBIT: Hint[] = [
   { keys: "Tab", does: "walk view" },
 ];
 
+const WALK_GRAPH: Hint[] = WALK.filter((h) => h.keys !== "E");
+
 export interface HelpProps {
   /** Show only the "?" button (a selection card needs the room); the dismissed state is untouched. */
   compact?: boolean;
+  /** The belief graph has no doors or map; hints and the footer change accordingly. */
+  graph?: boolean;
 }
 
-export function Help({ compact = false }: HelpProps) {
+export function Help({ compact = false, graph = false }: HelpProps) {
   const open = !useHelpDismissed() && !compact;
   const mode = useControlsMode();
   const { select } = usePalaceActions();
-  const hints = mode === "walk" ? WALK : ORBIT;
+  const hints = mode === "walk" ? (graph ? WALK_GRAPH : WALK) : ORBIT;
 
   if (!open) {
     // While a card has the room, "?" closes the card to make space for the sheet.
@@ -69,7 +73,7 @@ export function Help({ compact = false }: HelpProps) {
           </div>
         ))}
       </dl>
-      <p className="mt-2.5 border-t border-zinc-900/8 pt-2 text-xs leading-4 text-zinc-600">Click a room on the map to fly there. Scrub the timeline to watch memory fade.</p>
+      <p className="mt-2.5 border-t border-zinc-900/8 pt-2 text-xs leading-4 text-zinc-600">{graph ? "Walk into a cluster and click a memory. Scrub the timeline to watch memories dim and vanish." : "Click a room on the map to fly there. Scrub the timeline to watch memory fade."}</p>
       <details className="mt-2 border-t border-zinc-900/8 pt-2 text-xs leading-4 text-zinc-600">
         <summary className="cursor-pointer font-medium text-zinc-700">Demo keys</summary>
         <dl className="mt-1.5 grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-1">
