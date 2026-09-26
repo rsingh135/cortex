@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import type { PetState, Reaction } from '../lib/store';
-import brain from '../assets/brain-3d.png';
+import brain from '../assets/cortex-front.png';
 import { cursorTilt } from '../lib/cursor';
 
 export function Pet({ state, reaction }: { state: PetState; reaction: Reaction }) {

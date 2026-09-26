@@ -23,3 +23,8 @@
 .cortex-model .brain-ground-shadow{bottom:3px;height:5px}.pet-status{font-size:9px;padding:3px 8px}.pet-button{padding-bottom:8px}
 
 .cortex-portrait{position:relative;width:120px;height:120px;filter:none}.cortex-tilt{position:relative;z-index:1;transform-origin:50% 65%;will-change:transform}.cortex-portrait img{display:block;width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 3px 3px #713f6620)}.cortex-portrait .brain-ground-shadow{bottom:3px;height:5px}
+
+/* Anchor the portrait to the desktop corner; its card opens above it. */
+.companion{position:fixed;right:20px;bottom:20px;width:160px;height:144px;padding:0;margin:0;max-width:none;justify-content:flex-end}
+.pet-dock{align-self:center}.pet-button{cursor:grab;touch-action:none}.pet-button:active{cursor:grabbing}
+.memory-panel{position:absolute;right:0;bottom:152px;width:min(360px,calc(100vw - 24px));max-height:calc(100vh - 190px)}

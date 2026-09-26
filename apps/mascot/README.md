@@ -1,6 +1,6 @@
 # Cortex brain companion
 
-Track three: a small pink brain with glasses and short legs, living above other desktop windows. Click the character to open a memory card; click again to collapse. The footer grip moves the window. Transparent areas pass clicks through to the apps below. The tray offers Show, Hide, and Quit. Idle, listening, thinking, speaking, recall, and forgetting have distinct animations; reduced-motion preferences are respected.
+Track three: a small pink brain with glasses and short legs, living above other desktop windows. Click the character to open a memory card; click again to collapse. Drag Cortex herself to move her; a short click opens her card. She starts in the bottom-right corner. Transparent areas pass clicks through to the apps below. The tray offers Show, Hide, and Quit. Idle, listening, thinking, speaking, recall, and forgetting have distinct animations; reduced-motion preferences are respected.
 
 ## Run
 
@@ -66,6 +66,6 @@ Protocol: https://elevenlabs.io/docs/api-reference/speech-to-text/v-1-speech-to-
 
 ### Cortex's character
 
-Cortex uses the earlier reference-based, transparent 3D-rendered portrait (`brain-3d.png`) at 120 × 120 CSS pixels. Her original appearance is preserved, with a gentle perspective tilt toward the pointer. This is a rendered image with parallax, not a live 3D mesh. Browser tracking covers the whole window; Electron forwards desktop cursor coordinates so she responds outside her transparent window too. Reduced-motion preferences disable the tilt and idle animation. Event handlers, IPC subscriptions and the animation loop are released on unmount.
+Cortex uses a front-facing reference-based, transparent 3D-rendered portrait (`cortex-front.png`) at 120 × 120 CSS pixels. Her original appearance is preserved, with a gentle perspective tilt toward the pointer. This is a rendered image with parallax, not a live 3D mesh. Browser tracking covers the whole window; Electron forwards desktop cursor coordinates so she responds outside her transparent window too. Reduced-motion preferences disable the tilt and idle animation. Event handlers, IPC subscriptions and the animation loop are released on unmount.
 
 The optional **Talk with Cortex** switch enables spoken greetings and replies, using ElevenLabs Emma (`56bWURjYFHyYyVf490Dp`). Switching it off cancels playback, including speech requests still in flight. This library voice requires a paid ElevenLabs API plan; the current account returned `402 paid_plan_required`. Credentials stay in the main process/local server. Voice input remains available separately and transcribes live for review before sending.

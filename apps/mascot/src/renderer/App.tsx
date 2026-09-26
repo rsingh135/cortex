@@ -9,6 +9,14 @@ import type { MemoryNote } from "../shared/types";
 export function App() {
   const { pet, reaction, lastAnswer, error, dispatch } = useMascotStore();
   const [open, setOpen] = useState(false);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const drag = useRef<{ x: number; y: number; ox: number; oy: number; moved: boolean } | null>(null);
+  const suppressClick = useRef(false);
+  useEffect(() => {
+    const stop = () => { drag.current = null; window.mascot?.setDragging?.(false); };
+    window.addEventListener('blur', stop);
+    return () => { stop(); window.removeEventListener('blur', stop); };
+  }, []);
   const [mode, setMode] = useState<"remember" | "ask">("remember");
   const [notes, setNotes] = useState<MemoryNote[]>([]);
   const [saving, setSaving] = useState(false);
@@ -94,14 +102,36 @@ export function App() {
     } catch (err) { fail(err instanceof Error ? err.message : String(err)); }
     finally { setSaving(false); }
   };
-  return <main className="companion">
+  const dockX = window.innerWidth - 180 + offset.x;
+  const dockY = window.innerHeight - 164 + offset.y;
+  const panelAbove = dockY > window.innerHeight / 2;
+  const panelLeft = Math.max(12 - dockX, -200);
+  return <main className="companion" style={{ transform: `translate(${offset.x}px, ${offset.y}px)` }}>
     <div className="pet-dock" data-interactive>
-      <button className="pet-button" disabled={busy} onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="memory-panel" title={open ? "Close Cortex" : "Add a memory"}>
+      <button className="pet-button" aria-label="Cortex — click to open, drag to move" onPointerDown={event => {
+        if (event.button !== 0) return;
+        suppressClick.current = false;
+        drag.current = { x: event.clientX, y: event.clientY, ox: offset.x, oy: offset.y, moved: false };
+        event.currentTarget.setPointerCapture(event.pointerId);
+      }} onPointerMove={event => {
+        const start = drag.current; if (!start) return;
+        const dx = event.clientX - start.x, dy = event.clientY - start.y;
+        if (!start.moved && Math.hypot(dx, dy) < 5) return;
+        if (!start.moved) { start.moved = true; window.mascot?.setDragging?.(true); }
+        suppressClick.current = true;
+        if (!window.mascot?.setDragging) setOffset({
+          x: Math.max(170 - window.innerWidth, Math.min(12, start.ox + dx)),
+          y: Math.max(170 - window.innerHeight, Math.min(12, start.oy + dy)),
+        });
+      }} onPointerUp={event => {
+        drag.current = null; window.mascot?.setDragging?.(false);
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+      }} onPointerCancel={() => { drag.current = null; window.mascot?.setDragging?.(false); }} onClick={() => { if (suppressClick.current) { suppressClick.current = false; return; } if (!busy) setOpen(!open); }} aria-expanded={open} aria-controls="memory-panel" title={open ? "Close Cortex" : "Add a memory"}>
         <Pet state={pet} reaction={reaction}/>
         <span className={`pet-status ${pet !== "idle" ? "active" : ""}`}>{pet === "idle" || pet === "reacting" ? "a little space for your mind" : saving ? "keeping your memory…" : `${pet}…`}</span>
       </button>
     </div>
-    {open && <section id="memory-panel" className="memory-panel" data-interactive aria-label="Cortex memory companion">
+    {open && <section id="memory-panel" style={{ left: panelLeft, right: 'auto', bottom: panelAbove ? 152 : 'auto', top: panelAbove ? 'auto' : 152, maxHeight: Math.max(120, panelAbove ? dockY - 20 : window.innerHeight - dockY - 170) }} className="memory-panel" data-interactive aria-label="Cortex memory companion">
       <header className="panel-header"><div><span className="eyebrow"><i/> YOUR MEMORY COMPANION</span><h1>Hi, I’m Cortex<span>.</span></h1></div><button className="close-button" onClick={() => setOpen(false)} disabled={busy} aria-label="Close memory panel">×</button></header>
       <p className="intro">Little thoughts. Safely tucked away.</p>
       <div className="voice-conversation">

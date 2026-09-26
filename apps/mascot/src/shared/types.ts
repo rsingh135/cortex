@@ -5,6 +5,7 @@
 import type { AskResponse, WsEvent } from "@cortex/schema";
 
 export const IPC = {
+  drag: "mascot:drag",
   cursor: "mascot:cursor",
   ask: "mascot:ask",
   saveMemory: "mascot:save-memory",
@@ -31,6 +32,7 @@ export interface MemoryNote {
 }
 
 export interface MascotBridge {
+  setDragging?(active: boolean): void;
   onCursor?(cb: (point: { x: number; y: number }) => void): () => void;
   realtimeToken(): Promise<string>;
   synthesize(text: string): Promise<Uint8Array>;

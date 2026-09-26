@@ -22,11 +22,12 @@ const WINDOW = { width: 400, height: 680 } as const;
 
 let win: BrowserWindow | null = null;
 let tray: Tray | null = null;
+let dragOrigin: { x: number; y: number; wx: number; wy: number } | null = null;
 
 function createWindow(): BrowserWindow {
   const { workArea } = screen.getPrimaryDisplay();
-  const x = Math.round(workArea.x + (workArea.width - WINDOW.width) / 2);
-  const y = workArea.y;
+  const x = Math.round(workArea.x + workArea.width - WINDOW.width);
+  const y = Math.round(workArea.y + workArea.height - WINDOW.height);
   const w = new BrowserWindow({
     ...WINDOW,
     x,
@@ -59,6 +60,7 @@ function createWindow(): BrowserWindow {
   const cursorTimer = setInterval(() => {
     if (w.isDestroyed() || !w.isVisible()) return;
     const point = screen.getCursorScreenPoint();
+    if (dragOrigin) w.setPosition(Math.round(dragOrigin.wx + point.x - dragOrigin.x), Math.round(dragOrigin.wy + point.y - dragOrigin.y));
     const bounds = w.getBounds();
     w.webContents.send(IPC.cursor, { x: point.x - bounds.x, y: point.y - bounds.y });
   }, 50);
@@ -162,8 +164,15 @@ app.whenReady().then(() => {
     const speak = typeof opts === "object" && opts !== null && (opts as { speak?: unknown }).speak === true;
     return ask(text, speak);
   });
+  ipcMain.on(IPC.drag, (_e, active: unknown) => {
+    if (active === true && win) {
+      const point = screen.getCursorScreenPoint(), bounds = win.getBounds();
+      dragOrigin = { x: point.x, y: point.y, wx: bounds.x, wy: bounds.y };
+      win.setIgnoreMouseEvents(false);
+    } else dragOrigin = null;
+  });
   ipcMain.on(IPC.setClickThrough, (_e, enabled: unknown) => {
-    win?.setIgnoreMouseEvents(enabled === true, { forward: true });
+    win?.setIgnoreMouseEvents(enabled === true && !dragOrigin, { forward: true });
   });
 
   app.on("activate", () => {
