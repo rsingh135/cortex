@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_PARAMS } from "@cortex/schema";
-import { DEFAULT_INPUT, assertions, recallStateOn, simulate, suggestRecallDays } from "../simulate.js";
+import { DEFAULT_INPUT, assertions, recallStateOn, simulate, suggestRecallDays } from "../simulate";
 
 describe("simulator", () => {
   it("suggests the greedy recall schedule that keeps a day-2 L0 alive to day 24", () => {

@@ -3,7 +3,7 @@
  * mistake which attribute caused a rejection, plus traps for the agent's live hunt.
  */
 import { walkupFloor, type Listing } from "@cortex/schema";
-import type { Rng } from "./prng.js";
+import type { Rng } from "./prng";
 
 export const TRUE_BUDGET = 2800;
 

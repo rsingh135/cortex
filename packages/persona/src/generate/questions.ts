@@ -3,10 +3,10 @@
  * Seen-once questions target details that exist only in a screenshot and die with its resolution.
  */
 import type { Listing, Question, UsageLogEntry } from "@cortex/schema";
-import { TRUE_BUDGET, decide } from "./index-helpers.js";
-import { FACTS } from "./life.js";
-import { HUNT_DAYS } from "./script.js";
-import type { Rng } from "./prng.js";
+import { TRUE_BUDGET, decide } from "./index-helpers";
+import { FACTS } from "./life";
+import { HUNT_DAYS } from "./script";
+import type { Rng } from "./prng";
 
 function q(id: string, group: Question["group"], question: string, answer: string, grading: Question["grading"], extra: Partial<Question> = {}): Question {
   return { id, group, question, answer, grading, ...extra };

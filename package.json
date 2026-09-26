@@ -16,7 +16,8 @@
     "simulate": "tsx tools/simulate.ts",
     "atlas:check": "tsx tools/atlas-check.ts",
     "reset-demo-db": "tsx tools/reset-demo-db.ts",
-    "test:tools": "vitest run"
+    "test:tools": "vitest run",
+    "chart": "tsx tools/chart.ts"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

@@ -3,7 +3,7 @@
  * forget, plus a few things it must keep (Priya's dinner, the design review, the lease).
  */
 import type { CalendarEvent, Message } from "@cortex/schema";
-import type { Rng } from "./prng.js";
+import type { Rng } from "./prng";
 
 export const FACTS = {
   managerName: "Sam Okafor",

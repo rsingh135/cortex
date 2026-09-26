@@ -1,2 +1,2 @@
-export { TRUE_BUDGET } from "./listings.js";
-export { decide } from "./decisions.js";
+export { TRUE_BUDGET } from "./listings";
+export { decide } from "./decisions";

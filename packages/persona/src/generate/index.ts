@@ -8,13 +8,13 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
 import { CalendarEvent, GroundTruth, Listing, Message, UsageLogEntry } from "@cortex/schema";
-import { ScriptStep } from "../index.js";
-import { STYLE, TRUE_RULES } from "./decisions.js";
-import { generateCalendar, generateInbox } from "./life.js";
-import { generateListings } from "./listings.js";
-import { mulberry32 } from "./prng.js";
-import { generateQuestions, generateUsageLog } from "./questions.js";
-import { generateScript } from "./script.js";
+import { ScriptStep } from "../index";
+import { STYLE, TRUE_RULES } from "./decisions";
+import { generateCalendar, generateInbox } from "./life";
+import { generateListings } from "./listings";
+import { mulberry32 } from "./prng";
+import { generateQuestions, generateUsageLog } from "./questions";
+import { generateScript } from "./script";
 
 export interface Persona {
   listings: Listing[];

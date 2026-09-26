@@ -8,9 +8,10 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run"
   },
   "dependencies": {
+    "@cortex/persona": "workspace:*",
     "@cortex/schema": "workspace:*",
     "next": "16.3.6",
     "react": "19.2.8",

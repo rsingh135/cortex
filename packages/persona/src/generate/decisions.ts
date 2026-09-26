@@ -3,7 +3,7 @@
  * learner must recover, so it lives here and nowhere in the engine.
  */
 import type { GroundTruth, Listing } from "@cortex/schema";
-import { TRUE_BUDGET } from "./listings.js";
+import { TRUE_BUDGET } from "./listings";
 
 export type Outcome = "unopened" | "rejected" | "messaged";
 

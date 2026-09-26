@@ -3,8 +3,8 @@
  * per capture during sweeps. Also the shape of the stored event log used by replay mode.
  */
 import { z } from "zod";
-import { Condition, Level, Room, WsEventType } from "./enums.js";
-import { Belief, Capture, Edge, Procedure } from "./collections.js";
+import { Condition, Level, Room, WsEventType } from "./enums";
+import { Belief, Capture, Edge, Procedure } from "./collections";
 
 const base = {
   /** ULID of the event itself. */

@@ -2,9 +2,9 @@
  * HTTP contracts for apps/engine. Request and response bodies; documented in docs/contracts.md.
  */
 import { z } from "zod";
-import { Actor, ActionType, App, Condition, Level, RequestRoute, Room } from "./enums.js";
-import { Belief, Procedure } from "./collections.js";
-import { Rule } from "./rules.js";
+import { Actor, ActionType, App, Condition, Level, RequestRoute, Room } from "./enums";
+import { Belief, Procedure } from "./collections";
+import { Rule } from "./rules";
 
 // POST /ingest/capture  (multipart: `image` = PNG/WebP, `meta` = JSON of IngestCaptureMeta)
 export const IngestCaptureMeta = z.object({

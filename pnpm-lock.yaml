@@ -301,6 +301,9 @@ importers:
 
   apps/mockworld:
     dependencies:
+      '@cortex/persona':
+        specifier: workspace:*
+        version: link:../../packages/persona
       '@cortex/schema':
         specifier: workspace:*
         version: link:../../packages/schema
@@ -424,6 +427,9 @@ importers:
       '@types/node':
         specifier: ^24.0.0
         version: 24.13.6
+      tsx:
+        specifier: ^4.20.0
+        version: 4.23.15
       typescript:
         specifier: ^5.9.0
         version: 5.9.3

@@ -3,7 +3,7 @@
  * against every decision. Rules are hypotheses; the checker decides which survive.
  */
 import { z } from "zod";
-import { LISTING_ATTRS, ListingAttr, RuleOp, RuleOutcome, type DecisionOutcome } from "./enums.js";
+import { LISTING_ATTRS, ListingAttr, RuleOp, RuleOutcome, type DecisionOutcome } from "./enums";
 
 export const RuleValue = z.union([z.number(), z.string(), z.boolean(), z.array(z.string())]);
 export type RuleValue = z.infer<typeof RuleValue>;

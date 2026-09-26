@@ -2,7 +2,7 @@
  * Forgetting math. Single source of truth for the engine, the simulator, and the palace.
  * Mirrors the "Parameters" section of docs/spec.md. Tune via tools/simulate.ts, not here.
  */
-import { LEVELS, type Condition, type Level } from "./enums.js";
+import { LEVELS, type Condition, type Level } from "./enums";
 
 export interface Params {
   /** Days each level lasts since last recall, before any recall doubling. */

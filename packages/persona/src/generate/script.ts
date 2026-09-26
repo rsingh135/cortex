@@ -3,10 +3,10 @@
  * Every step carries its episode id so capture records carry explicit episode boundaries.
  */
 import type { Listing } from "@cortex/schema";
-import type { ScriptStep } from "../index.js";
-import { decide, draftMessage } from "./decisions.js";
-import { FACTS } from "./life.js";
-import type { Rng } from "./prng.js";
+import type { ScriptStep } from "../index";
+import { decide, draftMessage } from "./decisions";
+import { FACTS } from "./life";
+import type { Rng } from "./prng";
 
 export const HUNT_DAYS: Record<"hunt1" | "hunt2", number> = { hunt1: 2, hunt2: 5 };
 

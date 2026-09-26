@@ -17,8 +17,8 @@ import {
   QuestionGroup,
   Room,
   Source,
-} from "./enums.js";
-import { Rule } from "./rules.js";
+} from "./enums";
+import { Rule } from "./rules";
 
 /** ULID string. Every `_id` in every collection. */
 export const Id = z.string().min(1);
