@@ -18,11 +18,11 @@ for (const path of [join(process.cwd(), ".env"), join(__dirname, "../../../..", 
 
 const ENGINE_HTTP_URL = process.env.ENGINE_HTTP_URL ?? "http://localhost:4000";
 const ENGINE_WS_URL = process.env.ENGINE_WS_URL ?? "ws://localhost:4000/ws";
-const WINDOW = { width: 400, height: 680 } as const;
+/** Pet-sized: portrait, two mini buttons, one line of input, a short answer bubble above. */
+const WINDOW = { width: 260, height: 340 } as const;
 
 let win: BrowserWindow | null = null;
 let tray: Tray | null = null;
-let dragOrigin: { x: number; y: number; wx: number; wy: number } | null = null;
 
 function createWindow(): BrowserWindow {
   const { workArea } = screen.getPrimaryDisplay();
@@ -57,13 +57,13 @@ function createWindow(): BrowserWindow {
   } else {
     void w.loadFile(join(__dirname, "../renderer/index.html"));
   }
+  // Eye tracking only; window movement comes from the renderer's drag events (IPC.move).
   const cursorTimer = setInterval(() => {
     if (w.isDestroyed() || !w.isVisible()) return;
     const point = screen.getCursorScreenPoint();
-    if (dragOrigin) w.setPosition(Math.round(dragOrigin.wx + point.x - dragOrigin.x), Math.round(dragOrigin.wy + point.y - dragOrigin.y));
     const bounds = w.getBounds();
     w.webContents.send(IPC.cursor, { x: point.x - bounds.x, y: point.y - bounds.y });
-  }, 50);
+  }, 80);
   w.once("closed", () => clearInterval(cursorTimer));
   return w;
 }
@@ -164,15 +164,14 @@ app.whenReady().then(() => {
     const speak = typeof opts === "object" && opts !== null && (opts as { speak?: unknown }).speak === true;
     return ask(text, speak);
   });
-  ipcMain.on(IPC.drag, (_e, active: unknown) => {
-    if (active === true && win) {
-      const point = screen.getCursorScreenPoint(), bounds = win.getBounds();
-      dragOrigin = { x: point.x, y: point.y, wx: bounds.x, wy: bounds.y };
-      win.setIgnoreMouseEvents(false);
-    } else dragOrigin = null;
+  ipcMain.on(IPC.move, (_e, pos: unknown) => {
+    if (!win || typeof pos !== "object" || pos === null) return;
+    const { x, y } = pos as { x?: unknown; y?: unknown };
+    if (typeof x !== "number" || typeof y !== "number" || !Number.isFinite(x) || !Number.isFinite(y)) return;
+    win.setPosition(Math.round(x), Math.round(y));
   });
   ipcMain.on(IPC.setClickThrough, (_e, enabled: unknown) => {
-    win?.setIgnoreMouseEvents(enabled === true && !dragOrigin, { forward: true });
+    win?.setIgnoreMouseEvents(enabled === true, { forward: true });
   });
 
   // Option+V anywhere on the desktop: bring the pet forward and start listening.

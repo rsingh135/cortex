@@ -5,6 +5,7 @@
  *   pnpm play-maya                                   # record to captures/ (gitignored)
  *   pnpm play-maya --days 2 --speed 0                # only day 2, no human pacing
  *   pnpm play-maya --engine http://localhost:4000    # POST /ingest/capture instead of recording
+ *   pnpm play-maya --engine ... --usage-log          # also advance the clock per day and replay Maya's usage-log recalls
  *   MOCKWORLD_URL=http://localhost:3000 (default)
  *
  * Capture triggers follow docs/spec.md: page load, click, submit, dwell. Scroll never captures.
@@ -20,7 +21,8 @@ import {
   EndEpisodeResponse,
   type App,
 } from "@cortex/schema";
-import { mayaScript, type ScriptStep } from "@cortex/persona";
+import { mayaScript, usageLog, type ScriptStep } from "@cortex/persona";
+import type { UsageLogEntry } from "@cortex/schema";
 
 export interface CaptureRecord {
   n: number;
@@ -92,6 +94,10 @@ interface Sink {
   put(meta: IngestCaptureMeta, png: Buffer): Promise<void>;
   /** Called after the episode's final selected step, before the next day's captures. */
   endEpisode?(episodeId: string): Promise<void>;
+  /** Called when the simulated day changes, before that day's steps. Engine sink advances the clock. */
+  beginDay?(day: number): Promise<void>;
+  /** Replays one usage-log entry (a question Maya asked) as a recall. */
+  recall?(entry: UsageLogEntry): Promise<void>;
 }
 
 function fileSink(dir: string): Sink & { count: number } {
@@ -124,6 +130,18 @@ export function engineSink(engineUrl: string, token: string): Sink & { count: nu
       IngestCaptureResponse.parse(await res.json());
       this.count += 1;
     },
+    async beginDay(day) {
+      const res = await fetch(`${baseUrl}/clock/advance`, { method: "POST", headers: { "content-type": "application/json", "x-cortex-write-token": token }, body: JSON.stringify({ to_day: day }) });
+      if (!res.ok && res.status !== 501) throw new Error(`clock/advance to ${day} failed ${res.status}: ${await res.text()}`);
+    },
+    async recall(entry) {
+      const res = await fetch(`${baseUrl}/recall`, {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-cortex-write-token": token },
+        body: JSON.stringify({ query: entry.text, condition: "cortex", rooms: entry.rooms, by: "usage_log", reason: `usage log day ${entry.day}`, dry_run: false, limit: 10 }),
+      });
+      if (!res.ok && res.status !== 501) throw new Error(`recall on day ${entry.day} failed ${res.status}: ${await res.text()}`);
+    },
     async endEpisode(episodeId) {
       const res = await fetch(`${baseUrl}/episodes/${encodeURIComponent(episodeId)}/end`, {
         method: "POST",
@@ -144,6 +162,8 @@ export interface RunOptions {
   sink: Sink & { count: number };
   token: string;
   steps?: ScriptStep[];
+  /** Replay Maya's usage log: recalls on the days she asked, so used memories stay sharp. */
+  usage?: UsageLogEntry[];
 }
 
 export async function playMaya(opts: RunOptions): Promise<number> {
@@ -157,8 +177,16 @@ export async function playMaya(opts: RunOptions): Promise<number> {
   });
   const page = await context.newPage();
   let currentDay = -1;
+  const usage = [...(opts.usage ?? [])].sort((a, b) => a.day - b.day);
   const setDay = async (day: number): Promise<void> => {
     if (day === currentDay) return;
+    // Usage-log mode: days with no captures still advance the clock and replay their recalls.
+    if (opts.usage) {
+      for (let d = currentDay < 0 ? day : currentDay + 1; d <= day; d++) {
+        await opts.sink.beginDay?.(d);
+        for (const entry of usage.filter((u) => u.day === d && u.kind === "question")) await opts.sink.recall?.(entry);
+      }
+    }
     currentDay = day;
     await context.addCookies([{ name: "cortex-day", value: String(day), domain: host.hostname, path: "/" }]);
   };
@@ -199,6 +227,10 @@ export async function playMaya(opts: RunOptions): Promise<number> {
         }
         case "reject": {
           const btn = page.locator("#reject");
+          if ((await btn.count()) === 0) {
+            console.warn(`skip reject on ${step.target}: no Reject button (already rejected? restart the mock world for a clean run)`);
+            break;
+          }
           const box = await btn.boundingBox();
           await btn.click();
           await page.waitForTimeout(300);
@@ -246,9 +278,10 @@ async function main(): Promise<void> {
   const speed = Number(arg("--speed") ?? "0");
   const engine = arg("--engine");
   const out = arg("--out") ?? "captures";
+  const withUsage = argv.includes("--usage-log");
   const sink = engine ? engineSink(engine, token) : fileSink(out);
   const started = Date.now();
-  const n = await playMaya({ mockworldUrl, speed, sink, token, ...(days ? { days } : {}) });
+  const n = await playMaya({ mockworldUrl, speed, sink, token, ...(days ? { days } : {}), ...(withUsage ? { usage: usageLog() } : {}) });
   console.log(`${n} captures in ${((Date.now() - started) / 1000).toFixed(1)}s -> ${engine ?? out}`);
 }
 
