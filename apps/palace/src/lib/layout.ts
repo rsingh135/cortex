@@ -414,7 +414,7 @@ function placePaintings(
 }
 
 /** Where an unsupported capture hangs, by the app it came from. */
-const ROOM_BY_APP: Record<PalaceCapture["app"], Room> = { mockloft: "Housing", landlord_chat: "Housing", inbox: "Work", calendar: "Work" };
+const ROOM_BY_APP: Record<PalaceCapture["app"], Room> = { mockloft: "Housing", landlord_chat: "Housing", inbox: "Work", calendar: "Work", desktop: "Misc" };
 
 /** The belief a painting hangs behind: the strongest supporter, ties broken by id. */
 function pickAnchor(beliefs: readonly PalaceBelief[]): PalaceBelief | undefined {

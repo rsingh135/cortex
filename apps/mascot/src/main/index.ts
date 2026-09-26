@@ -6,6 +6,7 @@ import { synthesizeSpeech } from "./speech";
 import { app, BrowserWindow, globalShortcut, ipcMain, Menu, nativeImage, screen, Tray } from "electron";
 import { existsSync } from "node:fs";
 import { MemoryNotebook } from "./memory";
+import { createScreenCapture, type ScreenCapture } from "./capture";
 import { transcribeAudio, createRealtimeToken } from "./transcribe";
 import { join } from "node:path";
 import { AskRequest, AskResponse, WsEvent } from "@cortex/schema";
@@ -22,6 +23,8 @@ const ENGINE_WS_URL = process.env.ENGINE_WS_URL ?? "ws://localhost:4000/ws";
 const WINDOW = { width: 260, height: 340 } as const;
 
 let win: BrowserWindow | null = null;
+let capture: ScreenCapture | null = null;
+let trayRef: Tray | null = null;
 let tray: Tray | null = null;
 
 function createWindow(): BrowserWindow {
@@ -83,10 +86,55 @@ function createTray(): Tray {
       { label: "Show", click: () => win?.show() },
       { label: "Hide", click: () => win?.hide() },
       { type: "separator" },
+      {
+        label: capture?.running
+          ? `Stop watching my screen (${capture.stats.stored} kept)`
+          : "Watch my screen",
+        click: () => void toggleCapture(),
+      },
+      { type: "separator" },
       { label: "Quit", click: () => app.quit() },
     ]),
   );
   return t;
+}
+
+/**
+ * Screen watching is opt-in and never starts on its own: this photographs the whole display and
+ * posts it to the engine, so the user turns it on deliberately and can see that it is on.
+ */
+async function toggleCapture(): Promise<void> {
+  if (!capture) return;
+  try {
+    if (capture.running) await capture.stop();
+    else await capture.start();
+  } catch (error) {
+    console.error("capture:", error instanceof Error ? error.message : error);
+  }
+  if (trayRef) trayRef.setContextMenu(null);
+  refreshTrayMenu();
+}
+
+function refreshTrayMenu(): void {
+  if (!trayRef || !capture) return;
+  trayRef.setToolTip(
+    capture.running ? "Cortex — watching your screen" : "Cortex",
+  );
+  trayRef.setContextMenu(
+    Menu.buildFromTemplate([
+      { label: "Show", click: () => win?.show() },
+      { label: "Hide", click: () => win?.hide() },
+      { type: "separator" },
+      {
+        label: capture.running
+          ? `Stop watching my screen (${capture.stats.stored} kept)`
+          : "Watch my screen",
+        click: () => void toggleCapture(),
+      },
+      { type: "separator" },
+      { label: "Quit", click: () => app.quit() },
+    ]),
+  );
 }
 
 async function ask(text: string, speak: boolean): Promise<unknown> {
@@ -140,10 +188,27 @@ function safeJson(s: string): unknown {
   }
 }
 
+app.on("before-quit", () => {
+  void capture?.stop();
+});
+
 app.whenReady().then(() => {
   if (process.platform === "darwin") app.dock?.hide();
   win = createWindow();
+  capture = createScreenCapture({
+    engineUrl: ENGINE_HTTP_URL,
+    ...(process.env.CAPTURE_INTERVAL_MS
+      ? { intervalMs: Number(process.env.CAPTURE_INTERVAL_MS) }
+      : {}),
+    onCapture: () => refreshTrayMenu(),
+    onError: (error) =>
+      console.error(
+        "capture:",
+        error instanceof Error ? error.message : error,
+      ),
+  });
   tray = createTray();
+  trayRef = tray;
   relayEngineEvents(() => win);
 
   const notebook = new MemoryNotebook(join(app.getPath("userData"), "memories.json"), ENGINE_HTTP_URL);

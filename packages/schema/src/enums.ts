@@ -37,7 +37,8 @@ export const ACTORS = ["maya", "agent"] as const;
 export const Actor = z.enum(ACTORS);
 export type Actor = z.infer<typeof Actor>;
 
-export const APPS = ["mockloft", "inbox", "calendar", "landlord_chat"] as const;
+/** The mock world's four surfaces, plus `desktop` for real screenshots the mascot captures. */
+export const APPS = ["mockloft", "inbox", "calendar", "landlord_chat", "desktop"] as const;
 export const App = z.enum(APPS);
 export type App = z.infer<typeof App>;
 

@@ -30,6 +30,7 @@ const PALETTES: Record<App, Palette> = {
   inbox: { bg: "#f4f6f8", panel: "#ffffff", ink: "#1f2933", muted: "#7b8794", accent: "#3b6ea5", line: "#e1e6ea" },
   calendar: { bg: "#fbfbf9", panel: "#ffffff", ink: "#2a2a2a", muted: "#9a9a92", accent: "#5a8f5a", line: "#e5e5df" },
   landlord_chat: { bg: "#f2f4f0", panel: "#ffffff", ink: "#242a24", muted: "#7f877f", accent: "#3f7f6f", line: "#dfe4de" },
+  desktop: { bg: "#eceef2", panel: "#ffffff", ink: "#23262b", muted: "#7d838c", accent: "#5b6b8c", line: "#dcdfe5" },
 };
 
 /** Data URL of a fake screen for this capture, or null when there is no DOM or the capture is forgotten. */

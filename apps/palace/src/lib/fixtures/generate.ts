@@ -180,6 +180,8 @@ function captureUrl(prng: Prng, app: App): string {
       return `https://inbox.local/thread/${prng.hex(6)}`;
     case "calendar":
       return "https://calendar.local/week";
+    case "desktop":
+      return "desktop://primary";
     case "landlord_chat":
       return `https://mockloft.local/listings/${prng.int(200, 260)}/chat`;
   }

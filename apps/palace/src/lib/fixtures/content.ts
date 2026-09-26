@@ -134,6 +134,7 @@ export const CAPTURE_TITLES: Record<App, string[]> = {
   inbox: ["Inbox — {subject}", "Inbox (12) — {subject}", "Re: {subject} — Inbox"],
   calendar: ["Calendar — week of day {d}", "Calendar — {title}", "Calendar — day {d}"],
   landlord_chat: ["Chat with {landlord}", "Message {landlord} — listing {id}", "Landlord chat — listing {id}"],
+  desktop: ["Desktop", "Screen — {subject}"],
 };
 
 export const INBOX_SUBJECTS = ["Onboarding flow v3", "Lease documents", "Benefits enrollment", "Design review notes", "Renters insurance quote", "Moving checklist", "Q4 roadmap", "Oct 3 dinner?", "Your DMV appointment", "IKEA return"];
