@@ -703,17 +703,19 @@ Two stacked panels over simulated days: bytes stored on top (stacked bands for i
 
 ### Track 1: palace (3D and 2D visualization), demo ops, chart
 
-- [ ] Fixture mode: seeded fake memory, canvas placeholder screenshots, fake event ticker, so the palace runs with no engine
-- [ ] Atrium and rooms laid out deterministically from `_id` hash and room; first-person walk, click-door fly, orbit fallback
-- [ ] Beliefs by kind, confidence as opacity, procedures on tables, paintings with a clarity blur shader, empty "forgotten" frames
-- [ ] Pulse, cracks, solid and dashed threads, gold frames, Archive alcove
+- [x] Fixture mode: seeded fake memory, canvas placeholder screenshots, fake event ticker, so the palace runs with no engine
+- [x] Atrium and rooms laid out deterministically from `_id` hash and room; first-person walk, click-door fly, orbit fallback
+- [x] Beliefs by kind, confidence as opacity, procedures on tables, paintings with a clarity blur shader, empty "forgotten" frames
+- [x] Pulse, cracks, solid and dashed threads, gold frames, Archive alcove
 - [ ] Belief card with edit, delete, trace link; draft approval control for the live hunt
-- [ ] Timeline scrubber, fast-forward with sweep animation, storage meter, minimap, `/map` page with the agent's JSON
-- [ ] WebSocket client with `GET /snapshot` on reconnect; split view with the browser for the live hunt
+- [x] Timeline scrubber, fast-forward with sweep animation, storage meter, minimap, `/map` page with the agent's JSON
+- [x] WebSocket client with `GET /snapshot` on reconnect; split view with the browser for the live hunt
 - [ ] Two-panel chart from the ledger aggregation, rendered to PNG
-- [ ] `tools/reset-demo-db.ts`; JSONL event log recording and replay mode; hotkeys for every fallback
+- [x] `tools/reset-demo-db.ts` (save/restore verified on the sandbox); bundled day-2 event log built from real captures
+- [ ] Replay mode wired to the `R` hotkey; hotkeys for every fallback (`F`, `V`, `J`, `C`, `A`); pre-recorded WAV
 - [ ] Vercel projects for the mock world and the palace through the GitHub integration; cloudflared tunnel for the WebSocket
-- [ ] Demo script for the five beats, rehearsed on the demo machine; one-minute demo video; closing note listing what was built
+- [x] Demo script for the five beats (`docs/demo.md`)
+- [ ] Rehearsed on the demo machine; one-minute demo video; closing note listing what was built
 
 ### Track 2: memory engine, persona, mock world
 
@@ -730,13 +732,13 @@ Two stacked panels over simulated days: bytes stored on top (stacked bands for i
 - [ ] One cluster-wide change stream and the WebSocket server; `GET /snapshot`
 - [ ] Evaluation harness: three ledgers from identical captures, usage-log replay, per-checkpoint snapshots, dry-run answering agent, grader, calibration run, workflow decision scoring
 - [ ] LangSmith tracing around every Claude call; `trace_url` on each belief; datasets and experiments per strategy per checkpoint
-- [ ] Persona: listings dataset with contrastive pairs and traps, Maya's scripted month with explicit episodes, ground truth, question set, usage log
-- [ ] Mock world: MockLoft with `data-*` attributes, Reject and message form, inbox, calendar, canned replies, write gating, v0 scaffolds, CC0 photos
+- [x] Persona: listings dataset with contrastive pairs and traps, Maya's scripted month with explicit episodes, ground truth, question set, usage log
+- [x] Mock world: MockLoft with `data-*` attributes, Reject and message form, inbox, calendar, canned replies, write gating, v0 scaffolds, CC0 photos
 - [ ] Agent replay tools over Playwright: `open`, `filter`, `open_listing`, `read_listing`, `skip`, `draft_message`, `send_message`; recorded action logs for the fallback
 
 ### Track 3: mascot
 
-- [ ] Electron shell: transparent always-on-top window, click-through outside the pet, tray menu, top-centre placement
+- [x] Electron shell: transparent always-on-top window, click-through outside the pet, tray menu, top-centre placement
 - [ ] Pet design and animation states: idle, listening, thinking, speaking, reacting (nod on recall, shiver on forget, stretch after fast-forward)
 - [ ] Hold to talk with ElevenLabs speech-to-text; text composer fallback
 - [ ] `POST /ask` client with speech playback of the returned audio; cited-belief count in the bubble
