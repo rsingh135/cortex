@@ -18,7 +18,11 @@ describe("assignRealScreens", () => {
     const files = assignRealScreens(captures);
     expect(files.slice(0, 2)).toEqual([mock[0]!.file, mock[1]!.file]);
     expect(files.slice(2, 4)).toEqual([mock[0]!.file, mock[1]!.file]);
-    expect(files[4]).toBeNull();
+    // Apps present in the recording get a file; apps absent from it get null.
+    const calendarRecorded = manifestFor("calendar").length > 0;
+    if (calendarRecorded) expect(files[4]).toBe(manifestFor("calendar")[0]!.file);
+    else expect(files[4]).toBeNull();
+    expect(assignRealScreens([{ app: "landlord_chat" as const, group: "x" }])[0] !== null).toBe(manifestFor("landlord_chat").length > 0);
     for (const f of files.filter(Boolean)) expect(CAPTURE_MANIFEST.some((e) => e.file === f)).toBe(true);
   });
 });
@@ -30,8 +34,9 @@ describe("fixture textures", () => {
     const real = shown.filter((c) => c.textureUrl?.startsWith("/captures/"));
     const placeholder = shown.filter((c) => c.textureUrl !== null && isFixtureScreenKey(c.textureUrl));
     expect(real.length).toBeGreaterThan(shown.length / 2);
-    expect(real.every((c) => c.app !== "calendar")).toBe(true);
-    expect(placeholder.every((c) => c.app === "calendar")).toBe(true);
+    const recordedApps = new Set(CAPTURE_MANIFEST.map((e) => e.app));
+    expect(real.every((c) => recordedApps.has(c.app))).toBe(true);
+    expect(placeholder.every((c) => !recordedApps.has(c.app))).toBe(true);
     for (const c of shown) expect(c.textureUrl).toBe(fixtureScreenKey(c, 42));
     expect(snapshot.captures.filter((c) => c.ceiling === null).every((c) => c.textureUrl === null)).toBe(true);
   });

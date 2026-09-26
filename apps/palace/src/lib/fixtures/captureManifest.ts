@@ -16,49 +16,49 @@ export interface CaptureManifestEntry {
 
 export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
   {
-    "file": "/captures/001-mockloft-load.webp",
-    "app": "mockloft",
+    "file": "/captures/001-inbox-load.webp",
+    "app": "inbox",
     "action": "load",
-    "episode": "hunt1-day2",
-    "day": 2,
-    "title": "MockLoft · Listings",
+    "episode": "setup-day1",
+    "day": 1,
+    "title": "Inbox",
     "listingId": null
   },
   {
-    "file": "/captures/002-mockloft-dwell.webp",
-    "app": "mockloft",
-    "action": "dwell",
-    "episode": "hunt1-day2",
-    "day": 2,
-    "title": "MockLoft · Listings",
-    "listingId": null
-  },
-  {
-    "file": "/captures/003-mockloft-load.webp",
-    "app": "mockloft",
-    "action": "load",
-    "episode": "hunt1-day2",
-    "day": 2,
-    "title": "MockLoft · Renovated 1BR in Greenpoint",
-    "listingId": "listing:110"
-  },
-  {
-    "file": "/captures/004-mockloft-dwell.webp",
-    "app": "mockloft",
-    "action": "dwell",
-    "episode": "hunt1-day2",
-    "day": 2,
-    "title": "MockLoft · Renovated 1BR in Greenpoint",
-    "listingId": "listing:110"
-  },
-  {
-    "file": "/captures/005-mockloft-click.webp",
-    "app": "mockloft",
+    "file": "/captures/002-inbox-click.webp",
+    "app": "inbox",
     "action": "click",
+    "episode": "setup-day1",
+    "day": 1,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/003-calendar-load.webp",
+    "app": "calendar",
+    "action": "load",
+    "episode": "setup-day1",
+    "day": 1,
+    "title": "Calendar",
+    "listingId": null
+  },
+  {
+    "file": "/captures/004-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
     "episode": "hunt1-day2",
     "day": 2,
-    "title": "MockLoft · Renovated 1BR in Greenpoint",
-    "listingId": "listing:110"
+    "title": "MockLoft · Listings",
+    "listingId": null
+  },
+  {
+    "file": "/captures/005-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Listings",
+    "listingId": null
   },
   {
     "file": "/captures/006-mockloft-load.webp",
@@ -66,8 +66,8 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "action": "load",
     "episode": "hunt1-day2",
     "day": 2,
-    "title": "MockLoft · Loft-style 2BR in East Williamsburg",
-    "listingId": "listing:102"
+    "title": "MockLoft · Renovated 1BR in Greenpoint",
+    "listingId": "listing:110"
   },
   {
     "file": "/captures/007-mockloft-dwell.webp",
@@ -75,8 +75,8 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "action": "dwell",
     "episode": "hunt1-day2",
     "day": 2,
-    "title": "MockLoft · Loft-style 2BR in East Williamsburg",
-    "listingId": "listing:102"
+    "title": "MockLoft · Renovated 1BR in Greenpoint",
+    "listingId": "listing:110"
   },
   {
     "file": "/captures/008-mockloft-click.webp",
@@ -84,8 +84,8 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "action": "click",
     "episode": "hunt1-day2",
     "day": 2,
-    "title": "MockLoft · Loft-style 2BR in East Williamsburg",
-    "listingId": "listing:102"
+    "title": "MockLoft · Renovated 1BR in Greenpoint",
+    "listingId": "listing:110"
   },
   {
     "file": "/captures/009-mockloft-load.webp",
@@ -93,8 +93,8 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "action": "load",
     "episode": "hunt1-day2",
     "day": 2,
-    "title": "MockLoft · Bright 2BR in Bushwick",
-    "listingId": "listing:103"
+    "title": "MockLoft · Loft-style 2BR in East Williamsburg",
+    "listingId": "listing:102"
   },
   {
     "file": "/captures/010-mockloft-dwell.webp",
@@ -102,17 +102,17 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "action": "dwell",
     "episode": "hunt1-day2",
     "day": 2,
-    "title": "MockLoft · Bright 2BR in Bushwick",
-    "listingId": "listing:103"
+    "title": "MockLoft · Loft-style 2BR in East Williamsburg",
+    "listingId": "listing:102"
   },
   {
-    "file": "/captures/011-landlord_chat-submit.webp",
-    "app": "landlord_chat",
-    "action": "submit",
+    "file": "/captures/011-mockloft-click.webp",
+    "app": "mockloft",
+    "action": "click",
     "episode": "hunt1-day2",
     "day": 2,
-    "title": "MockLoft · Bright 2BR in Bushwick",
-    "listingId": "listing:103"
+    "title": "MockLoft · Loft-style 2BR in East Williamsburg",
+    "listingId": "listing:102"
   },
   {
     "file": "/captures/012-mockloft-load.webp",
@@ -120,8 +120,8 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "action": "load",
     "episode": "hunt1-day2",
     "day": 2,
-    "title": "MockLoft · Sunny 1BR in Ridgewood",
-    "listingId": "listing:112"
+    "title": "MockLoft · Bright 2BR in Bushwick",
+    "listingId": "listing:103"
   },
   {
     "file": "/captures/013-mockloft-dwell.webp",
@@ -129,8 +129,8 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "action": "dwell",
     "episode": "hunt1-day2",
     "day": 2,
-    "title": "MockLoft · Sunny 1BR in Ridgewood",
-    "listingId": "listing:112"
+    "title": "MockLoft · Bright 2BR in Bushwick",
+    "listingId": "listing:103"
   },
   {
     "file": "/captures/014-landlord_chat-submit.webp",
@@ -138,8 +138,8 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "action": "submit",
     "episode": "hunt1-day2",
     "day": 2,
-    "title": "MockLoft · Sunny 1BR in Ridgewood",
-    "listingId": "listing:112"
+    "title": "MockLoft · Bright 2BR in Bushwick",
+    "listingId": "listing:103"
   },
   {
     "file": "/captures/015-mockloft-load.webp",
@@ -147,8 +147,8 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "action": "load",
     "episode": "hunt1-day2",
     "day": 2,
-    "title": "MockLoft · Loft-style 2BR in East Williamsburg",
-    "listingId": "listing:101"
+    "title": "MockLoft · Sunny 1BR in Ridgewood",
+    "listingId": "listing:112"
   },
   {
     "file": "/captures/016-mockloft-dwell.webp",
@@ -156,8 +156,8 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "action": "dwell",
     "episode": "hunt1-day2",
     "day": 2,
-    "title": "MockLoft · Loft-style 2BR in East Williamsburg",
-    "listingId": "listing:101"
+    "title": "MockLoft · Sunny 1BR in Ridgewood",
+    "listingId": "listing:112"
   },
   {
     "file": "/captures/017-landlord_chat-submit.webp",
@@ -165,8 +165,8 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "action": "submit",
     "episode": "hunt1-day2",
     "day": 2,
-    "title": "MockLoft · Loft-style 2BR in East Williamsburg",
-    "listingId": "listing:101"
+    "title": "MockLoft · Sunny 1BR in Ridgewood",
+    "listingId": "listing:112"
   },
   {
     "file": "/captures/018-mockloft-load.webp",
@@ -174,8 +174,8 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "action": "load",
     "episode": "hunt1-day2",
     "day": 2,
-    "title": "MockLoft · Loft-style 1BR in Williamsburg",
-    "listingId": "listing:105"
+    "title": "MockLoft · Loft-style 2BR in East Williamsburg",
+    "listingId": "listing:101"
   },
   {
     "file": "/captures/019-mockloft-dwell.webp",
@@ -183,8 +183,8 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "action": "dwell",
     "episode": "hunt1-day2",
     "day": 2,
-    "title": "MockLoft · Loft-style 1BR in Williamsburg",
-    "listingId": "listing:105"
+    "title": "MockLoft · Loft-style 2BR in East Williamsburg",
+    "listingId": "listing:101"
   },
   {
     "file": "/captures/020-landlord_chat-submit.webp",
@@ -192,8 +192,8 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "action": "submit",
     "episode": "hunt1-day2",
     "day": 2,
-    "title": "MockLoft · Loft-style 1BR in Williamsburg",
-    "listingId": "listing:105"
+    "title": "MockLoft · Loft-style 2BR in East Williamsburg",
+    "listingId": "listing:101"
   },
   {
     "file": "/captures/021-mockloft-load.webp",
@@ -201,8 +201,8 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "action": "load",
     "episode": "hunt1-day2",
     "day": 2,
-    "title": "MockLoft · Loft-style 1BR in Bushwick",
-    "listingId": "listing:111"
+    "title": "MockLoft · Loft-style 1BR in Williamsburg",
+    "listingId": "listing:105"
   },
   {
     "file": "/captures/022-mockloft-dwell.webp",
@@ -210,17 +210,17 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "action": "dwell",
     "episode": "hunt1-day2",
     "day": 2,
-    "title": "MockLoft · Loft-style 1BR in Bushwick",
-    "listingId": "listing:111"
+    "title": "MockLoft · Loft-style 1BR in Williamsburg",
+    "listingId": "listing:105"
   },
   {
-    "file": "/captures/023-mockloft-click.webp",
-    "app": "mockloft",
-    "action": "click",
+    "file": "/captures/023-landlord_chat-submit.webp",
+    "app": "landlord_chat",
+    "action": "submit",
     "episode": "hunt1-day2",
     "day": 2,
-    "title": "MockLoft · Loft-style 1BR in Bushwick",
-    "listingId": "listing:111"
+    "title": "MockLoft · Loft-style 1BR in Williamsburg",
+    "listingId": "listing:105"
   },
   {
     "file": "/captures/024-mockloft-load.webp",
@@ -228,8 +228,8 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "action": "load",
     "episode": "hunt1-day2",
     "day": 2,
-    "title": "MockLoft · Bright 2BR in Bushwick",
-    "listingId": "listing:104"
+    "title": "MockLoft · Loft-style 1BR in Bushwick",
+    "listingId": "listing:111"
   },
   {
     "file": "/captures/025-mockloft-dwell.webp",
@@ -237,8 +237,8 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "action": "dwell",
     "episode": "hunt1-day2",
     "day": 2,
-    "title": "MockLoft · Bright 2BR in Bushwick",
-    "listingId": "listing:104"
+    "title": "MockLoft · Loft-style 1BR in Bushwick",
+    "listingId": "listing:111"
   },
   {
     "file": "/captures/026-mockloft-click.webp",
@@ -246,11 +246,38 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "action": "click",
     "episode": "hunt1-day2",
     "day": 2,
+    "title": "MockLoft · Loft-style 1BR in Bushwick",
+    "listingId": "listing:111"
+  },
+  {
+    "file": "/captures/027-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
+    "episode": "hunt1-day2",
+    "day": 2,
     "title": "MockLoft · Bright 2BR in Bushwick",
     "listingId": "listing:104"
   },
   {
-    "file": "/captures/027-mockloft-load.webp",
+    "file": "/captures/028-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Bright 2BR in Bushwick",
+    "listingId": "listing:104"
+  },
+  {
+    "file": "/captures/029-mockloft-click.webp",
+    "app": "mockloft",
+    "action": "click",
+    "episode": "hunt1-day2",
+    "day": 2,
+    "title": "MockLoft · Bright 2BR in Bushwick",
+    "listingId": "listing:104"
+  },
+  {
+    "file": "/captures/030-mockloft-load.webp",
     "app": "mockloft",
     "action": "load",
     "episode": "hunt1-day2",
@@ -259,7 +286,7 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "listingId": "listing:106"
   },
   {
-    "file": "/captures/028-mockloft-dwell.webp",
+    "file": "/captures/031-mockloft-dwell.webp",
     "app": "mockloft",
     "action": "dwell",
     "episode": "hunt1-day2",
@@ -268,7 +295,7 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "listingId": "listing:106"
   },
   {
-    "file": "/captures/029-mockloft-click.webp",
+    "file": "/captures/032-mockloft-click.webp",
     "app": "mockloft",
     "action": "click",
     "episode": "hunt1-day2",
@@ -277,7 +304,7 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "listingId": "listing:106"
   },
   {
-    "file": "/captures/030-mockloft-load.webp",
+    "file": "/captures/033-mockloft-load.webp",
     "app": "mockloft",
     "action": "load",
     "episode": "hunt1-day2",
@@ -286,7 +313,7 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "listingId": "listing:107"
   },
   {
-    "file": "/captures/031-mockloft-dwell.webp",
+    "file": "/captures/034-mockloft-dwell.webp",
     "app": "mockloft",
     "action": "dwell",
     "episode": "hunt1-day2",
@@ -295,7 +322,7 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "listingId": "listing:107"
   },
   {
-    "file": "/captures/032-landlord_chat-submit.webp",
+    "file": "/captures/035-landlord_chat-submit.webp",
     "app": "landlord_chat",
     "action": "submit",
     "episode": "hunt1-day2",
@@ -304,7 +331,7 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "listingId": "listing:107"
   },
   {
-    "file": "/captures/033-inbox-load.webp",
+    "file": "/captures/036-inbox-load.webp",
     "app": "inbox",
     "action": "load",
     "episode": "life-day2",
@@ -313,7 +340,7 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "listingId": null
   },
   {
-    "file": "/captures/034-inbox-click.webp",
+    "file": "/captures/037-inbox-click.webp",
     "app": "inbox",
     "action": "click",
     "episode": "life-day2",
@@ -322,12 +349,768 @@ export const CAPTURE_MANIFEST: readonly CaptureManifestEntry[] = [
     "listingId": null
   },
   {
-    "file": "/captures/035-inbox-load.webp",
+    "file": "/captures/038-inbox-load.webp",
     "app": "inbox",
     "action": "load",
     "episode": "life-day2",
     "day": 2,
     "title": "Inbox · newsletter",
+    "listingId": null
+  },
+  {
+    "file": "/captures/039-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day3",
+    "day": 3,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/040-inbox-click.webp",
+    "app": "inbox",
+    "action": "click",
+    "episode": "life-day3",
+    "day": 3,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/041-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day3",
+    "day": 3,
+    "title": "Inbox · promo-9",
+    "listingId": null
+  },
+  {
+    "file": "/captures/042-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day4",
+    "day": 4,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/043-inbox-click.webp",
+    "app": "inbox",
+    "action": "click",
+    "episode": "life-day4",
+    "day": 4,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/044-calendar-load.webp",
+    "app": "calendar",
+    "action": "load",
+    "episode": "life-day4",
+    "day": 4,
+    "title": "Calendar",
+    "listingId": null
+  },
+  {
+    "file": "/captures/045-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day4",
+    "day": 4,
+    "title": "Inbox · promo-9",
+    "listingId": null
+  },
+  {
+    "file": "/captures/046-calendar-load.webp",
+    "app": "calendar",
+    "action": "load",
+    "episode": "life-day4",
+    "day": 4,
+    "title": "Calendar",
+    "listingId": null
+  },
+  {
+    "file": "/captures/047-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Listings",
+    "listingId": null
+  },
+  {
+    "file": "/captures/048-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Listings",
+    "listingId": null
+  },
+  {
+    "file": "/captures/049-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Loft-style 1BR in Williamsburg",
+    "listingId": "listing:201"
+  },
+  {
+    "file": "/captures/050-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Loft-style 1BR in Williamsburg",
+    "listingId": "listing:201"
+  },
+  {
+    "file": "/captures/051-landlord_chat-submit.webp",
+    "app": "landlord_chat",
+    "action": "submit",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Loft-style 1BR in Williamsburg",
+    "listingId": "listing:201"
+  },
+  {
+    "file": "/captures/052-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Garden-level 2BR in Bushwick",
+    "listingId": "listing:204"
+  },
+  {
+    "file": "/captures/053-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Garden-level 2BR in Bushwick",
+    "listingId": "listing:204"
+  },
+  {
+    "file": "/captures/054-mockloft-click.webp",
+    "app": "mockloft",
+    "action": "click",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Garden-level 2BR in Bushwick",
+    "listingId": "listing:204"
+  },
+  {
+    "file": "/captures/055-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Cozy 2BR in Ridgewood",
+    "listingId": "listing:211"
+  },
+  {
+    "file": "/captures/056-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Cozy 2BR in Ridgewood",
+    "listingId": "listing:211"
+  },
+  {
+    "file": "/captures/057-mockloft-click.webp",
+    "app": "mockloft",
+    "action": "click",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Cozy 2BR in Ridgewood",
+    "listingId": "listing:211"
+  },
+  {
+    "file": "/captures/058-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Bright Studio in Ridgewood",
+    "listingId": "listing:212"
+  },
+  {
+    "file": "/captures/059-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Bright Studio in Ridgewood",
+    "listingId": "listing:212"
+  },
+  {
+    "file": "/captures/060-landlord_chat-submit.webp",
+    "app": "landlord_chat",
+    "action": "submit",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Bright Studio in Ridgewood",
+    "listingId": "listing:212"
+  },
+  {
+    "file": "/captures/061-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Loft-style 1BR in Ridgewood",
+    "listingId": "listing:207"
+  },
+  {
+    "file": "/captures/062-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Loft-style 1BR in Ridgewood",
+    "listingId": "listing:207"
+  },
+  {
+    "file": "/captures/063-landlord_chat-submit.webp",
+    "app": "landlord_chat",
+    "action": "submit",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Loft-style 1BR in Ridgewood",
+    "listingId": "listing:207"
+  },
+  {
+    "file": "/captures/064-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Garden-level 2BR in Bushwick",
+    "listingId": "listing:203"
+  },
+  {
+    "file": "/captures/065-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Garden-level 2BR in Bushwick",
+    "listingId": "listing:203"
+  },
+  {
+    "file": "/captures/066-landlord_chat-submit.webp",
+    "app": "landlord_chat",
+    "action": "submit",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Garden-level 2BR in Bushwick",
+    "listingId": "listing:203"
+  },
+  {
+    "file": "/captures/067-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Corner 2BR in Williamsburg",
+    "listingId": "listing:205"
+  },
+  {
+    "file": "/captures/068-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Corner 2BR in Williamsburg",
+    "listingId": "listing:205"
+  },
+  {
+    "file": "/captures/069-landlord_chat-submit.webp",
+    "app": "landlord_chat",
+    "action": "submit",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Corner 2BR in Williamsburg",
+    "listingId": "listing:205"
+  },
+  {
+    "file": "/captures/070-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Corner 2BR in Williamsburg",
+    "listingId": "listing:206"
+  },
+  {
+    "file": "/captures/071-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Corner 2BR in Williamsburg",
+    "listingId": "listing:206"
+  },
+  {
+    "file": "/captures/072-mockloft-click.webp",
+    "app": "mockloft",
+    "action": "click",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Corner 2BR in Williamsburg",
+    "listingId": "listing:206"
+  },
+  {
+    "file": "/captures/073-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Loft-style 1BR in Williamsburg",
+    "listingId": "listing:202"
+  },
+  {
+    "file": "/captures/074-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Loft-style 1BR in Williamsburg",
+    "listingId": "listing:202"
+  },
+  {
+    "file": "/captures/075-mockloft-click.webp",
+    "app": "mockloft",
+    "action": "click",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Loft-style 1BR in Williamsburg",
+    "listingId": "listing:202"
+  },
+  {
+    "file": "/captures/076-mockloft-load.webp",
+    "app": "mockloft",
+    "action": "load",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Sunny 1BR in Park Slope",
+    "listingId": "listing:210"
+  },
+  {
+    "file": "/captures/077-mockloft-dwell.webp",
+    "app": "mockloft",
+    "action": "dwell",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Sunny 1BR in Park Slope",
+    "listingId": "listing:210"
+  },
+  {
+    "file": "/captures/078-mockloft-click.webp",
+    "app": "mockloft",
+    "action": "click",
+    "episode": "hunt2-day5",
+    "day": 5,
+    "title": "MockLoft · Sunny 1BR in Park Slope",
+    "listingId": "listing:210"
+  },
+  {
+    "file": "/captures/079-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day5",
+    "day": 5,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/080-inbox-click.webp",
+    "app": "inbox",
+    "action": "click",
+    "episode": "life-day5",
+    "day": 5,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/081-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day6",
+    "day": 6,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/082-inbox-click.webp",
+    "app": "inbox",
+    "action": "click",
+    "episode": "life-day6",
+    "day": 6,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/083-calendar-load.webp",
+    "app": "calendar",
+    "action": "load",
+    "episode": "life-day6",
+    "day": 6,
+    "title": "Calendar",
+    "listingId": null
+  },
+  {
+    "file": "/captures/084-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day7",
+    "day": 7,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/085-inbox-click.webp",
+    "app": "inbox",
+    "action": "click",
+    "episode": "life-day7",
+    "day": 7,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/086-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day8",
+    "day": 8,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/087-calendar-load.webp",
+    "app": "calendar",
+    "action": "load",
+    "episode": "life-day8",
+    "day": 8,
+    "title": "Calendar",
+    "listingId": null
+  },
+  {
+    "file": "/captures/088-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day9",
+    "day": 9,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/089-inbox-click.webp",
+    "app": "inbox",
+    "action": "click",
+    "episode": "life-day9",
+    "day": 9,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/090-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day9",
+    "day": 9,
+    "title": "Inbox · newsletter",
+    "listingId": null
+  },
+  {
+    "file": "/captures/091-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day10",
+    "day": 10,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/092-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day11",
+    "day": 11,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/093-inbox-click.webp",
+    "app": "inbox",
+    "action": "click",
+    "episode": "life-day11",
+    "day": 11,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/094-calendar-load.webp",
+    "app": "calendar",
+    "action": "load",
+    "episode": "life-day11",
+    "day": 11,
+    "title": "Calendar",
+    "listingId": null
+  },
+  {
+    "file": "/captures/095-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day11",
+    "day": 11,
+    "title": "Inbox · one-on-one",
+    "listingId": null
+  },
+  {
+    "file": "/captures/096-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day11",
+    "day": 11,
+    "title": "Inbox · promo-2",
+    "listingId": null
+  },
+  {
+    "file": "/captures/097-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day12",
+    "day": 12,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/098-inbox-click.webp",
+    "app": "inbox",
+    "action": "click",
+    "episode": "life-day12",
+    "day": 12,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/099-calendar-load.webp",
+    "app": "calendar",
+    "action": "load",
+    "episode": "life-day12",
+    "day": 12,
+    "title": "Calendar",
+    "listingId": null
+  },
+  {
+    "file": "/captures/100-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day13",
+    "day": 13,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/101-inbox-click.webp",
+    "app": "inbox",
+    "action": "click",
+    "episode": "life-day13",
+    "day": 13,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/102-calendar-load.webp",
+    "app": "calendar",
+    "action": "load",
+    "episode": "life-day13",
+    "day": 13,
+    "title": "Calendar",
+    "listingId": null
+  },
+  {
+    "file": "/captures/103-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day13",
+    "day": 13,
+    "title": "Inbox · promo-2",
+    "listingId": null
+  },
+  {
+    "file": "/captures/104-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day14",
+    "day": 14,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/105-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day15",
+    "day": 15,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/106-inbox-click.webp",
+    "app": "inbox",
+    "action": "click",
+    "episode": "life-day15",
+    "day": 15,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/107-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day16",
+    "day": 16,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/108-inbox-click.webp",
+    "app": "inbox",
+    "action": "click",
+    "episode": "life-day16",
+    "day": 16,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/109-calendar-load.webp",
+    "app": "calendar",
+    "action": "load",
+    "episode": "life-day16",
+    "day": 16,
+    "title": "Calendar",
+    "listingId": null
+  },
+  {
+    "file": "/captures/110-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day17",
+    "day": 17,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/111-inbox-click.webp",
+    "app": "inbox",
+    "action": "click",
+    "episode": "life-day17",
+    "day": 17,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/112-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day18",
+    "day": 18,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/113-inbox-click.webp",
+    "app": "inbox",
+    "action": "click",
+    "episode": "life-day18",
+    "day": 18,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/114-calendar-load.webp",
+    "app": "calendar",
+    "action": "load",
+    "episode": "life-day18",
+    "day": 18,
+    "title": "Calendar",
+    "listingId": null
+  },
+  {
+    "file": "/captures/115-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day19",
+    "day": 19,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/116-inbox-click.webp",
+    "app": "inbox",
+    "action": "click",
+    "episode": "life-day19",
+    "day": 19,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/117-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day19",
+    "day": 19,
+    "title": "Inbox · promo-1",
+    "listingId": null
+  },
+  {
+    "file": "/captures/118-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day20",
+    "day": 20,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/119-inbox-click.webp",
+    "app": "inbox",
+    "action": "click",
+    "episode": "life-day20",
+    "day": 20,
+    "title": "Inbox",
+    "listingId": null
+  },
+  {
+    "file": "/captures/120-calendar-load.webp",
+    "app": "calendar",
+    "action": "load",
+    "episode": "life-day20",
+    "day": 20,
+    "title": "Calendar",
+    "listingId": null
+  },
+  {
+    "file": "/captures/121-inbox-load.webp",
+    "app": "inbox",
+    "action": "load",
+    "episode": "life-day20",
+    "day": 20,
+    "title": "Inbox · lease",
+    "listingId": null
+  },
+  {
+    "file": "/captures/122-calendar-load.webp",
+    "app": "calendar",
+    "action": "load",
+    "episode": "life-day20",
+    "day": 20,
+    "title": "Calendar",
     "listingId": null
   }
 ];
