@@ -9,7 +9,7 @@
  */
 import type { Belief } from "@cortex/schema";
 import { NotImplemented } from "../lib/errors.js";
-import type { Repo } from "../db/repo.js";
+import type { MemoryStore } from "../db/memory-store.js";
 
 export type ConsolidationOutcome =
   | { kind: "reinforced"; belief_id: string }
@@ -20,7 +20,7 @@ export interface Consolidator {
   consolidate(candidate: Belief, day: number): Promise<ConsolidationOutcome>;
 }
 
-export function createConsolidator(_repo: Repo): Consolidator {
+export function createConsolidator(_store: MemoryStore): Consolidator {
   return {
     async consolidate() {
       throw new NotImplemented("consolidation");

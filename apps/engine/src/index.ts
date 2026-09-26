@@ -15,6 +15,14 @@ import { loadMemoryConfig } from "./config.js";
 import { fixtureStore, mongoStore } from "./db/memory-store.js";
 import { connect } from "./db.js";
 import { createLiveServer, type LiveServer } from "./live/server.js";
+import {
+  createAsker,
+  createAudioStore,
+  createClaudeAnswerer,
+  createElevenLabsSpeaker,
+  type Speaker,
+} from "./ask/index.js";
+import Anthropic from "@anthropic-ai/sdk";
 
 async function main(): Promise<void> {
   const fixtureMode = process.env.FIXTURE_MODE === "true";
@@ -46,7 +54,35 @@ async function main(): Promise<void> {
     };
   }
 
-  const app = createApp({ fixtureMode, memory });
+  // Both credentials are optional: without them /ask still answers extractively from memory,
+  // which is what the eval harness and the offline demo rely on.
+  const audio = createAudioStore();
+  const anthropicKey = process.env.ANTHROPIC_API_KEY?.trim();
+  const elevenKey = process.env.ELEVENLABS_API_KEY?.trim();
+  let speaker: Speaker | undefined;
+  if (elevenKey) {
+    speaker = createElevenLabsSpeaker(elevenKey, {
+      voiceId: process.env.ELEVENLABS_VOICE_ID?.trim() || "56bWURjYFHyYyVf490Dp",
+      store: audio,
+    });
+  }
+  const asker = createAsker({
+    store: memory,
+    ...(anthropicKey
+      ? {
+          answerer: createClaudeAnswerer(
+            new Anthropic({ apiKey: anthropicKey }),
+            process.env.REASONING_MODEL?.trim() || "claude-opus-5",
+          ),
+        }
+      : {}),
+    ...(speaker ? { speaker } : {}),
+  });
+  console.log(
+    `engine: /ask uses ${anthropicKey ? "claude" : "extractive"} answers${speaker ? " with speech" : ""}`,
+  );
+
+  const app = createApp({ fixtureMode, memory, asker, audio });
   const server = serve({ fetch: app.fetch, port }, () =>
     console.log(`engine: http://localhost:${port}`),
   );
