@@ -8,11 +8,13 @@ import {
 import { planRecall } from "../forgetting/plan.js";
 import { rank } from "./rank.js";
 import { withoutEmbedding, type MemoryData } from "../db/memory-data.js";
+import { queryTerms, termOverlap } from "../lib/text.js";
 
 /** Deterministic subject/text search until the Voyage/Atlas vector integration lands. */
 export function recallMemory(data: MemoryData, request: RecallRequest) {
   const query = request.query.trim().toLowerCase();
   if (!query) throw new RangeError("Query must not be blank");
+  const terms = queryTerms(query);
   const states = data.beliefStates.filter(
     (s) =>
       s.condition === request.condition &&
@@ -26,12 +28,8 @@ export function recallMemory(data: MemoryData, request: RecallRequest) {
     if (!belief || (request.rooms && !request.rooms.includes(belief.room)))
       return [];
     const exact = belief.triple.s.toLowerCase() === query;
-    const text =
-      `${belief.text} ${belief.triple.s} ${belief.triple.o}`.toLowerCase();
-    const tokens = query.split(/\s+/);
-    const relevance = exact
-      ? 1
-      : (0.9 * tokens.filter((t) => text.includes(t)).length) / tokens.length;
+    const text = `${belief.text} ${belief.triple.s} ${belief.triple.o}`;
+    const relevance = exact ? 1 : 0.9 * termOverlap(terms, text);
     const evidence = captures.filter(
       (c) => belief.evidence.includes(c.capture_id) && c.ceiling !== null,
     );

@@ -58,11 +58,13 @@ async function main(): Promise<void> {
   // which is what the eval harness and the offline demo rely on.
   const audio = createAudioStore();
   const anthropicKey = process.env.ANTHROPIC_API_KEY?.trim();
+  // An organization-scoped key rejects every request without this header.
+  const workspaceId = process.env.ANTHROPIC_WORKSPACE_ID?.trim();
   const elevenKey = process.env.ELEVENLABS_API_KEY?.trim();
   let speaker: Speaker | undefined;
   if (elevenKey) {
     speaker = createElevenLabsSpeaker(elevenKey, {
-      voiceId: process.env.ELEVENLABS_VOICE_ID?.trim() || "56bWURjYFHyYyVf490Dp",
+      voiceId: process.env.ELEVENLABS_VOICE_ID?.trim() || "EXAVITQu4vr4xnSDxMaL",
       store: audio,
     });
   }
@@ -71,7 +73,12 @@ async function main(): Promise<void> {
     ...(anthropicKey
       ? {
           answerer: createClaudeAnswerer(
-            new Anthropic({ apiKey: anthropicKey }),
+            new Anthropic({
+              apiKey: anthropicKey,
+              ...(workspaceId
+                ? { defaultHeaders: { "anthropic-workspace-id": workspaceId } }
+                : {}),
+            }),
             process.env.REASONING_MODEL?.trim() || "claude-opus-5",
           ),
         }
