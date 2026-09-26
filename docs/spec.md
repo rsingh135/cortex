@@ -790,7 +790,7 @@ Two stacked panels over simulated days: bytes stored on top (stacked bands for i
 | Decision | Default | Alternatives |
 | --- | --- | --- |
 | Level lifetimes and λ values | Parameters table, as tuned by `tools/simulate.ts` | Shorter lifetimes for a more dramatic fast-forward, if the simulator's assertions still pass |
-| Dream journal voice | A calm narrator voice from the ElevenLabs library, voice id chosen at build | A voice designed for Cortex |
+| Dream journal voice (resolved: ElevenLabs premade "Sarah", `EXAVITQu4vr4xnSDxMaL`; library voices need a paid plan via API) | A calm narrator voice from the ElevenLabs library, voice id chosen at build | A voice designed for Cortex |
 | Question set wording | Drafted with the ground-truth file, frozen before the first evaluation run | — |
 
 ## Sources

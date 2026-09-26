@@ -52,3 +52,8 @@ pnpm --filter @cortex/mascot dev
 ```
 
 Deploys to Vercel go through the GitHub integration, not the CLI.
+
+## Built at the event
+
+Everything in this repository was created during the hackathon, from the first commit onward. In order of landing: the design spec and contracts; the shared schema with the forgetting math and rule checker; the forgetting simulator and Atlas feature check; the persona generator (60 listings, Maya's scripted month, 50 evaluation questions); the mock world (MockLoft, inbox, calendar); the Playwright runner that records Maya's month; the memory engine (ingest, resolution ladder, phash, ledgers, recall, live snapshots); the 3D memory palace with fixture and live modes, replay, hotkeys and the agent's 2D map; the mascot desktop pet; the closing chart; the demo runbook and snapshot tool. Earlier planning existed only as a prose document; no code predates the event.
+
