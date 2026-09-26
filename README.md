@@ -36,7 +36,11 @@ pnpm typecheck      # every package and the tools
 pnpm test           # schema, persona, engine, and simulator tests
 pnpm simulate       # forgetting simulator: bytes per day per strategy plus the demo-beat assertions
 pnpm atlas:check    # proves change streams, TTL, $graphLookup and Vector Search work on the sandbox
+pnpm chart          # renders the closing two-panel chart to chart.svg from the simulator (accuracy from the eval later)
+pnpm play-maya      # plays Maya's month against a running mock world and records screenshots + capture metadata
 ```
+
+Persona data is generated, not hand-edited: `pnpm --filter @cortex/persona generate` rewrites `packages/persona/data/*.json` deterministically.
 
 ## Run
 
