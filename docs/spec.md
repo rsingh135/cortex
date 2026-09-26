@@ -69,6 +69,7 @@ The chart is computed offline before the demo. The live demo runs from a seeded 
 | --- | --- | --- |
 | `apps/mockworld` | Next.js on Vercel, UI scaffolded with v0 | Maya's listings site (MockLoft), inbox, calendar and landlord chat; the stage the demo runs on |
 | `apps/palace` | Next.js + React Three Fiber on Vercel | The 3D memory palace; connects to the engine over WebSocket; also serves the agent's 2D map as JSON |
+| `apps/mascot` | Electron + React | The Cortex mascot: a desktop pet that sits at the top of the screen, listens and talks through ElevenLabs, and answers questions from the real memory by calling the engine's `POST /ask` |
 | `apps/engine` | One long-running Node process | Ingest, extraction, consolidation, forgetting sweep, workflow learner, agent, voice, propagation, evaluation harness. Holds one cluster-wide Atlas change stream and pushes events to the palace over WebSocket |
 | `packages/schema` | zod | Every collection schema, enum, the rule DSL and checker, the forgetting math, WebSocket event envelope, API request and response types. Imported by every app and tool |
 | `packages/persona` | JSON + Playwright | Listings dataset, Maya's scripted month, ground truth, question set, usage log |
@@ -438,6 +439,18 @@ Each procedure found is marked **cracked**:
 
 In the demo, this is beat 4: "I'm getting a dog," the apartment-hunt procedure cracks, and the re-run skips listings that don't allow pets.
 
+## The mascot
+
+**Cortex has a face: a small desktop pet that sits at the top of the screen, listens, talks, and answers from the same memory the palace shows.** It is the everyday way to use Cortex; the palace is the way to inspect it.
+
+- A frameless, transparent, always-on-top Electron window, click-through except over the pet.
+- Hold to talk. ElevenLabs speech-to-text turns the question into text; the mascot sends it to `POST /ask`; the engine routes it (general, personal, workflow), recalls, answers with belief citations, and returns ElevenLabs audio. The mascot speaks it.
+- Every belief the answer cites is a real recall: it re-sharpens in memory and pulses in the palace at the same moment.
+- The pet reacts to the memory's life on the `/ws` feed: a nod when something is recalled, a shiver when a screenshot is forgotten, a stretch after a fast-forward.
+- The mascot holds no Anthropic key and no memory of its own. It is a thin client; the engine owns the Claude call and the LangSmith trace.
+
+In the demo the mascot is how Maya asks "when is Priya's birthday dinner?" and how the dream journal is spoken after the fast-forward.
+
 ## The palace and the agent's map
 
 **Humans walk a 3D palace; the agent reads a compact 2D floor plan of the same memory.** Both are generated from the same Atlas data, so what you see is exactly what the agent knows.
@@ -676,73 +689,60 @@ Two stacked panels over simulated days: bytes stored on top (stacked bands for i
 
 ## Work breakdown
 
-**Everything that needs to exist for the full build, grouped by owner.** Three people, all full-stack TypeScript.
+**Everything that needs to exist for the full build, grouped by owner.** Three people, three tracks, one trunk. Ownership and branch rules are in `CONTRIBUTING.md` and `.github/CODEOWNERS`.
 
-### Foundations (shared, first)
+### Foundations (shared, done first)
 
+- [x] `packages/schema`: collection schemas, enums, rule DSL and checker, forgetting math, WebSocket envelope, API types, unit tests
+- [x] `tools/simulate.ts` passes its assertions with the Parameters table and outputs the usage-log recall days
+- [x] `docs/contracts.md`: endpoints, WebSocket events, listing schema, palace layout rule, write gating, mascot contract
+- [x] Monorepo scaffold: pnpm workspaces, turborepo, `apps/mockworld`, `apps/palace`, `apps/engine`, `apps/mascot`, `packages/persona`, `.env.example`, README, CI
 - [ ] Atlas sandbox project created from the hackathon invite link
 - [ ] `tools/atlas-check.ts` passes: TTL indexes, change streams, 512-dim vector search index, `$graphLookup`; cluster tier recorded in `docs/contracts.md`
-- [ ] `packages/schema`: collection schemas, enums, rule DSL and checker, forgetting math, WebSocket envelope, API types, unit tests
-- [ ] `tools/simulate.ts` passes its assertions with the Parameters table and outputs the usage-log recall days
-- [ ] `docs/contracts.md`: endpoints, WebSocket events, listing schema, palace layout rule, write gating
-- [ ] Monorepo scaffold: pnpm workspaces, turborepo, `apps/mockworld`, `apps/palace`, `apps/engine`, `packages/persona`, `.env.example`, README
 - [ ] Public repository with the team added; Vercel projects connected through the GitHub integration
 
-### P1: mock world, persona, capture, agent replay tools
+### Track 1: palace (3D and 2D visualization), demo ops, chart
 
-- [ ] Listings dataset of about 60 listings with stable ids and `hunt` field, including contrastive pairs, the 6 agent listings and the 4 re-run listings
-- [ ] MockLoft: search, filters, listing pages with `data-*` attributes, a Reject button and a message form
-- [ ] Inbox and calendar views over seeded threads and events
-- [ ] Canned landlord replies
-- [ ] CC0 or generated photos
-- [ ] Write gating with `x-cortex-write-token`
-- [ ] Maya's month as a script: hunts on days 2 and 5, ordinary life on days 3–20
-- [ ] Playwright scripts that perform it with human-like pacing and explicit episode boundaries
-- [ ] Ground-truth file: her true rules and the answers to every evaluation question
-- [ ] Usage log with the recall days from the simulator
-- [ ] Capture hooks for load, click, submit and dwell; perceptual-hash dedupe
-- [ ] Capture record with URL, app, action, bounding box, page text, listing attributes, actor, episode and day
-- [ ] Agent replay tools over Playwright: `open`, `filter`, `open_listing`, `read_listing`, `skip`, `draft_message`, `send_message`
-- [ ] Recorded action logs for the replay fallback
-
-### P2: engine
-
-- [ ] Ingest endpoint; resolution ladder generation (L0–L3, WebP q80) and storage as level documents
-- [ ] Extraction prompt with structured outputs; room assignment from the fixed list; `page_text` deletion after success
-- [ ] Decision record parser from listing attributes and actions
-- [ ] Consolidation: exact match on canonical triples, Voyage vector match, conflict handling with supersede
-- [ ] Episode summaries
-- [ ] Simulated clock document and advance endpoint
-- [ ] Sweep over the state ledgers: expire levels, update ceilings and clarity, decay beliefs; physical deletion in the demo database
-- [ ] Recall handler with cascade, `dry_run`, clarity restore, clock reset, lifetime extension
-- [ ] Real-time mode with TTL indexes and `expires_at` updates
-- [ ] Byte accounting per strategy per day
-- [ ] Repeated-episode detection; rule proposal prompt; rule checker and threshold tightening; procedure, preference and style beliefs with `derived_from` and `uses` edges and `decision_attributes`
-- [ ] Router: general, personal, workflow; 2D map aggregation; recall ranking
-- [ ] Agent loop on the SDK tool runner with mandatory rule citations, batch decision, draft approval
-- [ ] Override handling as negative evidence
-- [ ] ElevenLabs speech-to-text endpoint; voice extraction; inference prompt with `inferred` marking; pinning
-- [ ] Propagation via `$graphLookup` plus attribute match; cracked and healed
-- [ ] Evaluation harness: three ledgers from identical captures, usage-log replay, per-checkpoint snapshots, dry-run answering agent, grader, calibration run, workflow decision scoring with and without memory
-- [ ] LangSmith tracing around every Claude call; `trace_url` on each belief; datasets and experiments per strategy per checkpoint
-- [ ] One cluster-wide change stream and the WebSocket server; `GET /snapshot`
-
-### P3: palace, live server client, demo ops, chart, sponsor wiring
-
-- [ ] Atrium and rooms laid out deterministically from `_id` hash and room
-- [ ] Beliefs, procedures, paintings with a clarity blur shader, empty "forgotten" frames
-- [ ] Glow, pulse, cracks, solid and dashed threads, gold frames, Archive alcove
-- [ ] Belief card with edit, delete, trace link
-- [ ] Hold-to-talk voice capture; draft approval control for the live hunt
-- [ ] Timeline scrubber, fast-forward, storage meter
+- [ ] Fixture mode: seeded fake memory, canvas placeholder screenshots, fake event ticker, so the palace runs with no engine
+- [ ] Atrium and rooms laid out deterministically from `_id` hash and room; first-person walk, click-door fly, orbit fallback
+- [ ] Beliefs by kind, confidence as opacity, procedures on tables, paintings with a clarity blur shader, empty "forgotten" frames
+- [ ] Pulse, cracks, solid and dashed threads, gold frames, Archive alcove
+- [ ] Belief card with edit, delete, trace link; draft approval control for the live hunt
+- [ ] Timeline scrubber, fast-forward with sweep animation, storage meter, minimap, `/map` page with the agent's JSON
 - [ ] WebSocket client with `GET /snapshot` on reconnect; split view with the browser for the live hunt
 - [ ] Two-panel chart from the ledger aggregation, rendered to PNG
-- [ ] ElevenLabs text-to-speech dream journal, scripted from the day-24 sweep stats, pre-generated
-- [ ] `tools/reset-demo-db.ts`; JSONL event log recording and replay mode; hotkeys for every fallback; pre-recorded voice WAV
-- [ ] Vercel projects for the mock world and the palace through the GitHub integration; cloudflared tunnel for the WebSocket; v0 scaffolds for MockLoft, Inbox and Calendar
-- [ ] Demo script for the five beats, rehearsed on the demo machine
-- [ ] One-minute demo video for the submission form
-- [ ] Closing note listing what was built at the event; repository confirmed public; all teammates on the submission
+- [ ] `tools/reset-demo-db.ts`; JSONL event log recording and replay mode; hotkeys for every fallback
+- [ ] Vercel projects for the mock world and the palace through the GitHub integration; cloudflared tunnel for the WebSocket
+- [ ] Demo script for the five beats, rehearsed on the demo machine; one-minute demo video; closing note listing what was built
+
+### Track 2: memory engine, persona, mock world
+
+- [ ] Capture policy: when to screenshot (load, click, submit, dwell), perceptual-hash dedupe, capture record with listing attributes
+- [ ] Resolution ladder generation (L0–L3, WebP q80) and storage as level documents; byte accounting per strategy per day
+- [ ] Extraction prompt with structured outputs; room assignment; `page_text` deletion after success; decision record parser
+- [ ] Consolidation: exact match on canonical triples, Voyage vector match, conflict handling with supersede; episode summaries
+- [ ] Simulated clock and advance endpoint; sweep over the state ledgers with physical deletion in the demo database; real-time TTL mode
+- [ ] Recall: exact subject match then `$vectorSearch`, ranking, cascade, `dry_run`, clarity restore, clock reset, lifetime extension; served-level image endpoint
+- [ ] Workflow learner: repeated-episode detection, rule proposal, rule checker, procedure and preference beliefs with edges and `decision_attributes`
+- [ ] Router, 2D map aggregation, `POST /ask` for the mascot and palace with citations and optional ElevenLabs audio
+- [ ] Agent loop on the SDK tool runner with mandatory rule citations, batch decision, draft approval; override handling as negative evidence
+- [ ] Voice extraction with the inference prompt and `inferred` marking; pinning; propagation via `$graphLookup` plus attribute match
+- [ ] One cluster-wide change stream and the WebSocket server; `GET /snapshot`
+- [ ] Evaluation harness: three ledgers from identical captures, usage-log replay, per-checkpoint snapshots, dry-run answering agent, grader, calibration run, workflow decision scoring
+- [ ] LangSmith tracing around every Claude call; `trace_url` on each belief; datasets and experiments per strategy per checkpoint
+- [ ] Persona: listings dataset with contrastive pairs and traps, Maya's scripted month with explicit episodes, ground truth, question set, usage log
+- [ ] Mock world: MockLoft with `data-*` attributes, Reject and message form, inbox, calendar, canned replies, write gating, v0 scaffolds, CC0 photos
+- [ ] Agent replay tools over Playwright: `open`, `filter`, `open_listing`, `read_listing`, `skip`, `draft_message`, `send_message`; recorded action logs for the fallback
+
+### Track 3: mascot
+
+- [ ] Electron shell: transparent always-on-top window, click-through outside the pet, tray menu, top-centre placement
+- [ ] Pet design and animation states: idle, listening, thinking, speaking, reacting (nod on recall, shiver on forget, stretch after fast-forward)
+- [ ] Hold to talk with ElevenLabs speech-to-text; text composer fallback
+- [ ] `POST /ask` client with speech playback of the returned audio; cited-belief count in the bubble
+- [ ] `/ws` subscription for reactions; reconnect with backoff
+- [ ] Persona and voice: a calm narrator voice from the ElevenLabs library; the spoken dream journal after the fast-forward
+- [ ] Packaging for the demo laptop; fallback: pre-recorded answers behind a hotkey
 
 ## Risks and rule compliance
 

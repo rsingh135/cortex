@@ -138,6 +138,32 @@ export const AgentRunResponse = z.object({
 // POST /agent/drafts/:draft_id/approve
 export const ApproveDraftResponse = z.object({ message_id: z.string(), sent: z.boolean() });
 
+// POST /ask  (mascot and palace chat: routes, recalls, answers with citations; engine owns the Claude call)
+export const AskRequest = z.object({
+  text: z.string().min(1),
+  /** Who is asking; drives voice/persona and recall logging. */
+  client: z.enum(["mascot", "palace", "eval"]).default("mascot"),
+  condition: Condition.default("cortex"),
+  /** Evaluation checkpoints set true: recall without touching memory. */
+  dry_run: z.boolean().default(false),
+  /** Return an ElevenLabs audio URL for the answer. */
+  speak: z.boolean().default(false),
+});
+export type AskRequest = z.infer<typeof AskRequest>;
+
+export const AskResponse = z.object({
+  route: RequestRoute,
+  answer: z.string(),
+  /** Belief ids the answer relied on; the palace pulses these. */
+  cited: z.array(z.string()),
+  recalled_ids: z.array(z.string()),
+  /** Set when a workflow route started an agent run. */
+  run_id: z.string().optional(),
+  audio_url: z.string().optional(),
+  trace_url: z.string().optional(),
+});
+export type AskResponse = z.infer<typeof AskResponse>;
+
 // GET /map?condition=cortex  -> the agent's 2D map (about 500 tokens)
 export const MapResponse = z.object({
   day: z.number().int(),

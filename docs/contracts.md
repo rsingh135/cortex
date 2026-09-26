@@ -25,6 +25,7 @@ Frozen interfaces every track builds against. Types live in `packages/schema/src
 | POST | `/route` | `RouteRequest` | `RouteResponse` | general / personal / workflow |
 | POST | `/agent/run` | `AgentRunRequest` | `AgentRunResponse` | Runs the procedure in Playwright; returns decisions with belief citations and message drafts awaiting approval |
 | POST | `/agent/drafts/:draft_id/approve` | none | `ApproveDraftResponse` | Presenter approval sends the landlord message |
+| POST | `/ask` | `AskRequest` | `AskResponse` | Mascot and palace chat. Routes, recalls, answers with belief citations; optional ElevenLabs audio. Cited beliefs pulse in the palace |
 | GET | `/map?condition=cortex` | none | `MapResponse` | The agent's 2D map, about 500 tokens |
 | GET | `/snapshot?condition=cortex` | none | `WsEvent` of type `snapshot` | Palace calls on connect and reconnect |
 | GET | `/stats?condition=cortex` | none | `StatsResponse` | Daily bytes and accuracy rows for the chart |
@@ -39,6 +40,11 @@ Rules:
 - The engine holds one cluster-wide change stream and translates changes into these events. Sweeps coalesce `level.deleted` per capture.
 - The same envelopes are appended to `event-log/*.jsonl` during ingest so replay mode can re-emit them on a timer for beat 1.
 - Palace treats an unknown type as a no-op and logs it.
+
+## Mascot (apps/mascot)
+
+- Thin client. Every answer comes from `POST /ask`; the mascot never holds an Anthropic key. It holds the ElevenLabs key only for local speech-to-text of the user's voice; text-to-speech of answers is returned by the engine as `audio_url` when `speak: true`.
+- Talks to the engine at `ENGINE_HTTP_URL`; subscribes to the same `/ws` feed to react (blink, nod) when memories are recalled or forgotten.
 
 ## Mock world (apps/mockworld)
 

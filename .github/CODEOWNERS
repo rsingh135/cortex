@@ -1,0 +1,24 @@
+# Directory ownership. A PR touching a path needs review from that owner.
+# Replace the placeholders with GitHub handles.
+
+# Palace: 3D memory palace + 2D agent map
+/apps/palace/            @rsingh135
+
+# Memory engine: capture policy, ladder, forgetting, Mongo search, agent, voice
+/apps/engine/            @MEMORY_OWNER
+
+# Mascot: desktop pet, ElevenLabs voice, asks the engine
+/apps/mascot/            @MASCOT_OWNER
+
+# Mock world and persona: whoever picks it up
+/apps/mockworld/         @rsingh135
+/packages/persona/       @MEMORY_OWNER
+
+# Shared contracts: any change needs a second reviewer from another track
+/packages/schema/        @rsingh135 @MEMORY_OWNER @MASCOT_OWNER
+/docs/contracts.md       @rsingh135 @MEMORY_OWNER @MASCOT_OWNER
+/docs/spec.md            @rsingh135 @MEMORY_OWNER @MASCOT_OWNER
+
+# Root tooling
+/tools/                  @rsingh135
+/.github/                @rsingh135
