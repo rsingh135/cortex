@@ -70,7 +70,7 @@ export function Minimap({ size = 220, playerPosition, onRoomClick, className = "
       aria-label={`Palace floor plan, ${snapshot.beliefs.filter((b) => isShownInRoom(b) && b.createdDay <= snapshot.day).length} beliefs across ${layout.rooms.length} rooms${here ? `, you are in ${here}` : ", you are in the atrium"}`}
       className={`select-none ${className}`}
     >
-      <polygon points={atrium} className={`${here === null && player ? "fill-sky-200 stroke-sky-700" : "fill-white stroke-zinc-500"}`} strokeWidth={PX.wall * unitsPerPx} strokeLinejoin="round" />
+      <polygon points={atrium} className={`transition-[fill,stroke] duration-300 ease-out ${here === null && player ? "fill-sky-200 stroke-sky-700" : "fill-white stroke-zinc-500"}`} strokeWidth={PX.wall * unitsPerPx} strokeLinejoin="round" />
       {showAtriumLabel && (
         <text x={0} y={0.35 * PX.atrium * unitsPerPx} textAnchor="middle" fontSize={PX.atrium * unitsPerPx} className="fill-zinc-400 font-medium uppercase" style={{ letterSpacing: 0.12 * PX.atrium * unitsPerPx }}>
           Atrium

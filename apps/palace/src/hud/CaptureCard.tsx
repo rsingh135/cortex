@@ -21,7 +21,7 @@ export function CaptureCard({ capture }: CaptureCardProps) {
   const supports = snapshot.beliefs.filter((b) => b.status !== "tombstoned" && b.evidence.includes(capture.id));
 
   return (
-    <section className="w-80 max-w-[calc(100vw-2rem)] rounded-xl bg-white/95 p-4 text-sm shadow-lg ring-1 ring-zinc-200 backdrop-blur" aria-labelledby="capture-card-title">
+    <section className="glass-strong w-80 max-w-[calc(100vw-2rem)] rounded-2xl p-4 text-[13px] leading-5" aria-labelledby="capture-card-title">
       <header className="flex items-start gap-2">
         <div className="flex flex-1 flex-wrap gap-1">
           <Chip tone="blue">screenshot</Chip>
@@ -30,14 +30,14 @@ export function CaptureCard({ capture }: CaptureCardProps) {
             {forgotten ? "forgotten" : formatLevel(capture.ceiling)}
           </Chip>
         </div>
-        <button type="button" onClick={() => select(null)} aria-label="Close screenshot card" className="-mr-1 -mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 focus-visible:outline-2 focus-visible:outline-sky-600">
+        <button type="button" onClick={() => select(null)} aria-label="Close screenshot card" className="-mr-1 -mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-zinc-500 transition hover:bg-zinc-900/6 hover:text-zinc-900 focus-visible:outline-2 focus-visible:outline-sky-600">
           <span aria-hidden className="text-base leading-none">
             ×
           </span>
         </button>
       </header>
 
-      <h2 id="capture-card-title" className="mt-3 text-[15px] font-medium leading-6 text-zinc-900">
+      <h2 id="capture-card-title" className="mt-3 text-[15px] font-medium leading-6 tracking-[-0.01em] text-zinc-900">
         {capture.title}
       </h2>
 
@@ -51,18 +51,18 @@ export function CaptureCard({ capture }: CaptureCardProps) {
 
       <dl className="mt-3 grid grid-cols-3 gap-2 text-xs">
         <div>
-          <dt className="text-zinc-500">Clarity</dt>
+          <dt className="text-zinc-600">Clarity</dt>
           <dd className="font-semibold tabular-nums text-zinc-900">{formatClarity(capture.clarity)}</dd>
         </div>
         <div>
-          <dt className="text-zinc-500">Captured</dt>
+          <dt className="text-zinc-600">Captured</dt>
           <dd className="font-semibold text-zinc-900">{formatDay(capture.day)}</dd>
         </div>
         <div>
-          <dt className="text-zinc-500">Recalls</dt>
+          <dt className="text-zinc-600">Recalls</dt>
           <dd className="font-semibold tabular-nums text-zinc-900">
             {capture.recalls}
-            {capture.lastRecallDay > 0 && <span className="font-normal text-zinc-500">, last {formatDay(capture.lastRecallDay).toLowerCase()}</span>}
+            {capture.lastRecallDay > 0 && <span className="font-normal text-zinc-600">, last {formatDay(capture.lastRecallDay).toLowerCase()}</span>}
           </dd>
         </div>
       </dl>
@@ -73,14 +73,14 @@ export function CaptureCard({ capture }: CaptureCardProps) {
           <ul className="mt-1.5 space-y-1">
             {supports.slice(0, 5).map((b) => (
               <li key={b.id}>
-                <button type="button" onClick={() => select(b.id)} className="w-full rounded-md px-2 py-1 text-left text-[13px] leading-5 text-zinc-800 ring-1 ring-inset ring-zinc-200 hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-sky-600">
+                <button type="button" onClick={() => select(b.id)} className="lift w-full rounded-lg bg-white/60 px-2 py-1 text-left text-[13px] leading-5 text-zinc-800 ring-1 ring-inset ring-zinc-900/10 hover:bg-white focus-visible:outline-2 focus-visible:outline-sky-600">
                   {truncate(b.text, 80)}
                 </button>
               </li>
             ))}
           </ul>
         )}
-        {supports.length > 5 && <div className="mt-1 text-xs text-zinc-500">+{supports.length - 5} more</div>}
+        {supports.length > 5 && <div className="mt-1 text-xs text-zinc-600">+{supports.length - 5} more</div>}
       </div>
     </section>
   );

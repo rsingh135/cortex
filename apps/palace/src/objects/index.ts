@@ -13,5 +13,6 @@ export { anchorFor, beliefOpacity, beliefSink, isGold } from "./anchors";
 export { beliefColor, beliefGeometry } from "./shapes";
 export { clearTextureCache, peekTexture, subscribeTexture, useCachedTexture } from "./textureCache";
 export { createBlurMaterial, createBlurUniforms, BLUR_FRAGMENT_SHADER, BLUR_VERTEX_SHADER, type BlurMaterial, type BlurUniforms } from "./blurMaterial";
-export { PULSE_MS, PULSE_SCALE, clamp01, pulseGlow, pulseProgress, pulseScale, sharpenAmount } from "./pulse";
+export { PULSE_MS, PULSE_SCALE, ORB_MS, HOVER_SCALE, clamp01, orbOpacity, orbProgress, orbScale, pulseGlow, pulseProgress, pulseScale, sharpenAmount } from "./pulse";
+export { RecallOrb, type RecallOrbProps } from "./RecallOrb";
 export * from "./palette";

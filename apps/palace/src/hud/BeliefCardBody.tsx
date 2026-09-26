@@ -12,8 +12,8 @@ import { Sparkline } from "./Sparkline";
 const KIND_LABEL: Record<Kind, string> = { fact: "fact", event: "event", person: "person", preference: "preference", routine: "routine", style: "style", summary: "summary" };
 const SOURCE_LABEL: Record<Source, string> = { screen: "from screen", voice: "voice note", agent_outcome: "agent outcome", learner: "learned", manual: "edited by Maya" };
 
-const BUTTON = "inline-flex h-8 items-center justify-center rounded-md px-3 text-xs font-medium ring-1 ring-inset transition focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-sky-600 disabled:cursor-not-allowed disabled:opacity-40";
-const NEUTRAL = `${BUTTON} text-zinc-700 ring-zinc-200 hover:bg-zinc-100`;
+const BUTTON = "lift inline-flex h-8 items-center justify-center rounded-lg px-3 text-xs font-medium ring-1 ring-inset focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-sky-600 disabled:cursor-not-allowed disabled:opacity-40";
+const NEUTRAL = `${BUTTON} bg-white/70 text-zinc-700 ring-zinc-900/10 hover:bg-white hover:text-zinc-900`;
 const PRIMARY = `${BUTTON} bg-sky-600 text-white ring-sky-600 hover:bg-sky-700`;
 const DANGER = `${BUTTON} bg-red-600 text-white ring-red-600 hover:bg-red-700`;
 
@@ -41,7 +41,7 @@ export function BeliefCardBody({ belief }: BeliefCardBodyProps) {
   const canSave = draft.trim().length > 0 && draft.trim() !== belief.text;
 
   return (
-    <section className="w-80 max-w-[calc(100vw-2rem)] rounded-xl bg-white/95 p-4 text-sm shadow-lg ring-1 ring-zinc-200 backdrop-blur" aria-labelledby="belief-card-title">
+    <section className="glass-strong w-80 max-w-[calc(100vw-2rem)] rounded-2xl p-4 text-[13px] leading-5" aria-labelledby="belief-card-title">
       <header className="flex items-start gap-2">
         <div className="flex flex-1 flex-wrap gap-1">
           <Chip tone="blue">{KIND_LABEL[belief.kind]}</Chip>
@@ -55,7 +55,7 @@ export function BeliefCardBody({ belief }: BeliefCardBodyProps) {
             </Chip>
           )}
         </div>
-        <button type="button" onClick={() => select(null)} aria-label="Close belief card" className="-mr-1 -mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 focus-visible:outline-2 focus-visible:outline-sky-600">
+        <button type="button" onClick={() => select(null)} aria-label="Close belief card" className="-mr-1 -mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-zinc-500 transition hover:bg-zinc-900/6 hover:text-zinc-900 focus-visible:outline-2 focus-visible:outline-sky-600">
           <span aria-hidden className="text-base leading-none">
             ×
           </span>
@@ -86,19 +86,19 @@ export function BeliefCardBody({ belief }: BeliefCardBodyProps) {
           </div>
         </form>
       ) : (
-        <p id="belief-card-title" className="mt-3 text-[15px] font-medium leading-6 text-zinc-900">
+        <p id="belief-card-title" className="mt-3 text-[15px] font-medium leading-6 tracking-[-0.01em] text-zinc-900">
           {belief.text}
         </p>
       )}
-      {belief.ruleText && <p className="mt-1 text-xs italic leading-5 text-zinc-500">{belief.ruleText}</p>}
+      {belief.ruleText && <p className="mt-1 text-xs italic leading-5 text-zinc-600">{belief.ruleText}</p>}
 
       <div className="mt-3">
         <div className="flex items-baseline justify-between text-xs text-zinc-600">
           <span>Confidence</span>
           <span className="font-semibold tabular-nums text-zinc-900">{formatConfidence(belief.confidence)}</span>
         </div>
-        <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-sky-100" role="meter" aria-label="Confidence" aria-valuemin={0} aria-valuemax={1} aria-valuenow={Number(formatConfidence(belief.confidence))}>
-          <div className="h-full rounded-full bg-sky-600 transition-[width] duration-500" style={{ width: `${Math.max(2, belief.confidence * 100)}%` }} />
+        <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-sky-900/10" role="meter" aria-label="Confidence" aria-valuemin={0} aria-valuemax={1} aria-valuenow={Number(formatConfidence(belief.confidence))}>
+          <div className="h-full rounded-full bg-gradient-to-r from-sky-500 to-sky-600 shadow-[0_0_8px_rgba(14,165,233,0.35)] transition-[width] duration-700 ease-spring-soft" style={{ width: `${Math.max(2, belief.confidence * 100)}%` }} />
         </div>
       </div>
 
@@ -107,7 +107,7 @@ export function BeliefCardBody({ belief }: BeliefCardBodyProps) {
           <div className="text-xs text-zinc-600">Since {formatDay(belief.createdDay)}</div>
           <div className="text-xs text-zinc-600">
             <span className="font-semibold tabular-nums text-zinc-900">{formatCount(belief.recalls, "recall")}</span>
-            {belief.lastRecallDay > 0 && <span className="text-zinc-500">, last {formatDay(belief.lastRecallDay).toLowerCase()}</span>}
+            {belief.lastRecallDay > 0 && <span className="text-zinc-600">, last {formatDay(belief.lastRecallDay).toLowerCase()}</span>}
           </div>
         </div>
         <Sparkline values={series.values} markers={series.markers} width={150} height={34} label={`Confidence from ${formatDay(belief.createdDay)} to ${formatDay(snapshot.day)}; dots mark recalls`} />
@@ -122,7 +122,7 @@ export function BeliefCardBody({ belief }: BeliefCardBodyProps) {
             ))}
           </div>
         )}
-        {evidence.length > 6 && <div className="mt-1 text-xs text-zinc-500">+{evidence.length - 6} more</div>}
+        {evidence.length > 6 && <div className="mt-1 text-xs text-zinc-600">+{evidence.length - 6} more</div>}
       </div>
 
       <footer className="mt-4 flex items-center gap-2 border-t border-zinc-100 pt-3">

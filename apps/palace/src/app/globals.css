@@ -4,6 +4,12 @@
   /* Warm off-white, the same family as the scene's sky horizon and plaster. */
   --background: #f6f5f2;
   --foreground: #18181b;
+  /* Frosted panels over the scene: translucent white, a hairline ring, a soft drop. */
+  --glass-bg: rgba(255, 255, 255, 0.74);
+  --glass-bg-strong: rgba(255, 255, 255, 0.9);
+  --glass-ring: rgba(24, 24, 27, 0.09);
+  --glass-highlight: rgba(255, 255, 255, 0.85);
+  --glass-shadow: 0 1px 2px rgba(24, 24, 27, 0.05), 0 14px 36px -18px rgba(24, 24, 27, 0.28);
 }
 
 @theme inline {
@@ -11,6 +17,140 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /*
+   * Springs sampled into CSS `linear()` (stiffness / damping / mass):
+   * `spring` is 520 / 34 / 0.45 over 420 ms, a snappy settle for cards and thumbs;
+   * `spring-soft` is 260 / 34 / 0.8 over 520 ms, for crossfades and counters.
+   */
+  --ease-spring: linear(0, 0.1383, 0.3724, 0.5794, 0.7318, 0.8346, 0.9003, 0.941, 0.9656, 0.9801, 0.9886, 0.9935, 0.9964, 0.998, 0.9989, 0.9994, 0.9996, 0.9998, 0.9999, 0.9999, 1, 1, 1);
+  --ease-spring-soft: linear(0, 0.0809, 0.2412, 0.4103, 0.5591, 0.6791, 0.771, 0.8391, 0.8883, 0.9232, 0.9476, 0.9645, 0.9761, 0.984, 0.9893, 0.9929, 0.9953, 0.9969, 0.998, 0.9987, 0.9991);
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-card-enter: card-enter 420ms var(--ease-spring) both;
+  --animate-card-exit: card-exit 160ms ease-in both;
+  --animate-ticker-in: ticker-in 380ms var(--ease-spring) both;
+  --animate-page-in: page-in 420ms var(--ease-out-soft) both;
+  --animate-breathe: breathe 2.4s ease-out infinite;
+  --animate-shimmer: shimmer 1.3s linear infinite;
+  --animate-pop: pop 320ms var(--ease-spring) both;
+
+  @keyframes card-enter {
+    from {
+      opacity: 0;
+      transform: translateY(10px) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes card-exit {
+    from {
+      opacity: 1;
+      transform: none;
+    }
+    to {
+      opacity: 0;
+      transform: translateY(6px) scale(0.98);
+    }
+  }
+  @keyframes ticker-in {
+    from {
+      opacity: 0;
+      transform: translateX(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes page-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes breathe {
+    0% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--dot, currentColor) 55%, transparent);
+    }
+    70%,
+    100% {
+      box-shadow: 0 0 0 7px transparent;
+    }
+  }
+  @keyframes shimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+  @keyframes pop {
+    from {
+      transform: scale(0.6);
+      opacity: 0;
+    }
+    to {
+      transform: none;
+      opacity: 1;
+    }
+  }
+}
+
+/* Frosted panel: translucent white, blur, hairline ring and a soft drop, all as shadows so no layout changes. */
+@utility glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(1.6);
+  -webkit-backdrop-filter: blur(16px) saturate(1.6);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 0 0 1px var(--glass-ring),
+    var(--glass-shadow);
+}
+
+/* Denser variant for cards that carry a lot of text. */
+@utility glass-strong {
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(20px) saturate(1.6);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 0 0 1px var(--glass-ring),
+    0 2px 4px rgba(24, 24, 27, 0.05),
+    0 24px 48px -24px rgba(24, 24, 27, 0.35);
+}
+
+/* Moving highlight for an in-progress control (fast-forward while it runs). */
+@utility shimmer {
+  background-image: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, 0.85) 50%, transparent 65%);
+  background-size: 250% 100%;
+  animation: var(--animate-shimmer);
+}
+
+/* Hover lift shared by chips and buttons. */
+@utility lift {
+  transition:
+    transform 160ms var(--ease-out-soft),
+    box-shadow 160ms var(--ease-out-soft),
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease;
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px -2px rgba(24, 24, 27, 0.25);
+  }
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: none;
+    transition-duration: 60ms;
+  }
 }
 
 html,
@@ -34,4 +174,86 @@ body:has(> [aria-label="Memory palace"]) {
 canvas {
   display: block;
   outline: none;
+}
+
+/*
+ * Day scrubber. The native range keeps keyboard and touch behaviour; its own track is transparent and
+ * the visible track, ticks and fill are drawn by siblings underneath, inset by half a thumb so they
+ * line up with the thumb's centre.
+ */
+input.scrubber {
+  --thumb: 18px;
+  appearance: none;
+  background: transparent;
+  height: 28px;
+  width: 100%;
+  margin: 0;
+  cursor: pointer;
+}
+input.scrubber:focus-visible {
+  outline: none;
+}
+input.scrubber::-webkit-slider-runnable-track {
+  height: 28px;
+  background: transparent;
+}
+input.scrubber::-moz-range-track {
+  height: 28px;
+  background: transparent;
+}
+input.scrubber::-webkit-slider-thumb {
+  appearance: none;
+  width: var(--thumb);
+  height: var(--thumb);
+  margin-top: 5px;
+  border-radius: 999px;
+  background: #0284c7;
+  border: 3px solid #fff;
+  box-shadow:
+    0 0 0 1px rgba(2, 132, 199, 0.35),
+    0 2px 8px rgba(2, 132, 199, 0.45);
+  transition:
+    transform 200ms var(--ease-spring),
+    box-shadow 200ms ease;
+}
+input.scrubber::-moz-range-thumb {
+  width: var(--thumb);
+  height: var(--thumb);
+  border-radius: 999px;
+  background: #0284c7;
+  border: 3px solid #fff;
+  box-shadow:
+    0 0 0 1px rgba(2, 132, 199, 0.35),
+    0 2px 8px rgba(2, 132, 199, 0.45);
+  transition:
+    transform 200ms var(--ease-spring),
+    box-shadow 200ms ease;
+}
+input.scrubber:hover::-webkit-slider-thumb,
+input.scrubber:focus-visible::-webkit-slider-thumb,
+input.scrubber:active::-webkit-slider-thumb {
+  transform: scale(1.12);
+  box-shadow:
+    0 0 0 5px rgba(2, 132, 199, 0.18),
+    0 0 18px rgba(14, 165, 233, 0.6);
+}
+input.scrubber:hover::-moz-range-thumb,
+input.scrubber:focus-visible::-moz-range-thumb,
+input.scrubber:active::-moz-range-thumb {
+  transform: scale(1.12);
+  box-shadow:
+    0 0 0 5px rgba(2, 132, 199, 0.18),
+    0 0 18px rgba(14, 165, 233, 0.6);
+}
+
+/* Motion is decoration here: with reduced motion every animation lands on its final frame at once. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

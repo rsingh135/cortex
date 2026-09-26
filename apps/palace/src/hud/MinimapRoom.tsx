@@ -59,7 +59,7 @@ export function MinimapRoom({ room, corners, count, cracked, current, unitsPerPx
       onKeyDown={interactive ? onKeyDown : undefined}
       className={`group outline-none ${interactive ? "cursor-pointer" : ""}`}
     >
-      <polygon points={points} className={`${fill} ${stroke} transition-colors group-hover:fill-sky-100 group-focus-visible:fill-sky-100`} strokeWidth={(current ? 1.6 : 1.2) * unitsPerPx} strokeLinejoin="round" />
+      <polygon points={points} className={`${fill} ${stroke} transition-[fill,stroke] duration-300 ease-out group-hover:fill-sky-100 group-hover:stroke-sky-600 group-focus-visible:fill-sky-100 group-focus-visible:stroke-sky-600`} strokeWidth={(current ? 1.6 : 1.2) * unitsPerPx} strokeLinejoin="round" />
       {labels && (
         <>
           <text x={cx} y={nameY} textAnchor="middle" fontSize={name} className={`pointer-events-none font-semibold ${current ? "fill-sky-950" : "fill-zinc-800"}`}>

@@ -18,7 +18,9 @@ export function PointerHint() {
   }
   return (
     <div className="absolute inset-x-0 bottom-40 flex justify-center">
-      <p className="rounded-full bg-white/85 px-4 py-1.5 text-sm font-medium text-zinc-700 shadow-sm ring-1 ring-zinc-200 backdrop-blur">Click the scene to look around · W A S D to walk · Tab for orbit</p>
+      <p className="glass rounded-full px-4 py-1.5 text-[13px] font-medium leading-5 text-zinc-700 animate-card-enter">
+        Click the scene to look around <span className="text-zinc-400">·</span> W A S D to walk <span className="text-zinc-400">·</span> Tab for orbit
+      </p>
     </div>
   );
 }

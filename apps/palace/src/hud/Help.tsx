@@ -1,6 +1,6 @@
 "use client";
-/** Controls hint. Dismissible (remembered in localStorage); a "?" button brings it back. */
-import { useControlsMode } from "@/lib/store";
+/** Controls hint as a compact glass sheet. Dismissible (remembered in localStorage) or collapsed while a card is open; a "?" button brings it back. */
+import { useControlsMode, usePalaceActions } from "@/lib/store";
 import { setHelpDismissed, useHelpDismissed } from "./helpDismissed";
 
 interface Hint {
@@ -9,55 +9,66 @@ interface Hint {
 }
 
 const WALK: Hint[] = [
-  { keys: "Click", does: "grab the mouse to look around" },
+  { keys: "Click", does: "look around" },
   { keys: "W A S D", does: "walk" },
   { keys: "Shift", does: "run" },
-  { keys: "E", does: "fly through the door ahead" },
+  { keys: "E", does: "fly through the door" },
   { keys: "Click object", does: "open its card" },
-  { keys: "Tab", does: "switch to orbit view" },
-  { keys: "Esc", does: "release the pointer" },
+  { keys: "Tab", does: "orbit view" },
+  { keys: "Esc", does: "release pointer" },
 ];
 
 const ORBIT: Hint[] = [
   { keys: "Drag", does: "orbit" },
-  { keys: "Scroll / pinch", does: "zoom" },
-  { keys: "Right-drag / two fingers", does: "pan" },
+  { keys: "Scroll", does: "zoom" },
+  { keys: "Right-drag", does: "pan" },
   { keys: "Click object", does: "open its card" },
-  { keys: "Tab", does: "switch to walk view" },
+  { keys: "Tab", does: "walk view" },
 ];
 
-export function Help() {
-  const open = !useHelpDismissed();
+export interface HelpProps {
+  /** Show only the "?" button (a selection card needs the room); the dismissed state is untouched. */
+  compact?: boolean;
+}
+
+export function Help({ compact = false }: HelpProps) {
+  const open = !useHelpDismissed() && !compact;
   const mode = useControlsMode();
+  const { select } = usePalaceActions();
   const hints = mode === "walk" ? WALK : ORBIT;
 
   if (!open) {
+    // While a card has the room, "?" closes the card to make space for the sheet.
+    const show = () => {
+      if (compact) select(null);
+      setHelpDismissed(false);
+    };
     return (
-      <button type="button" onClick={() => setHelpDismissed(false)} aria-label="Show controls help" aria-expanded={false} className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-base font-semibold text-zinc-700 shadow-sm ring-1 ring-zinc-200 backdrop-blur hover:bg-white focus-visible:outline-2 focus-visible:outline-sky-600">
+      <button type="button" onClick={show} aria-label="Show controls help" aria-expanded={false} className="glass lift flex h-10 w-10 items-center justify-center rounded-full text-base font-semibold text-zinc-700 hover:text-zinc-900 focus-visible:outline-2 focus-visible:outline-sky-600">
         ?
       </button>
     );
   }
 
   return (
-    <aside className="w-72 rounded-xl bg-white/90 p-3 text-sm shadow-sm ring-1 ring-zinc-200 backdrop-blur" aria-label="Controls">
+    <aside className="glass w-64 rounded-2xl p-3 text-[13px] leading-5 animate-card-enter" aria-label="Controls">
       <div className="mb-2 flex items-center justify-between">
         <span className="font-semibold text-zinc-800">{mode === "walk" ? "Walk" : "Orbit"} controls</span>
-        <button type="button" onClick={() => setHelpDismissed(true)} aria-label="Dismiss controls help" className="-mr-1 flex h-6 w-6 items-center justify-center rounded text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 focus-visible:outline-2 focus-visible:outline-sky-600">
+        <button type="button" onClick={() => setHelpDismissed(true)} aria-label="Dismiss controls help" className="-mr-1 flex h-6 w-6 items-center justify-center rounded-md text-zinc-500 transition hover:bg-zinc-900/6 hover:text-zinc-900 focus-visible:outline-2 focus-visible:outline-sky-600">
           <span aria-hidden>×</span>
         </button>
       </div>
-      <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
+      <dl className="grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-1.5">
         {hints.map((h) => (
           <div key={h.keys} className="contents">
             <dt>
-              <kbd className="rounded border border-zinc-300 bg-zinc-50 px-1 py-px font-mono text-xs text-zinc-700">{h.keys}</kbd>
+              <kbd className="inline-block rounded-md bg-white/80 px-1.5 py-px font-mono text-[11px] leading-4 text-zinc-700 shadow-[0_1px_0_rgba(24,24,27,0.14)] ring-1 ring-zinc-900/10">{h.keys}</kbd>
             </dt>
-            <dd className="text-zinc-600">{h.does}</dd>
+            <dd className="text-zinc-700">{h.does}</dd>
           </div>
         ))}
       </dl>
-      <p className="mt-2 text-xs leading-4 text-zinc-500">Click a room on the map to fly there. Scrub the timeline to watch memory fade.</p>
+      <p className="mt-2.5 border-t border-zinc-900/8 pt-2 text-xs leading-4 text-zinc-600">Click a room on the map to fly there. Scrub the timeline to watch memory fade.</p>
     </aside>
   );
 }

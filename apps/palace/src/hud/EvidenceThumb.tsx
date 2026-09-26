@@ -21,8 +21,8 @@ export function EvidenceThumb({ capture }: EvidenceThumbProps) {
   const blur = Math.round((1 - Math.min(1, Math.max(0, capture.clarity))) * MAX_BLUR_PX * 10) / 10;
   const description = forgotten ? `${capture.title}, forgotten` : `${capture.title}, ${formatLevel(capture.ceiling)} at ${formatClarity(capture.clarity)} clarity`;
   return (
-    <figure className="min-w-0" onMouseEnter={() => hover(capture.id)} onMouseLeave={() => hover(null)} onFocus={() => hover(capture.id)} onBlur={() => hover(null)} tabIndex={0}>
-      <div className={`relative aspect-[16/10] overflow-hidden rounded-md ring-1 ring-inset ${forgotten ? "border border-dashed border-zinc-300 bg-zinc-50 ring-transparent" : "bg-zinc-100 ring-zinc-200"}`}>
+    <figure className="lift min-w-0 rounded-md" onMouseEnter={() => hover(capture.id)} onMouseLeave={() => hover(null)} onFocus={() => hover(capture.id)} onBlur={() => hover(null)} tabIndex={0}>
+      <div className={`relative aspect-[16/10] overflow-hidden rounded-lg ring-1 ring-inset ${forgotten ? "border border-dashed border-zinc-300 bg-zinc-50 ring-transparent" : "bg-zinc-100 ring-zinc-200"}`}>
         {forgotten ? (
           <span className="absolute inset-0 flex items-center justify-center text-xs font-medium uppercase tracking-wide text-zinc-400">forgotten</span>
         ) : (

@@ -23,11 +23,11 @@ export function TimelineTick({ day, current, left, active, onJump, onFastForward
       aria-label={label}
       aria-pressed={active}
       title={label}
-      className="group absolute top-0 flex -translate-x-1/2 flex-col items-center rounded focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-sky-600"
+      className="group absolute top-0 flex -translate-x-1/2 flex-col items-center rounded px-1 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-sky-600"
       style={{ left: `${left}%` }}
     >
-      <span className={`block h-2 w-px ${reached ? "bg-sky-600" : "bg-zinc-300"} ${active ? "bg-amber-500" : ""}`} aria-hidden />
-      <span className={`mt-0.5 text-xs leading-4 tabular-nums group-hover:text-zinc-900 ${reached ? "font-semibold text-zinc-700" : "text-zinc-400"} ${active ? "text-amber-700" : ""}`}>{day}</span>
+      <span className={`block h-2 w-0.5 rounded-full transition-colors duration-300 ${active ? "bg-amber-500" : reached ? "bg-sky-600" : "bg-zinc-400"}`} aria-hidden />
+      <span className={`mt-0.5 text-xs leading-4 tabular-nums transition-[color,transform] duration-200 group-hover:-translate-y-px group-hover:text-zinc-900 ${active ? "font-semibold text-amber-700" : reached ? "font-semibold text-zinc-800" : "text-zinc-500"}`}>{day}</span>
     </button>
   );
 }

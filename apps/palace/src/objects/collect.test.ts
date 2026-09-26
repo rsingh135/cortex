@@ -3,7 +3,7 @@ import { generateFixture } from "@/lib/fixtures/generate";
 import { computeLayout } from "@/lib/layout";
 import { anchorFor, beliefOpacity, beliefSink, isGold } from "./anchors";
 import { collectObjects } from "./collect";
-import { pulseProgress, pulseScale, sharpenAmount } from "./pulse";
+import { ORB_SCALE_END, ORB_SCALE_START, orbOpacity, orbProgress, orbScale, pulseProgress, pulseScale, sharpenAmount } from "./pulse";
 import { buildThreadSegments } from "./threadSegments";
 
 const snapshot = generateFixture(42, 24);
@@ -64,5 +64,23 @@ describe("visual mapping math", () => {
     expect(sharpenAmount(1000, 1500, 900, 1200)).toBe(1);
     expect(sharpenAmount(1000, 2500, 900, 1200)).toBeCloseTo(0.5);
     expect(sharpenAmount(1000, 4000, 900, 1200)).toBe(0);
+  });
+});
+
+describe("recall orb", () => {
+  it("runs for 900 ms after the pulse stamp", () => {
+    expect(orbProgress(0, 1000)).toBeNull();
+    expect(orbProgress(1000, 1450)).toBeCloseTo(0.5);
+    expect(orbProgress(1000, 1900)).toBeNull();
+  });
+
+  it("blooms fast, fades to nothing and grows the whole way", () => {
+    expect(orbOpacity(0)).toBe(0);
+    expect(orbOpacity(0.1)).toBeGreaterThan(orbOpacity(0.5));
+    expect(orbOpacity(0.5)).toBeGreaterThan(orbOpacity(0.9));
+    expect(orbOpacity(1)).toBe(0);
+    expect(orbScale(0)).toBeCloseTo(ORB_SCALE_START);
+    expect(orbScale(1)).toBeCloseTo(ORB_SCALE_END);
+    expect(orbScale(0.5)).toBeGreaterThan(orbScale(0.25));
   });
 });

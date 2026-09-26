@@ -1,13 +1,15 @@
 export { Hud, type HudProps } from "./Hud";
-export { BeliefCard } from "./BeliefCard";
+export { BeliefCard, type BeliefCardProps } from "./BeliefCard";
 export { ProcedureCard, type ProcedureCardProps } from "./ProcedureCard";
 export { CaptureCard, type CaptureCardProps } from "./CaptureCard";
-export { SelectionCard } from "./SelectionCard";
+export { SelectionCard, type SelectionCardProps } from "./SelectionCard";
+export { Presence, type PresenceProps } from "./Presence";
+export { useTweenedNumber, type TweenOptions } from "./useTweenedNumber";
 export { PointerHint } from "./PointerHint";
 export { setHelpDismissed, useHelpDismissed } from "./helpDismissed";
 export { ConnectionBadge } from "./ConnectionBadge";
 export { EventTicker, type EventTickerProps } from "./EventTicker";
-export { Help } from "./Help";
+export { Help, type HelpProps } from "./Help";
 export { Minimap, type MinimapProps } from "./Minimap";
 export { MinimapLegend, type MinimapLegendProps } from "./MinimapLegend";
 export { StorageMeter } from "./StorageMeter";
