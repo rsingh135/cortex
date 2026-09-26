@@ -9,7 +9,7 @@ const Env = z.object({
   VOYAGE_BASE_URL: z.url().optional(),
   VOYAGE_EMBEDDING_MODEL: z.string().min(1).optional(),
   ELEVENLABS_API_KEY: z.string().optional(),
-  ELEVENLABS_VOICE_ID: z.string().optional(),
+  ELEVENLABS_VOICE_ID: z.string().default("56bWURjYFHyYyVf490Dp"),
   LANGSMITH_API_KEY: z.string().optional(),
   LANGSMITH_TRACING: z.string().optional(),
   LANGSMITH_PROJECT: z.string().default("cortex"),

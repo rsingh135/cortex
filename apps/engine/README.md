@@ -80,7 +80,7 @@ starts empty. The root `.env` is loaded by the entry point.
 ## Live memory snapshots
 
 Connect to `ws://localhost:4000/ws?condition=cortex` (also `keep_all` or
-`decay_only`). Each connection receives a validated snapshot, then fresh snapshots
+`blur_by_age`). Each connection receives a validated snapshot, then fresh snapshots
 after committed memory changes. Atlas uses one filtered database change stream;
 fixture mode notifies after successful in-memory writes. Reads are coalesced and
 serialized, and no snapshot work runs while there are no clients.
@@ -123,3 +123,9 @@ storage, recall, images, or forgetting.
 
 Each command creates a unique temporary database and removes it in a `finally`
 block. Neither command seeds or deletes the configured `ATLAS_DB` database.
+
+## Voice selection
+
+Emma (`56bWURjYFHyYyVf490Dp`) is the default ElevenLabs voice. Override it with
+`ELEVENLABS_VOICE_ID`. Speech generation still requires `ELEVENLABS_API_KEY` and
+the voice/answer pipeline; setting a voice ID alone does not enable audio.

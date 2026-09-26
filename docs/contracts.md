@@ -41,7 +41,7 @@ Rules:
 - The same envelopes are appended to `event-log/*.jsonl` during ingest so replay mode can re-emit them on a timer for beat 1.
 - Palace treats an unknown type as a no-op and logs it.
 
-Current implementation: `/ws?condition=cortex` (or `keep_all`, `decay_only`)
+Current implementation: `/ws?condition=cortex` (or `keep_all`, `blur_by_age`)
 sends complete `snapshot` envelopes on connect and after committed changes. A
 filtered database change stream triggers refreshes; fixture writes notify the
 same path. Startup/recovery returns HTTP 503 until the stream is ready; stream
