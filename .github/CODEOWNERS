@@ -5,19 +5,19 @@
 /apps/palace/            @rsingh135
 
 # Memory engine: capture policy, ladder, forgetting, Mongo search, agent, voice
-/apps/engine/            @MEMORY_OWNER
+/apps/engine/            @avneetsingh36
 
 # Mascot: desktop pet, ElevenLabs voice, asks the engine
-/apps/mascot/            @MASCOT_OWNER
+/apps/mascot/            @KaurArshnoor
 
 # Mock world and persona: whoever picks it up
 /apps/mockworld/         @rsingh135
-/packages/persona/       @MEMORY_OWNER
+/packages/persona/       @avneetsingh36
 
 # Shared contracts: any change needs a second reviewer from another track
-/packages/schema/        @rsingh135 @MEMORY_OWNER @MASCOT_OWNER
-/docs/contracts.md       @rsingh135 @MEMORY_OWNER @MASCOT_OWNER
-/docs/spec.md            @rsingh135 @MEMORY_OWNER @MASCOT_OWNER
+/packages/schema/        @rsingh135 @avneetsingh36 @KaurArshnoor
+/docs/contracts.md       @rsingh135 @avneetsingh36 @KaurArshnoor
+/docs/spec.md            @rsingh135 @avneetsingh36 @KaurArshnoor
 
 # Root tooling
 /tools/                  @rsingh135
