@@ -4,7 +4,14 @@ import { z } from "zod";
 const Env = z.object({
   ATLAS_URI: z.string().min(1),
   ATLAS_DB: z.string().min(1).default("cortex"),
-  ANTHROPIC_API_KEY: z.string().min(1),
+  /** Model provider: openai | anthropic | none. Defaults by which key is present (OpenAI first). */
+  LLM_PROVIDER: z.enum(["openai", "anthropic", "none"]).optional(),
+  ANTHROPIC_API_KEY: z.string().min(1).optional(),
+  ANTHROPIC_WORKSPACE_ID: z.string().min(1).optional(),
+  OPENAI_API_KEY: z.string().min(1).optional(),
+  OPENAI_EXTRACTION_MODEL: z.string().min(1).optional(),
+  OPENAI_ROUTER_MODEL: z.string().min(1).optional(),
+  OPENAI_ASK_MODEL: z.string().min(1).optional(),
   VOYAGE_API_KEY: z.string().optional(),
   VOYAGE_BASE_URL: z.url().optional(),
   VOYAGE_EMBEDDING_MODEL: z.string().min(1).optional(),
