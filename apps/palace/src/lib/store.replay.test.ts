@@ -39,9 +39,9 @@ describe("replay mode", () => {
     expect(s.pulses[belief!.id]).toBeGreaterThan(0);
     expect(s.layout.placements.get(s.snapshot.captures[0]!.id)?.kind).toBe("painting");
 
-    await vi.advanceTimersByTimeAsync(76 * 2500);
+    await vi.advanceTimersByTimeAsync(LOG_EVENTS * 2500);
     s = usePalaceStore.getState();
-    expect(s.replay).toEqual({ status: "done", played: 76, total: 76 });
+    expect(s.replay).toEqual({ status: "done", played: LOG_EVENTS, total: LOG_EVENTS });
     expect(s.snapshot.captures).toHaveLength(36);
     expect(s.snapshot.edges.length).toBeGreaterThan(0);
   });
