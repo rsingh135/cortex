@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "sync-manifest": "node scripts/sync-capture-manifest.mjs"
   },
   "dependencies": {
     "@cortex/schema": "workspace:*",

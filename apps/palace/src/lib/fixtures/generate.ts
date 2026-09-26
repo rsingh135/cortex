@@ -23,6 +23,7 @@ import {
   type BeliefTemplate,
 } from "./content";
 import { createPrng, type Prng } from "./prng";
+import { assignRealScreens } from "./realScreens";
 import { fixtureScreenKey } from "./screenUrl";
 
 export const DEFAULT_SEED = 42;
@@ -68,9 +69,11 @@ export function generateFixture(seed: number = DEFAULT_SEED, day: number = DEFAU
   for (const room of ROOMS) if (room !== "Housing") generateRoom(ctx, root.fork(), room, ROOM_TARGETS[room]);
   const procedures = generateProcedures(ctx, housing);
 
-  const captures: PalaceCapture[] = ctx.captures.map((c) => {
+  const screenFiles = assignRealScreens(ctx.captures);
+  const captures: PalaceCapture[] = ctx.captures.map((c, i) => {
     const state = captureStateOn(c, day);
-    const base: PalaceCapture = { id: c.id, app: c.app, title: c.title, day: c.day, url: c.url, l0Bytes: c.l0Bytes, recallDays: c.recallDays, textureUrl: null, ...state };
+    const screenFile = screenFiles[i];
+    const base: PalaceCapture = { id: c.id, app: c.app, title: c.title, day: c.day, url: c.url, l0Bytes: c.l0Bytes, recallDays: c.recallDays, textureUrl: null, ...state, ...(screenFile ? { screenFile } : {}) };
     return { ...base, textureUrl: fixtureScreenKey(base, seed) };
   });
 

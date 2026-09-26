@@ -13,7 +13,7 @@ type CreatedBelief = Extract<WsEvent, { type: "belief.created" }>["payload"];
 type CreatedCapture = Extract<WsEvent, { type: "capture.created" }>["payload"];
 
 /** Where a live capture's image is served from. */
-export type TextureResolver = (capture: Pick<PalaceCapture, "id" | "app" | "title" | "ceiling">) => string | null;
+export type TextureResolver = (capture: Pick<PalaceCapture, "id" | "app" | "title" | "ceiling"> & { screenFile?: string }) => string | null;
 
 function isBeliefStatus(s: string): s is PalaceBelief["status"] {
   return s === "active" || s === "cracked" || s === "superseded" || s === "tombstoned" || s === "forgotten";

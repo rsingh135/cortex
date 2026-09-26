@@ -18,12 +18,17 @@ const MAX_RESOLVED = 400;
 const FALLBACK_BUDGET_MS = 8;
 const MIN_IDLE_REMAINING_MS = 4;
 
-export type ScreenCapture = Pick<PalaceCapture, "id" | "app" | "title" | "ceiling">;
+export type ScreenCapture = Pick<PalaceCapture, "id" | "app" | "title" | "ceiling"> & { screenFile?: string };
 export type ScreenPriority = "normal" | "high";
 
-/** The key for a capture's placeholder screen, or null when every level is forgotten. */
+/**
+ * The texture source for a fixture capture: its real recorded screenshot when one was assigned
+ * (a plain URL the texture cache loads directly), else a placeholder key; null when forgotten.
+ * Clarity and ceiling still drive the blur shader either way.
+ */
 export function fixtureScreenKey(capture: ScreenCapture, seed: number): string | null {
   if (capture.ceiling === null) return null;
+  if (capture.screenFile) return capture.screenFile;
   return `${FIXTURE_SCREEN_PREFIX}${seed >>> 0}:${capture.ceiling}:${capture.app}:${encodeURIComponent(capture.id)}:${encodeURIComponent(capture.title)}`;
 }
 

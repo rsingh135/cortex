@@ -8,7 +8,7 @@ import { ENGINE_URL, usePalaceStore } from "./store";
 export const DEMO_ASSETS = {
   journal: "/demo/dream-journal.mp3",
   fallbackVideo: "/demo/fallback.mp4",
-  voiceWav: "/demo/voice-dog.wav",
+  voiceNote: "/demo/voice-dog.mp3",
 } as const;
 
 async function assetExists(url: string): Promise<boolean> {
@@ -49,21 +49,29 @@ export async function openFallback(): Promise<void> {
   setFallbackOpen(true);
 }
 
-/** `V`: push the pre-recorded voice note through the engine's speech path. */
+/**
+ * `V`: push the pre-recorded voice note ("I'm getting a dog") through the engine's speech path.
+ * Without an engine the note plays locally so the beat still has sound.
+ */
 export async function sendVoiceFallback(): Promise<void> {
   const { toast } = usePalaceStore.getState();
-  if (!ENGINE_URL) {
-    toast("voice fallback: no engine configured");
+  if (!(await assetExists(DEMO_ASSETS.voiceNote))) {
+    toast("voice-dog.mp3 missing (apps/palace/public/demo)");
     return;
   }
-  if (!(await assetExists(DEMO_ASSETS.voiceWav))) {
-    toast("voice-dog.wav missing (apps/palace/public/demo)");
+  if (!ENGINE_URL) {
+    try {
+      await new Audio(DEMO_ASSETS.voiceNote).play();
+      toast("played locally: engine not connected");
+    } catch {
+      toast("voice note blocked: click the page first");
+    }
     return;
   }
   try {
-    const wav = await (await fetch(DEMO_ASSETS.voiceWav)).blob();
+    const audio = await (await fetch(DEMO_ASSETS.voiceNote)).blob();
     const form = new FormData();
-    form.set("audio", wav, "voice-dog.wav");
+    form.set("audio", audio, "voice-dog.mp3");
     form.set("day", String(usePalaceStore.getState().snapshot.day));
     const res = await fetch(`${ENGINE_URL}/voice`, { method: "POST", body: form });
     toast(res.ok ? "Voice note sent" : `voice fallback: engine POST /voice returned ${res.status}`);

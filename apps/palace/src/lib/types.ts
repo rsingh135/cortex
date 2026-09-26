@@ -47,6 +47,8 @@ export interface PalaceCapture {
   recalls: number;
   /** Data URL (fixture) or engine image URL (live); null when forgotten or not yet drawn. */
   textureUrl: string | null;
+  /** Fixture only: a real recorded screenshot under /captures that stands in for this capture. */
+  screenFile?: string;
   recallDays: number[];
   lastRecallDay: number;
   /** Original L0 byte size; keep-everything accounting survives level deletion. */

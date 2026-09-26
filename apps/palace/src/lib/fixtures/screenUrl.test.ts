@@ -13,6 +13,12 @@ describe("fixture screen keys", () => {
       }
       expect(key).not.toBeNull();
       if (key === null) continue;
+      if (c.screenFile) {
+        // Real recorded screenshots pass through as plain URLs the texture cache loads directly.
+        expect(key).toBe(c.screenFile);
+        expect(isFixtureScreenKey(key)).toBe(false);
+        continue;
+      }
       expect(isFixtureScreenKey(key)).toBe(true);
       expect(parseFixtureScreenKey(key)).toEqual({ seed: 42, capture: { id: c.id, app: c.app, title: c.title, ceiling: c.ceiling } });
     }
