@@ -172,6 +172,9 @@ importers:
       '@cortex/schema':
         specifier: workspace:*
         version: link:packages/schema
+      bson:
+        specifier: ^6.10.4
+        version: 6.10.4
       mongodb:
         specifier: ^6.18.0
         version: 6.21.0
