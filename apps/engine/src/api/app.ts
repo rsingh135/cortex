@@ -1,6 +1,6 @@
 /**
  * HTTP surface of the engine. Every route from docs/contracts.md, validated with @cortex/schema/api.
- * Handlers return 501 until their module lands; wiring them is the memory track's job.
+ * Handlers still awaiting their module return 501; the rest run against the memory ledger.
  */
 import { Binary } from "mongodb";
 import { cors } from "hono/cors";
@@ -12,6 +12,9 @@ import type { MemoryStore } from "../db/memory-store.js";
 import { advanceMemory } from "../forgetting/sweep.js";
 import { recallMemory } from "../recall/search.js";
 import { snapshot } from "../live/snapshot.js";
+import { buildAgentMap } from "../map/index.js";
+import { createAsker, type Asker } from "../ask/index.js";
+import type { AudioStore } from "../ask/speech.js";
 import { Hono } from "hono";
 import { z } from "zod";
 import {
@@ -32,6 +35,10 @@ export interface AppOptions {
   fixtureMode: boolean;
   memory?: MemoryStore;
   now?: () => string;
+  /** Answers POST /ask. Defaults to a deterministic extractive answerer when memory is present. */
+  asker?: Asker;
+  /** Backs GET /audio/:id when the asker synthesises speech. */
+  audio?: AudioStore;
 }
 
 const ConditionQuery = z.object({ condition: Condition.default("cortex") });
@@ -39,6 +46,8 @@ const ConditionQuery = z.object({ condition: Condition.default("cortex") });
 export function createApp(opts: AppOptions): Hono {
   const app = new Hono();
   const intake = opts.memory ? createIntake(opts.memory) : undefined;
+  const asker =
+    opts.asker ?? (opts.memory ? createAsker({ store: opts.memory }) : undefined);
   app.use("*", cors());
   app.onError((error, c) => {
     if (error instanceof RangeError || error instanceof SyntaxError)
@@ -206,13 +215,28 @@ export function createApp(opts: AppOptions): Hono {
   app.post("/ask", async (c) => {
     const v = await validateJson(c, AskRequest);
     if (!v.ok) return v.response;
-    return c.json({ error: "not implemented", route: "POST /ask" }, 501);
+    if (!asker)
+      return c.json({ error: "not implemented", route: "POST /ask" }, 501);
+    return c.json(await asker.ask(v.data));
   });
 
-  app.get("/map", (c) => {
+  app.get("/audio/:id", (c) => {
+    const clip = opts.audio?.get(c.req.param("id"));
+    if (!clip) return c.notFound();
+    return c.body(new Uint8Array(clip.bytes), 200, {
+      "Content-Type": clip.contentType,
+      "Cache-Control": "no-store",
+    });
+  });
+
+  app.get("/map", async (c) => {
     const q = validateQuery(c, ConditionQuery);
     if (!q.ok) return q.response;
-    return c.json({ error: "not implemented", route: "GET /map" }, 501);
+    if (!opts.memory)
+      return c.json({ error: "not implemented", route: "GET /map" }, 501);
+    return c.json(
+      await opts.memory.run(false, (d) => buildAgentMap(d, q.data.condition)),
+    );
   });
 
   app.get("/snapshot", async (c) => {
