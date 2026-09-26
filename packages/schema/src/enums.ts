@@ -78,8 +78,12 @@ export const EDGE_TYPES = ["derived_from", "uses", "evidence", "supersedes"] as 
 export const EdgeType = z.enum(EDGE_TYPES);
 export type EdgeType = z.infer<typeof EdgeType>;
 
-/** Listing attributes the learner may write rules over. Parsed from captures, never read from the mock-world DB. */
-export const LISTING_ATTRS = ["price", "neighborhood", "train", "floor", "elevator", "laundry", "pets"] as const;
+/**
+ * Listing attributes the learner may write rules over. Parsed from captures, never read from the mock-world DB.
+ * `walkup_floor` is derived: the floor when there is no elevator, else 0. It lets a single-attribute rule
+ * express "no walk-up above the 3rd floor" (walkup_floor <= 3).
+ */
+export const LISTING_ATTRS = ["price", "neighborhood", "train", "floor", "elevator", "laundry", "pets", "walkup_floor"] as const;
 export const ListingAttr = z.enum(LISTING_ATTRS);
 export type ListingAttr = z.infer<typeof ListingAttr>;
 
@@ -97,7 +101,7 @@ export const DecisionOutcome = z.enum(DECISION_OUTCOMES);
 export type DecisionOutcome = z.infer<typeof DecisionOutcome>;
 
 /** Which hunt a listing appears in. */
-export const HUNTS = ["hunt1", "hunt2", "agent", "rerun"] as const;
+export const HUNTS = ["hunt1", "hunt2", "agent", "rerun", "pool"] as const;
 export const Hunt = z.enum(HUNTS);
 export type Hunt = z.infer<typeof Hunt>;
 

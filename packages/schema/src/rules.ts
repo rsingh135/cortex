@@ -76,16 +76,21 @@ export function checkRule(rule: Rule, decisions: readonly DecisionLike[]): RuleC
   return { ok: contradictions.length === 0, contradictions, explained, neutral };
 }
 
-/** Attribute on which two decisions differ, if they differ on exactly one. */
+/** Derived attributes and the raw attributes they are computed from. A derived difference is not a second difference. */
+export const DERIVED_ATTRS: Partial<Record<ListingAttr, readonly ListingAttr[]>> = {
+  walkup_floor: ["floor", "elevator"],
+};
+
+/** Does a pair differing on `pairAttr` bear on a rule over `ruleAttr`? */
+export function attrBearsOn(ruleAttr: ListingAttr, pairAttr: ListingAttr): boolean {
+  return ruleAttr === pairAttr || (DERIVED_ATTRS[ruleAttr]?.includes(pairAttr) ?? false);
+}
+
+/** Raw attribute on which two decisions differ, if they differ on exactly one (derived attrs follow their sources). */
 export function singleDifference(a: DecisionLike, b: DecisionLike): ListingAttr | null {
-  let diff: ListingAttr | null = null;
-  for (const attr of LISTING_ATTRS) {
-    if (a.attrs[attr] !== b.attrs[attr]) {
-      if (diff !== null) return null;
-      diff = attr;
-    }
-  }
-  return diff;
+  const raw = LISTING_ATTRS.filter((attr) => !(attr in DERIVED_ATTRS) && a.attrs[attr] !== b.attrs[attr]);
+  if (raw.length !== 1) return null;
+  return raw[0]!;
 }
 
 export interface ContrastivePair {
@@ -113,7 +118,7 @@ export function findContrastivePairs(decisions: readonly DecisionLike[]): Contra
 export function pairsSupporting(rule: Rule, decisions: readonly DecisionLike[]): ContrastivePair[] {
   const byId = new Map(decisions.map((d) => [d._id, d]));
   return findContrastivePairs(decisions).filter((pair) => {
-    if (pair.attr !== rule.attr) return false;
+    if (!attrBearsOn(rule.attr, pair.attr)) return false;
     const a = byId.get(pair.a)!;
     const b = byId.get(pair.b)!;
     const satA = satisfies(rule, a.attrs);

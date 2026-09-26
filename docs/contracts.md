@@ -48,7 +48,7 @@ Rules:
 
 ## Mock world (apps/mockworld)
 
-- Listing pages expose every attribute as `data-*` on the root element: `data-listing-id`, `data-price`, `data-neighborhood`, `data-train`, `data-floor`, `data-elevator`, `data-laundry`, `data-pets`. The capture hook and the agent's `read_listing()` parse these; nothing reads the listings collection directly.
+- Listing pages expose every attribute as `data-*` on the root element: `data-listing-id`, `data-price`, `data-neighborhood`, `data-train`, `data-floor`, `data-elevator`, `data-laundry`, `data-pets`. The capture hook and the agent's `read_listing()` parse these; nothing reads the listings collection directly. The derived attribute `walkup_floor` (floor when there is no elevator, else 0) is computed by the parser with `walkupFloor()` from `@cortex/schema`, so the single-attribute rule DSL can express "no walk-up above the 3rd floor".
 - Listing ids are stable strings `listing:NNN` and carry a `hunt` field (`hunt1`, `hunt2`, `agent`, `rerun`).
 - Write endpoints (`POST /api/messages`, `POST /api/reject`) require `x-cortex-write-token`.
 
@@ -61,7 +61,7 @@ Rules:
 
 | File | Schema | Content |
 | --- | --- | --- |
-| `listings.json` | `Listing[]` | About 60 listings with contrastive pairs, traps, and `hunt` |
+| `listings.json` | `Listing[]` | About 60 listings with contrastive pairs, traps, and `hunt` (`pool` = shown in search results, in no scripted hunt) |
 | `maya-script.json` | `ScriptStep[]` | Maya's month as ordered steps with pacing |
 | `ground-truth.json` | `GroundTruth` | Her true rules with `active_from_day`, her style, and the 50 questions with answers, groups, and grading mode |
 | `usage-log.json` | `UsageLogEntry[]` | Questions and tasks she runs on which days; housing recalls on the simulator's schedule |

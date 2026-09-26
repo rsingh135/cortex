@@ -13,14 +13,14 @@ import {
 } from "../src/rules.js";
 import type { Rule } from "../src/rules.js";
 
-const base = { neighborhood: "Bushwick", train: "L", floor: 2, elevator: false, laundry: true, pets: false } as const;
+const base = { neighborhood: "Bushwick", train: "L", floor: 2, elevator: false, laundry: true, pets: false, walkup_floor: 2 } as const;
 
 /** Five listings: three contrastive pairs (laundry; elevator on a 5th floor; price) and no floor pair. */
 const decisions: DecisionLike[] = [
   { _id: "d1", listing_id: "listing:101", attrs: { ...base, price: 2600 }, outcome: "messaged" },
   { _id: "d2", listing_id: "listing:102", attrs: { ...base, price: 2600, laundry: false }, outcome: "rejected" },
-  { _id: "d3", listing_id: "listing:103", attrs: { ...base, price: 2750, floor: 5, elevator: true }, outcome: "messaged" },
-  { _id: "d4", listing_id: "listing:104", attrs: { ...base, price: 2750, floor: 5, elevator: false }, outcome: "rejected" },
+  { _id: "d3", listing_id: "listing:103", attrs: { ...base, price: 2750, floor: 5, elevator: true, walkup_floor: 0 }, outcome: "messaged" },
+  { _id: "d4", listing_id: "listing:104", attrs: { ...base, price: 2750, floor: 5, elevator: false, walkup_floor: 5 }, outcome: "rejected" },
   { _id: "d5", listing_id: "listing:105", attrs: { ...base, price: 3100 }, outcome: "unopened" },
 ];
 
@@ -68,6 +68,11 @@ describe("contrastive pairs", () => {
       ]),
     );
     expect(pairs).toHaveLength(3);
+  });
+  it("a derived-attribute rule is supported by pairs on its source attribute", () => {
+    const walkup: Rule = { attr: "walkup_floor", op: "<=", value: 3, then: "skip", support: [] };
+    expect(pairsSupporting(walkup, decisions)).toEqual([{ attr: "elevator", a: "d3", b: "d4" }]);
+    expect(checkRule(walkup, decisions).ok).toBe(true);
   });
   it("credits only pairs the rule predicts", () => {
     expect(pairsSupporting(laundry, decisions)).toHaveLength(1);

@@ -1,1 +1,90 @@
-[]
+[
+  {
+    "day": 3,
+    "kind": "question",
+    "text": "Remind me which of yesterday's places had laundry in the building",
+    "rooms": [
+      "Housing"
+    ]
+  },
+  {
+    "day": 6,
+    "kind": "question",
+    "text": "What's my rent ceiling again, and which listings did I message this week?",
+    "rooms": [
+      "Housing"
+    ]
+  },
+  {
+    "day": 7,
+    "kind": "question",
+    "text": "When and where is Priya's birthday dinner?",
+    "rooms": [
+      "Social"
+    ]
+  },
+  {
+    "day": 10,
+    "kind": "question",
+    "text": "What time is design review tomorrow?",
+    "rooms": [
+      "Work"
+    ]
+  },
+  {
+    "day": 12,
+    "kind": "question",
+    "text": "What's my gym schedule this week?",
+    "rooms": [
+      "Health"
+    ]
+  },
+  {
+    "day": 13,
+    "kind": "question",
+    "text": "Which apartments did I skip because of the walk-up thing?",
+    "rooms": [
+      "Housing"
+    ]
+  },
+  {
+    "day": 16,
+    "kind": "question",
+    "text": "Who is my manager and when is our next review?",
+    "rooms": [
+      "Work"
+    ]
+  },
+  {
+    "day": 18,
+    "kind": "question",
+    "text": "Show me the places near the L I liked, I want to follow up",
+    "rooms": [
+      "Housing"
+    ]
+  },
+  {
+    "day": 21,
+    "kind": "question",
+    "text": "Did any landlord I messaged reply about laundry?",
+    "rooms": [
+      "Housing"
+    ]
+  },
+  {
+    "day": 24,
+    "kind": "task",
+    "text": "Find me apartments",
+    "rooms": [
+      "Housing"
+    ]
+  },
+  {
+    "day": 25,
+    "kind": "task",
+    "text": "Find me apartments (after the dog voice note)",
+    "rooms": [
+      "Housing"
+    ]
+  }
+]

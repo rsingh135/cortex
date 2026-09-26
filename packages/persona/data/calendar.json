@@ -1,1 +1,218 @@
-[]
+[
+  {
+    "_id": "cal_001",
+    "title": "First day at Studio Kite",
+    "day": 2,
+    "start": "9:00 AM",
+    "end": "6:00 PM",
+    "location": "Union Square office",
+    "attendees": []
+  },
+  {
+    "_id": "cal_008",
+    "title": "Gym",
+    "day": 3,
+    "start": "7:00 AM",
+    "end": "8:00 AM",
+    "location": "Ridgewood Barbell",
+    "attendees": []
+  },
+  {
+    "_id": "cal_019",
+    "title": "Apartment viewings",
+    "day": 3,
+    "start": "5:30 PM",
+    "end": "7:30 PM",
+    "location": "Bushwick",
+    "attendees": []
+  },
+  {
+    "_id": "cal_002",
+    "title": "Design review",
+    "day": 4,
+    "start": "2:00 PM",
+    "end": "3:00 PM",
+    "location": "Fern room",
+    "attendees": [
+      "Sam Okafor"
+    ]
+  },
+  {
+    "_id": "cal_009",
+    "title": "Gym",
+    "day": 5,
+    "start": "7:00 AM",
+    "end": "8:00 AM",
+    "location": "Ridgewood Barbell",
+    "attendees": []
+  },
+  {
+    "_id": "cal_003",
+    "title": "Design review",
+    "day": 6,
+    "start": "2:00 PM",
+    "end": "3:00 PM",
+    "location": "Fern room",
+    "attendees": [
+      "Sam Okafor"
+    ]
+  },
+  {
+    "_id": "cal_020",
+    "title": "Apartment viewings",
+    "day": 6,
+    "start": "5:30 PM",
+    "end": "7:30 PM",
+    "location": "Williamsburg",
+    "attendees": []
+  },
+  {
+    "_id": "cal_010",
+    "title": "Gym",
+    "day": 8,
+    "start": "7:00 AM",
+    "end": "8:00 AM",
+    "location": "Ridgewood Barbell",
+    "attendees": []
+  },
+  {
+    "_id": "cal_016",
+    "title": "Priya's birthday dinner",
+    "day": 8,
+    "start": "7:30 PM",
+    "end": "10:00 PM",
+    "location": "Casa Ora",
+    "attendees": [
+      "Priya"
+    ]
+  },
+  {
+    "_id": "cal_011",
+    "title": "Gym",
+    "day": 10,
+    "start": "7:00 AM",
+    "end": "8:00 AM",
+    "location": "Ridgewood Barbell",
+    "attendees": []
+  },
+  {
+    "_id": "cal_004",
+    "title": "Design review",
+    "day": 11,
+    "start": "2:00 PM",
+    "end": "3:00 PM",
+    "location": "Fern room",
+    "attendees": [
+      "Sam Okafor"
+    ]
+  },
+  {
+    "_id": "cal_012",
+    "title": "Gym",
+    "day": 12,
+    "start": "7:00 AM",
+    "end": "8:00 AM",
+    "location": "Ridgewood Barbell",
+    "attendees": []
+  },
+  {
+    "_id": "cal_017",
+    "title": "1:1 with Sam",
+    "day": 12,
+    "start": "11:00 AM",
+    "end": "11:30 AM",
+    "location": "Fern room",
+    "attendees": [
+      "Sam Okafor"
+    ]
+  },
+  {
+    "_id": "cal_005",
+    "title": "Design review",
+    "day": 13,
+    "start": "2:00 PM",
+    "end": "3:00 PM",
+    "location": "Fern room",
+    "attendees": [
+      "Sam Okafor"
+    ]
+  },
+  {
+    "_id": "cal_013",
+    "title": "Gym",
+    "day": 15,
+    "start": "7:00 AM",
+    "end": "8:00 AM",
+    "location": "Ridgewood Barbell",
+    "attendees": []
+  },
+  {
+    "_id": "cal_014",
+    "title": "Gym",
+    "day": 17,
+    "start": "7:00 AM",
+    "end": "8:00 AM",
+    "location": "Ridgewood Barbell",
+    "attendees": []
+  },
+  {
+    "_id": "cal_018",
+    "title": "Dentist",
+    "day": 17,
+    "start": "9:30 AM",
+    "end": "10:15 AM",
+    "location": "Bright Smile Dental",
+    "attendees": []
+  },
+  {
+    "_id": "cal_006",
+    "title": "Design review",
+    "day": 18,
+    "start": "2:00 PM",
+    "end": "3:00 PM",
+    "location": "Fern room",
+    "attendees": [
+      "Sam Okafor"
+    ]
+  },
+  {
+    "_id": "cal_015",
+    "title": "Gym",
+    "day": 19,
+    "start": "7:00 AM",
+    "end": "8:00 AM",
+    "location": "Ridgewood Barbell",
+    "attendees": []
+  },
+  {
+    "_id": "cal_007",
+    "title": "Design review",
+    "day": 20,
+    "start": "2:00 PM",
+    "end": "3:00 PM",
+    "location": "Fern room",
+    "attendees": [
+      "Sam Okafor"
+    ]
+  },
+  {
+    "_id": "cal_022",
+    "title": "Flight to Chicago",
+    "day": 27,
+    "start": "6:15 PM",
+    "end": "9:00 PM",
+    "location": "LGA",
+    "attendees": []
+  },
+  {
+    "_id": "cal_021",
+    "title": "Lease signing",
+    "day": 30,
+    "start": "10:00 AM",
+    "end": "11:00 AM",
+    "location": "Keystone Leasing",
+    "attendees": [
+      "Elena Vasquez"
+    ]
+  }
+]

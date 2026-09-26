@@ -56,6 +56,7 @@ describe("collection schemas", () => {
       elevator: false,
       laundry: true,
       pets: false,
+      walkup_floor: 5,
       photos: [],
       landlord: "Dana",
       description: "",

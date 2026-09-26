@@ -8,7 +8,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "lint": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "generate": "tsx src/generate/index.ts"
   },
   "dependencies": {
     "@cortex/schema": "workspace:*",
@@ -17,6 +18,7 @@
   "devDependencies": {
     "@types/node": "^24.0.0",
     "typescript": "^5.9.0",
-    "vitest": "^3.2.0"
+    "vitest": "^3.2.0",
+    "tsx": "^4.20.0"
   }
 }

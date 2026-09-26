@@ -1,1 +1,427 @@
-{"rules":[],"style":"","questions":[]}
+{
+  "rules": [
+    {
+      "attr": "price",
+      "op": "<=",
+      "value": 2800,
+      "active_from_day": 1
+    },
+    {
+      "attr": "laundry",
+      "op": "==",
+      "value": true,
+      "active_from_day": 1
+    },
+    {
+      "attr": "walkup_floor",
+      "op": "<=",
+      "value": 3,
+      "active_from_day": 1
+    },
+    {
+      "attr": "train",
+      "op": "==",
+      "value": "L",
+      "active_from_day": 1
+    },
+    {
+      "attr": "pets",
+      "op": "==",
+      "value": true,
+      "active_from_day": 25
+    }
+  ],
+  "style": "Short and friendly. Introduces herself as Maya, mentions a Sept 1 move-in for a job near Union Square, always asks whether the building has laundry, and asks for a viewing this week.",
+  "questions": [
+    {
+      "id": "u01",
+      "group": "used_often",
+      "question": "What is Maya's maximum monthly rent?",
+      "answer": "$2,800",
+      "grading": "exact"
+    },
+    {
+      "id": "u02",
+      "group": "used_often",
+      "question": "Does Maya require laundry in the building?",
+      "answer": "Yes",
+      "grading": "exact"
+    },
+    {
+      "id": "u03",
+      "group": "used_often",
+      "question": "What is Maya's rule about walk-up apartments?",
+      "answer": "No walk-ups above the 3rd floor unless there is an elevator",
+      "grading": "judge"
+    },
+    {
+      "id": "u04",
+      "group": "used_often",
+      "question": "Which subway line does Maya want to live near?",
+      "answer": "The L",
+      "grading": "exact"
+    },
+    {
+      "id": "u05",
+      "group": "used_often",
+      "question": "Where is Maya's new job?",
+      "answer": "Near Union Square, at Studio Kite",
+      "grading": "judge"
+    },
+    {
+      "id": "u06",
+      "group": "used_often",
+      "question": "When does Maya move in / start work?",
+      "answer": "Sept 1 move-in, first day Sept 2",
+      "grading": "judge"
+    },
+    {
+      "id": "u07",
+      "group": "used_often",
+      "question": "Which city is Maya moving from?",
+      "answer": "Chicago",
+      "grading": "exact"
+    },
+    {
+      "id": "u08",
+      "group": "used_often",
+      "question": "What is Maya's profession?",
+      "answer": "Product designer",
+      "grading": "exact"
+    },
+    {
+      "id": "u09",
+      "group": "used_often",
+      "question": "When is Priya's birthday dinner?",
+      "answer": "Day 8 (Sept 8) at 7:30 PM",
+      "grading": "judge"
+    },
+    {
+      "id": "u10",
+      "group": "used_often",
+      "question": "Where is Priya's birthday dinner?",
+      "answer": "Casa Ora",
+      "grading": "exact"
+    },
+    {
+      "id": "u11",
+      "group": "used_often",
+      "question": "What time is the recurring design review?",
+      "answer": "2:00 PM",
+      "grading": "exact"
+    },
+    {
+      "id": "u12",
+      "group": "used_often",
+      "question": "Who is Maya's manager?",
+      "answer": "Sam Okafor",
+      "grading": "exact"
+    },
+    {
+      "id": "u13",
+      "group": "used_often",
+      "question": "What time does Maya go to the gym?",
+      "answer": "7:00 AM",
+      "grading": "exact"
+    },
+    {
+      "id": "u14",
+      "group": "used_often",
+      "question": "Which gym did Maya join?",
+      "answer": "Ridgewood Barbell",
+      "grading": "exact"
+    },
+    {
+      "id": "u15",
+      "group": "used_often",
+      "question": "How many landlords did Maya message in her first apartment hunt?",
+      "answer": "5",
+      "grading": "exact"
+    },
+    {
+      "id": "u16",
+      "group": "used_often",
+      "question": "Which neighborhoods has Maya been searching in?",
+      "answer": "Bushwick, Williamsburg, East Williamsburg, Ridgewood (along the L)",
+      "grading": "judge"
+    },
+    {
+      "id": "u17",
+      "group": "used_often",
+      "question": "How does Maya sign off or introduce herself to landlords?",
+      "answer": "As Maya, moving Sept 1 for a job near Union Square; asks about laundry and a viewing",
+      "grading": "judge"
+    },
+    {
+      "id": "u18",
+      "group": "used_often",
+      "question": "Which listing did Maya message in Williamsburg during hunt 2, if any?",
+      "answer": "Loft-style 1BR in Williamsburg",
+      "grading": "judge"
+    },
+    {
+      "id": "u19",
+      "group": "used_often",
+      "question": "Does Maya accept apartments on high floors if there is an elevator?",
+      "answer": "Yes",
+      "grading": "exact"
+    },
+    {
+      "id": "u20",
+      "group": "used_often",
+      "question": "Does Maya currently need a pet-friendly apartment? (as of day 20)",
+      "answer": "No",
+      "grading": "exact"
+    },
+    {
+      "id": "s01",
+      "group": "seen_once",
+      "question": "What was the unit number of Corner 2BR in Williamsburg (listing:206)?",
+      "answer": "4R",
+      "grading": "exact",
+      "evidence_capture_hint": "listing:206",
+      "survives_at": "L1"
+    },
+    {
+      "id": "s02",
+      "group": "seen_once",
+      "question": "What was the unit number of Loft-style 1BR in Ridgewood (listing:207)?",
+      "answer": "1A",
+      "grading": "exact",
+      "evidence_capture_hint": "listing:207",
+      "survives_at": "L1"
+    },
+    {
+      "id": "s03",
+      "group": "seen_once",
+      "question": "What was the unit number of Loft-style 1BR in Williamsburg (listing:202)?",
+      "answer": "2B",
+      "grading": "exact",
+      "evidence_capture_hint": "listing:202",
+      "survives_at": "L1"
+    },
+    {
+      "id": "s04",
+      "group": "seen_once",
+      "question": "What was the unit number of Bright 2BR in Bushwick (listing:104)?",
+      "answer": "5B",
+      "grading": "exact",
+      "evidence_capture_hint": "listing:104",
+      "survives_at": "L1"
+    },
+    {
+      "id": "s05",
+      "group": "seen_once",
+      "question": "What was the unit number of Loft-style 1BR in Bushwick (listing:111)?",
+      "answer": "5C",
+      "grading": "exact",
+      "evidence_capture_hint": "listing:111",
+      "survives_at": "L1"
+    },
+    {
+      "id": "s06",
+      "group": "seen_once",
+      "question": "What color were the kitchen cabinets in listing:110?",
+      "answer": "walnut",
+      "grading": "exact",
+      "evidence_capture_hint": "listing:110",
+      "survives_at": "L1"
+    },
+    {
+      "id": "s07",
+      "group": "seen_once",
+      "question": "What color were the kitchen cabinets in listing:101?",
+      "answer": "butter yellow",
+      "grading": "exact",
+      "evidence_capture_hint": "listing:101",
+      "survives_at": "L1"
+    },
+    {
+      "id": "s08",
+      "group": "seen_once",
+      "question": "What color were the kitchen cabinets in listing:210?",
+      "answer": "pale grey",
+      "grading": "exact",
+      "evidence_capture_hint": "listing:210",
+      "survives_at": "L1"
+    },
+    {
+      "id": "s09",
+      "group": "seen_once",
+      "question": "What color were the kitchen cabinets in listing:107?",
+      "answer": "walnut",
+      "grading": "exact",
+      "evidence_capture_hint": "listing:107",
+      "survives_at": "L1"
+    },
+    {
+      "id": "s10",
+      "group": "seen_once",
+      "question": "What street was listing:106 on?",
+      "answer": "293 Grand St",
+      "grading": "exact",
+      "evidence_capture_hint": "listing:106",
+      "survives_at": "L1"
+    },
+    {
+      "id": "s11",
+      "group": "seen_once",
+      "question": "What street was listing:102 on?",
+      "answer": "851 Metropolitan Ave",
+      "grading": "exact",
+      "evidence_capture_hint": "listing:102",
+      "survives_at": "L1"
+    },
+    {
+      "id": "s12",
+      "group": "seen_once",
+      "question": "What street was listing:201 on?",
+      "answer": "246 Bedford Ave",
+      "grading": "exact",
+      "evidence_capture_hint": "listing:201",
+      "survives_at": "L1"
+    },
+    {
+      "id": "s13",
+      "group": "seen_once",
+      "question": "What was the listed price of listing:523 in the search results?",
+      "answer": "$2,900",
+      "grading": "exact",
+      "evidence_capture_hint": "listing:523",
+      "survives_at": "L2"
+    },
+    {
+      "id": "s14",
+      "group": "seen_once",
+      "question": "What was the listed price of listing:524 in the search results?",
+      "answer": "$2,500",
+      "grading": "exact",
+      "evidence_capture_hint": "listing:524",
+      "survives_at": "L2"
+    },
+    {
+      "id": "s15",
+      "group": "seen_once",
+      "question": "What was the listed price of listing:518 in the search results?",
+      "answer": "$2,700",
+      "grading": "exact",
+      "evidence_capture_hint": "listing:518",
+      "survives_at": "L2"
+    },
+    {
+      "id": "s16",
+      "group": "seen_once",
+      "question": "What was the listed price of listing:514 in the search results?",
+      "answer": "$2,750",
+      "grading": "exact",
+      "evidence_capture_hint": "listing:514",
+      "survives_at": "L2"
+    },
+    {
+      "id": "s17",
+      "group": "seen_once",
+      "question": "What was the subject of the Design Systems Weekly newsletter on day 2?",
+      "answer": "Design Systems Weekly #212: tokens that survive a rebrand",
+      "grading": "judge",
+      "evidence_capture_hint": "inbox:newsletter:day2",
+      "survives_at": "L1"
+    },
+    {
+      "id": "s18",
+      "group": "seen_once",
+      "question": "What was the subject of the Design Systems Weekly newsletter on day 9?",
+      "answer": "Design Systems Weekly #213: the case for boring components",
+      "grading": "judge",
+      "evidence_capture_hint": "inbox:newsletter:day9",
+      "survives_at": "L1"
+    },
+    {
+      "id": "s19",
+      "group": "seen_once",
+      "question": "What was the subject of the Design Systems Weekly newsletter on day 16?",
+      "answer": "Design Systems Weekly #214: accessibility audits in one afternoon",
+      "grading": "judge",
+      "evidence_capture_hint": "inbox:newsletter:day16",
+      "survives_at": "L1"
+    },
+    {
+      "id": "s20",
+      "group": "seen_once",
+      "question": "Which floor was the rejected walk-up listing:104 on?",
+      "answer": "5",
+      "grading": "exact",
+      "evidence_capture_hint": "listing:104",
+      "survives_at": "L2"
+    },
+    {
+      "id": "r01",
+      "group": "rare_important",
+      "question": "When is Maya's lease signing?",
+      "answer": "October 15",
+      "grading": "exact"
+    },
+    {
+      "id": "r02",
+      "group": "rare_important",
+      "question": "What is the address on Maya's lease?",
+      "answer": "88 Wyckoff Ave, Apt 3B",
+      "grading": "exact"
+    },
+    {
+      "id": "r03",
+      "group": "rare_important",
+      "question": "How much is the security deposit?",
+      "answer": "$2,750",
+      "grading": "exact"
+    },
+    {
+      "id": "r04",
+      "group": "rare_important",
+      "question": "Who is the leasing broker?",
+      "answer": "Elena Vasquez",
+      "grading": "exact"
+    },
+    {
+      "id": "r05",
+      "group": "rare_important",
+      "question": "What should Maya bring to the lease signing?",
+      "answer": "Photo ID and a bank statement",
+      "grading": "judge"
+    },
+    {
+      "id": "r06",
+      "group": "rare_important",
+      "question": "What is Maya's gym member number?",
+      "answer": "RB-40917",
+      "grading": "exact"
+    },
+    {
+      "id": "r07",
+      "group": "rare_important",
+      "question": "When is Maya's dentist appointment?",
+      "answer": "Day 17 at 9:30 AM",
+      "grading": "judge"
+    },
+    {
+      "id": "r08",
+      "group": "rare_important",
+      "question": "What did Maya give Priya for her birthday?",
+      "answer": "a ceramics class voucher",
+      "grading": "judge"
+    },
+    {
+      "id": "r09",
+      "group": "rare_important",
+      "question": "When is Maya's flight to Chicago and what is the confirmation code?",
+      "answer": "Day 27 at 6:15 PM, MWY7Q2",
+      "grading": "judge"
+    },
+    {
+      "id": "r10",
+      "group": "rare_important",
+      "question": "When was Maya's first 1:1 with her manager?",
+      "answer": "Day 12 at 11:00 AM",
+      "grading": "judge"
+    }
+  ]
+}

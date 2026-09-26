@@ -156,8 +156,15 @@ export const ListingAttrs = z.object({
   elevator: z.boolean(),
   laundry: z.boolean(),
   pets: z.boolean(),
+  /** Derived: floor when no elevator, else 0. See LISTING_ATTRS. */
+  walkup_floor: z.number().int().nonnegative(),
 });
 export type ListingAttrs = z.infer<typeof ListingAttrs>;
+
+/** Compute the derived attribute from the raw ones. */
+export function walkupFloor(floor: number, elevator: boolean): number {
+  return elevator ? 0 : Math.max(0, floor);
+}
 
 /** One decision Maya (or the agent) made about one listing in one episode. Attrs parsed from captures. */
 export const Decision = z.object({
