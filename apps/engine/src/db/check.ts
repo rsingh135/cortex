@@ -1,10 +1,14 @@
 /** Live memory integration check; creates and removes only a uniquely named test database. */
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
+import { createServer, type ClientRequest, type IncomingMessage } from "node:http";
+import type { AddressInfo } from "node:net";
+import { setTimeout as delay } from "node:timers/promises";
 import { fileURLToPath } from "node:url";
 import { config as dotenv } from "dotenv";
-import { Binary, MongoClient } from "mongodb";
+import { Binary, MongoClient, type Db } from "mongodb";
 import sharp from "sharp";
+import { WebSocket, type RawData } from "ws";
 import {
   CONDITIONS,
   LEVELS,
@@ -16,13 +20,130 @@ import {
 } from "@cortex/schema";
 import { collections } from "../db.js";
 import { createApp } from "../api/app.js";
-import { mongoStore } from "./memory-store.js";
+import { createLiveServer } from "../live/server.js";
+import { mongoStore, type MemoryStore } from "./memory-store.js";
 
 dotenv({
   path: fileURLToPath(new URL("../../../../.env", import.meta.url)),
   quiet: true,
 });
 dotenv({ quiet: true });
+
+class StreamNotReady extends Error {}
+type MemorySnapshot = ReturnType<typeof Snapshot.parse>;
+
+function nextSnapshot(
+  socket: WebSocket,
+  matches: (snapshot: MemorySnapshot) => boolean = () => true,
+  timeoutMs = 15_000,
+): Promise<MemorySnapshot> {
+  return new Promise((resolve, reject) => {
+    const cleanup = () => {
+      clearTimeout(timeout);
+      socket.off("message", onMessage);
+      socket.off("error", onError);
+      socket.off("close", onClose);
+      socket.off("unexpected-response", onResponse);
+    };
+    const onError = (error: Error) => { cleanup(); reject(error); };
+    const onClose = () => onError(new Error("Live socket closed before snapshot"));
+    const onResponse = (_request: ClientRequest, response: IncomingMessage) => {
+      response.resume();
+      onError(response.statusCode === 503
+        ? new StreamNotReady()
+        : new Error("Live socket upgrade rejected"));
+    };
+    const onMessage = (message: RawData) => {
+      try {
+        const snapshot = Snapshot.parse(JSON.parse(String(message)));
+        if (matches(snapshot)) { cleanup(); resolve(snapshot); }
+      } catch {
+        onError(new Error("Live socket returned an invalid snapshot"));
+      }
+    };
+    const timeout = setTimeout(
+      () => onError(new Error("Live snapshot deadline exceeded")),
+      timeoutMs,
+    );
+    socket.on("message", onMessage);
+    socket.on("error", onError);
+    socket.on("close", onClose);
+    socket.on("unexpected-response", onResponse);
+  });
+}
+
+async function checkLiveSnapshots(
+  db: Db,
+  memory: MemoryStore,
+  app: ReturnType<typeof createApp>,
+) {
+  const server = createServer((_request, response) => {
+    response.writeHead(404);
+    response.end();
+  });
+  const live = createLiveServer({ server, memory, db });
+  let socket: WebSocket | undefined;
+  try {
+    await new Promise<void>((resolve, reject) => {
+      server.once("error", reject);
+      server.listen(0, "127.0.0.1", () => {
+        server.off("error", reject);
+        resolve();
+      });
+    });
+    await live.start();
+    const address = server.address() as AddressInfo;
+    const url = `ws://127.0.0.1:${address.port}/ws?condition=cortex`;
+    const deadline = Date.now() + 15_000;
+    let initial: MemorySnapshot | undefined;
+    while (Date.now() < deadline) {
+      socket = new WebSocket(url);
+      // terminate() may emit a later error for a rejected/unfinished upgrade.
+      socket.on("error", () => {});
+      try {
+        initial = await nextSnapshot(socket, () => true, deadline - Date.now());
+        break;
+      } catch (error) {
+        socket.terminate();
+        if (!(error instanceof StreamNotReady)) throw error;
+        await delay(Math.min(100, Math.max(0, deadline - Date.now())));
+      }
+    }
+    assert.ok(initial, "Atlas change stream did not become ready before deadline");
+    assert.ok(socket);
+    const current = Snapshot.parse(await (await app.request("/snapshot")).json());
+    assert.equal(initial.condition, "cortex");
+    assert.equal(initial.day, current.day);
+    assert.deepEqual(initial.payload, current.payload);
+
+    const targetDay = current.day + 1;
+    // Subscribe before committing; only the database watcher can refresh this socket.
+    const changed = nextSnapshot(socket, (event) => event.day === targetDay);
+    const [, streamed] = await Promise.all([
+      Promise.resolve(app.request("/clock/advance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ to_day: targetDay }),
+      })).then((response) => assert.equal(response.status, 200)),
+      changed,
+    ]);
+    const updated = Snapshot.parse(await (await app.request("/snapshot")).json());
+    assert.equal(streamed.condition, "cortex");
+    assert.equal(streamed.day, updated.day);
+    assert.deepEqual(streamed.payload, updated.payload);
+    console.log("PASS real WebSocket initial snapshot and Atlas-driven memory updates");
+  } finally {
+    socket?.terminate();
+    try {
+      await live.stop();
+    } finally {
+      if (server.listening)
+        await new Promise<void>((resolve, reject) => {
+          server.close((error) => error ? reject(error) : resolve());
+        });
+    }
+  }
+}
 
 async function main() {
   if (!process.env.ATLAS_URI)
@@ -264,6 +385,7 @@ async function main() {
     console.log(
       "PASS transaction rollback and forgetting with canonical images preserved",
     );
+    await checkLiveSnapshots(db, store, app);
   } finally {
     try {
       if (created) {

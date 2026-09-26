@@ -5,6 +5,8 @@
  */
 import { config as dotenv } from "dotenv";
 import { fileURLToPath } from "node:url";
+import type { Server } from "node:http";
+import type { Db } from "mongodb";
 dotenv({ path: fileURLToPath(new URL("../../../.env", import.meta.url)) });
 dotenv();
 import { serve } from "@hono/node-server";
@@ -12,6 +14,7 @@ import { createApp } from "./api/index.js";
 import { loadMemoryConfig } from "./config.js";
 import { fixtureStore, mongoStore } from "./db/memory-store.js";
 import { connect } from "./db.js";
+import { createLiveServer, type LiveServer } from "./live/server.js";
 
 async function main(): Promise<void> {
   const fixtureMode = process.env.FIXTURE_MODE === "true";
@@ -20,28 +23,55 @@ async function main(): Promise<void> {
     throw new Error("Invalid ENGINE_PORT");
   let memory = fixtureStore();
   let close = async () => {};
+  let database: Db | undefined;
+  let live: LiveServer | undefined;
 
   if (!fixtureMode) {
     const config = loadMemoryConfig();
     const { client, db } = await connect(config.ATLAS_URI, config.ATLAS_DB);
+    database = db;
     memory = mongoStore(client, db);
     close = () => client.close();
     const ping = await db.command({ ping: 1 });
-    console.log(
-      `engine: connected to ${config.ATLAS_DB} (ping ok=${ping.ok})`,
-    );
+    console.log(`engine: connected to ${config.ATLAS_DB} (ping ok=${ping.ok})`);
   } else {
     console.log("engine: FIXTURE_MODE, no database");
+    const fixture = memory;
+    memory = {
+      async run(write, action) {
+        const result = await fixture.run(write, action);
+        if (write) live?.refresh();
+        return result;
+      },
+    };
   }
 
   const app = createApp({ fixtureMode, memory });
   const server = serve({ fetch: app.fetch, port }, () =>
     console.log(`engine: http://localhost:${port}`),
   );
-  const shutdown = () =>
-    server.close(() => {
-      void close();
+  live = createLiveServer({
+    server: server as Server,
+    memory,
+    ...(database ? { db: database } : {}),
+  });
+  await live.start();
+  let stopping = false;
+  const shutdown = () => {
+    if (stopping) return;
+    stopping = true;
+    void (async () => {
+      try {
+        await live?.stop();
+      } finally {
+        await new Promise<void>((resolve) => server.close(() => resolve()));
+        await close();
+      }
+    })().catch(() => {
+      console.error("engine: shutdown failed");
+      process.exitCode = 1;
     });
+  };
   process.once("SIGINT", shutdown);
   process.once("SIGTERM", shutdown);
 }

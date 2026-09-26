@@ -6,7 +6,7 @@
 
 ```bash
 pnpm --filter @cortex/engine dev              # tsx watch; needs root .env (ATLAS_URI; AI/agent keys are separate)
-FIXTURE_MODE=true pnpm --filter @cortex/engine dev   # in-memory ledger, no Atlas: captures, episodes, snapshot, recall, clock, images, stats
+FIXTURE_MODE=true pnpm --filter @cortex/engine dev   # in-memory ledger, no Atlas: captures, episodes, live snapshots, recall, clock, images, stats
 pnpm --filter @cortex/engine typecheck && pnpm --filter @cortex/engine lint && pnpm --filter @cortex/engine test
 ```
 
@@ -31,17 +31,17 @@ pnpm --filter @cortex/engine typecheck && pnpm --filter @cortex/engine lint && p
 | `src/agent/` | stub | The agent | Router, Playwright replay tools with citations, drafts awaiting approval |
 | `src/voice/` | stub | Voice notes and updates | ElevenLabs STT/TTS, inference prompt, pinning, tombstone |
 | `src/propagation/` | stub | Voice notes › propagation | `$graphLookup` + `decision_attributes` match → crack/heal |
-| `src/live/events.ts` | done | The palace › rendering | Change-stream event → `WsEvent` translation (beliefs, captures, levels, procedures, edges, voice) |
-| `src/live/server.ts` | stub | The palace › rendering | One cluster-wide change stream, `ws` broadcast, `/snapshot` on connect |
+| `src/live/events.ts` | partial, not wired | The palace › rendering | Semantic event translator scaffold; ledger writes currently synchronize through full snapshots |
+| `src/live/server.ts` | snapshots | The palace › rendering | One filtered database change stream, condition-specific snapshots on connect and after committed changes |
 | `src/api/app.ts` | partial | contracts.md | Every route, validated with `@cortex/schema/api`; handlers return 501 until wired |
 
 Unimplemented HTTP handlers return 501; module stubs throw `NotImplemented("<module>")` from `src/lib/errors.ts`.
 
 ## Build order
 
-1. Live snapshot updates for palace clients.
-2. Wire screenshot extraction and consolidation into the transactional ledger.
-3. Embed beliefs and add vector fallback to recall.
+1. Wire screenshot extraction and consolidation into the transactional ledger.
+2. Embed beliefs and add vector fallback to recall.
+3. Add semantic live events for mascot recall/forgetting reactions.
 4. Learner → propagation → agent → voice → eval harness.
 
 Parameters live in `packages/schema/src/forgetting.ts` only. Never copy the math.
@@ -58,8 +58,8 @@ remain unfinished.
 
 Clock advancement requires all three conditions together because they share one
 clock. It updates condition ledgers and daily byte statistics, retaining canonical
-images for the comparison. Physical demo deletion, realtime TTL, and live WebSocket
-broadcasts remain unimplemented. Realtime clock documents are rejected by this
+images for the comparison. Physical demo deletion and realtime TTL remain
+unimplemented. Realtime clock documents are rejected by this
 store. Atlas transactions require a replica set/Atlas cluster.
 
 Recall searches exact subjects first, then deterministic text matches. It returns
@@ -76,6 +76,20 @@ auto-create an episode using the supplied ID, supporting the scripted browser.
 evidence that can be recalled immediately. Screenshot fact extraction and inferred
 preferences remain pending; summaries describe only capture metadata. Fixture mode
 starts empty. The root `.env` is loaded by the entry point.
+
+## Live memory snapshots
+
+Connect to `ws://localhost:4000/ws?condition=cortex` (also `keep_all` or
+`decay_only`). Each connection receives a validated snapshot, then fresh snapshots
+after committed memory changes. Atlas uses one filtered database change stream;
+fixture mode notifies after successful in-memory writes. Reads are coalesced and
+serialized, and no snapshot work runs while there are no clients.
+
+During change-stream startup or recovery, new connections receive HTTP 503 and
+should retry. Stream errors close active connections with code 1011; reconnecting
+clients receive current state after recovery. Semantic recall/forgetting events
+and event-log replay remain pending, so mascot reactions are not yet driven by
+this snapshot stream.
 
 ## Atlas model API
 
@@ -102,7 +116,7 @@ storage, recall, images, or forgetting.
 
 - `pnpm --filter @cortex/engine memory:check` exercises actual Atlas transactions,
   concurrent duplicate uploads, episode summaries, concurrent recalls, dry runs,
-  rollback, snapshots, BSON image bytes, and
+  rollback, WebSocket snapshots from actual change notifications, BSON image bytes, and
   condition-specific forgetting using the real HTTP handlers.
 - `pnpm atlas:check` verifies change streams, TTL index support, `$graphLookup`, and
   creation/query of a 512-dimensional vector index. It does not wait for TTL deletion.
