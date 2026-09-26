@@ -150,6 +150,64 @@ async function main() {
       "PASS clock sweep, per-condition states, and existing statistics ID",
     );
 
+    const upload = () => {
+      const form = new FormData();
+      form.set(
+        "meta",
+        JSON.stringify({
+          episode_id: "incoming",
+          day: 2,
+          actor: "maya",
+          app: "mockloft",
+          url: "http://mock/listings/1",
+          title: "Live screenshot check",
+          action: { type: "load" },
+          listing: { listing_id: "listing:1", attrs: { price: 2800 } },
+        }),
+      );
+      form.set(
+        "image",
+        new Blob([new Uint8Array(bytes)], { type: "image/webp" }),
+        "check.webp",
+      );
+      return app.request("/ingest/capture", { method: "POST", body: form });
+    };
+    const uploads = await Promise.all([upload(), upload()]);
+    uploads.forEach((response) => assert.equal(response.status, 200));
+    const uploaded = (await Promise.all(
+      uploads.map((response) => response.json()),
+    )) as Array<{ stored: boolean; capture_id: string }>;
+    assert.equal(uploaded.filter((result) => result.stored).length, 1);
+    assert.equal(uploaded[0]?.capture_id, uploaded[1]?.capture_id);
+    assert.equal(
+      (await c.episodes.findOne({ _id: "incoming" }))?.capture_count,
+      1,
+    );
+    assert.equal(
+      (await c.captures.findOne({ _id: uploaded[0]!.capture_id }))?.listing
+        ?.attrs.price,
+      2800,
+    );
+    assert.equal(
+      (await app.request("/episodes/incoming/end", { method: "POST" })).status,
+      200,
+    );
+    const ended = await c.episodes.findOne({ _id: "incoming" });
+    assert.ok(ended?.summary_belief_id);
+    assert.equal(
+      await c.belief_state.countDocuments({
+        belief_id: ended.summary_belief_id,
+      }),
+      3,
+    );
+    assert.equal(
+      (await app.request(`/image/${uploaded[0]!.capture_id}`)).status,
+      200,
+    );
+    console.log(
+      "PASS concurrent uploads deduplicate and produce a stored episode summary with evidence",
+    );
+
     const before = await c.belief_state.findOne({ _id: "cortex" });
     assert.equal(
       (await post("/recall", { ...recall, dry_run: true })).status,
@@ -181,7 +239,7 @@ async function main() {
     const snapshot = Snapshot.parse(
       await (await app.request("/snapshot")).json(),
     );
-    assert.equal(snapshot.payload.beliefs.length, 1);
+    assert.equal(snapshot.payload.beliefs.length, 2);
     assert.equal("embedding" in snapshot.payload.beliefs[0]!, false);
     assert.equal("page_text" in snapshot.payload.captures[0]!, false);
     console.log("PASS Binary-backed image serving and sanitized snapshot");
@@ -202,7 +260,7 @@ async function main() {
       (await app.request("/image/capture?condition=keep_all")).status,
       200,
     );
-    assert.equal(await c.image_levels.countDocuments(), 4);
+    assert.equal(await c.image_levels.countDocuments(), 8);
     console.log(
       "PASS transaction rollback and forgetting with canonical images preserved",
     );

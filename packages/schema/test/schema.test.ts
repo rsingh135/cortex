@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Belief, CaptureState, Listing } from "../src/collections.js";
+import { Belief, Capture, CaptureState, Listing } from "../src/collections.js";
 import { WsEvent } from "../src/events.js";
 import { RecallRequest } from "../src/api.js";
 
@@ -39,6 +39,12 @@ describe("collection schemas", () => {
         history: [],
       }),
     ).toThrow();
+  });
+  it("retains optional listing hints without requiring them on older captures", () => {
+    const capture = { _id: "capture", episode_id: "episode", day: 0, ts: new Date().toISOString(), actor: "maya", app: "mockloft", url: "", title: "Listing", action: { type: "load" }, phash: "0", extracted: false, belief_ids: [], l0_bytes: 100 };
+    expect(Capture.parse(capture).listing).toBeUndefined();
+    const listing = { listing_id: "listing:1", attrs: { price: 2800, laundry: true } };
+    expect(Capture.parse({ ...capture, listing }).listing).toEqual(listing);
   });
   it("capture_state allows a null ceiling for forgotten captures", () => {
     const s = CaptureState.parse({ _id: "s", condition: "cortex", capture_id: "c", alive_levels: [], ceiling: null, clarity: 0, recalls: 0, last_recall_day: 2 });

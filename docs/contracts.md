@@ -80,3 +80,20 @@ PASS  Atlas Vector Search + $vectorSearch 512-dim cosine index queryable after 5
 ```
 
 Vector search indexes take about a minute to become queryable after creation; create them in setup, never on the request path.
+
+## Capture intake details
+
+`Capture.listing` optionally preserves the `listing_id` and `attrs` submitted in
+`IngestCaptureMeta.listing`. Older captures remain valid without it. Ingest does
+not infer a rejection/message decision solely from these attributes.
+
+The engine accepts PNG/WebP captures up to 10 MiB and 16 million pixels. Duplicate
+frames return the previous capture ID without adding ladder/state documents;
+changes to the URL, action, page text, or listing metadata preserve a new event.
+The simulated clock advances with chronological captures; captures older than the
+current day are rejected. A missing episode is created for the supplied ID so
+`play-maya --engine` can stream its predefined episode IDs.
+
+Ending an episode currently creates an evidence-backed, deterministic activity
+summary from capture metadata. Screenshot-to-fact model extraction remains pending;
+raw `page_text` stays until extraction succeeds and is never included in snapshots.

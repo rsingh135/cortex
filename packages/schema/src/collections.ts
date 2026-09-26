@@ -52,6 +52,11 @@ export const Capture = z.object({
   url: z.string(),
   title: z.string(),
   action: CaptureAction,
+  /** Attributes supplied by the capture client; retained until decision parsing/extraction. */
+  listing: z.object({
+    listing_id: z.string(),
+    attrs: z.record(z.string(), z.union([z.number(), z.string(), z.boolean()])),
+  }).optional(),
   page_text: z.string().optional(),
   phash: z.string(),
   /** Set when extraction has run; the beliefs it produced. */

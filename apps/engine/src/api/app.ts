@@ -4,6 +4,9 @@
  */
 import { Binary } from "mongodb";
 import { cors } from "hono/cors";
+import { bodyLimit } from "hono/body-limit";
+import { createIntake } from "../ingest/intake.js";
+import { startEpisode, endEpisode } from "../ingest/episodes.js";
 import { servedLevel } from "@cortex/schema";
 import type { MemoryStore } from "../db/memory-store.js";
 import { advanceMemory } from "../forgetting/sweep.js";
@@ -35,6 +38,7 @@ const ConditionQuery = z.object({ condition: Condition.default("cortex") });
 
 export function createApp(opts: AppOptions): Hono {
   const app = new Hono();
+  const intake = opts.memory ? createIntake(opts.memory) : undefined;
   app.use("*", cors());
   app.onError((error, c) => {
     if (error instanceof RangeError || error instanceof SyntaxError)
@@ -50,10 +54,32 @@ export function createApp(opts: AppOptions): Hono {
   app.post("/episodes", async (c) => {
     const v = await validateJson(c, StartEpisodeRequest);
     if (!v.ok) return v.response;
+    if (opts.memory)
+      return c.json(
+        await opts.memory.run(true, (d) => startEpisode(d, v.data, now())),
+      );
     return c.json({ error: "not implemented", route: "POST /episodes" }, 501);
   });
-  app.post("/episodes/:id/end", (c) =>
-    c.json({ error: "not implemented", route: "POST /episodes/:id/end" }, 501),
+  app.post("/episodes/:id/end", async (c) => {
+    if (!opts.memory)
+      return c.json(
+        { error: "not implemented", route: "POST /episodes/:id/end" },
+        501,
+      );
+    const result = await opts.memory.run(true, (d) =>
+      endEpisode(d, c.req.param("id"), now()),
+    );
+    return result
+      ? c.json(result)
+      : c.json({ error: "Episode not found" }, 404);
+  });
+
+  app.use(
+    "/ingest/capture",
+    bodyLimit({
+      maxSize: 11 * 1024 * 1024,
+      onError: (c) => c.json({ error: "Capture request exceeds 11 MiB" }, 413),
+    }),
   );
 
   app.post("/ingest/capture", async (c) => {
@@ -69,6 +95,15 @@ export function createApp(opts: AppOptions): Hono {
       return c.json(
         { error: "validation failed", issues: meta.error.issues },
         400,
+      );
+    const image = form?.get("image");
+    if (!(image instanceof File))
+      return c.json({ error: "An image file is required" }, 400);
+    if (image.size > 10 * 1024 * 1024)
+      return c.json({ error: "Image exceeds 10 MiB" }, 413);
+    if (intake)
+      return c.json(
+        await intake.ingest(Buffer.from(await image.arrayBuffer()), meta.data),
       );
     return c.json(
       { error: "not implemented", route: "POST /ingest/capture" },
