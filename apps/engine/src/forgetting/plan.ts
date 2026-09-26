@@ -81,7 +81,7 @@ export function planSweep(
     if (!meta) continue;
     const conf = confidence(condition, meta.c0, day - s.last_recall_day, s.recalls, { humanSourced: meta.humanSourced, pinned: meta.pinned }, p);
     const aliveEvidence = meta.evidence.reduce((n, id) => n + ((aliveByCapture.get(id) ?? 0) > 0 ? 1 : 0), 0);
-    const forgotten = isForgotten(conf, aliveEvidence, p);
+    const forgotten = condition !== "keep_all" && !meta.pinned && isForgotten(conf, aliveEvidence, p);
     const next: BeliefState = { ...s, confidence: conf, status: forgotten ? "forgotten" : s.status };
     if (forgotten || conf !== s.confidence) beliefs.push({ belief_id: s.belief_id, next, forgotten });
   }
