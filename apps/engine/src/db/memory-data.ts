@@ -8,6 +8,8 @@ import type {
   Edge,
   Recall,
   DailyStat,
+  Episode,
+  Decision,
 } from "@cortex/schema";
 export interface MemoryData {
   day: number;
@@ -20,6 +22,8 @@ export interface MemoryData {
   procedures: Procedure[];
   edges: Edge[];
   recalls: Recall[];
+  episodes: Episode[];
+  decisions: Decision[];
 }
 export const emptyMemory = (): MemoryData => ({
   day: 0,
@@ -32,6 +36,8 @@ export const emptyMemory = (): MemoryData => ({
   procedures: [],
   edges: [],
   recalls: [],
+  episodes: [],
+  decisions: [],
 });
 export const withoutEmbedding = <T extends { embedding?: unknown }>(
   value: T,
